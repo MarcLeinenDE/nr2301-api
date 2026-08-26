@@ -1,8 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 — 2026-08-26
 
-Publication cleanup and task-oriented documentation after the repository URL became final.
+First public stable release of the reverse-engineered NR2301 local API reference.
+
+Publication cleanup and task-oriented documentation after the release-candidate review:
 
 - replaced the remaining canonical-repository placeholder in `ATTRIBUTION.md` with `https://github.com/MarcLeinenDE/nr2301-api`
 - added the canonical repository link to the recommended attribution text
@@ -10,7 +12,8 @@ Publication cleanup and task-oriented documentation after the repository URL bec
 - added `docs/recipes/` as a task-oriented "How do I …?" layer covering all 16 API namespaces
 - added detailed workflows for authentication, diagnostics, mobile network, VPN, Wi-Fi/WPS, LAN/DHCP/DNS, firewall/NAT, client management, SMS, phonebook, SIM/PIN, traffic/package tracking, DDNS, OTA, TR-069 and system maintenance
 - documented the live-verified manual-DNS workflow (`auto`/`manual`, upstream DNS-proxy behavior and read-back/recovery pattern)
-- linked the recipe index prominently from the root README
+- linked the recipe index prominently from the root README and API namespace index
+- finalized the machine-readable release metadata as `0.1.0`
 - no API method IDs were added or removed by the recipe layer
 
 ## 0.1-rc3 — 2026-08-26
