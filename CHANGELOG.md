@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+Development metadata: `0.1.1.dev0`.
+
+- normalized the exact live-verified `sms/sms.send` normal-SMS request and response contract, including GSM7 flagging, UTF-16BE hexadecimal body encoding, timestamp format, trailing-comma recipient representation and SMS-specific success fields
+- normalized the exact live-verified `sms/sms.delete` single-ID request and success response; deletion had been verified for Draft, Inbox and Outbox, with Inbox/Outbox read-back
+- promoted the already verified Wi-Fi mode tokens `DUAL`, `DUAL GUEST`, `2.4G 5G` and `2.4G 5G GUEST` into the machine-readable `wireless/wifi_set_ap_config` contract
+- documented Guest enable/disable as presence/absence of the `GUEST` token, with disruptive recovery/read-back and preservation of the current Guest block
+- documented the live-verified DUAL ↔ split transition with Guest preservation and exact final restore
+- documented Guest `maxassoc` range/evidence and the ACIY.3 Guest-isolation round-trip limitation
+- expanded the SMS and Wi-Fi task recipes so SDK/client implementers can use these contracts without relying on the earlier private application
+
+The published `v0.1.0` tag remains immutable. These additions exist on `main` for the next API release.
+
 ## 0.1.0 — 2026-08-26
 
 First public stable release of the reverse-engineered NR2301 local API reference.
