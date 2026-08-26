@@ -27,6 +27,31 @@ if 'CC BY-SA 4.0' not in (ROOT/'LICENSE.md').read_text(encoding='utf-8'):
 if 'GPL-3.0-or-later' not in (ROOT/'LICENSE.md').read_text(encoding='utf-8'):
     errors.append('software license marker missing')
 
+# The public attribution must point back to the canonical repository.
+attribution=(ROOT/'ATTRIBUTION.md').read_text(encoding='utf-8')
+canonical_repo='https://github.com/MarcLeinenDE/nr2301-api'
+if canonical_repo not in attribution:
+    errors.append('canonical repository URL missing from ATTRIBUTION.md')
+
+# Reject common publication-time placeholders/residue in public-facing material.
+public_files=[]
+for path in ROOT.rglob('*'):
+    if not path.is_file() or '.git' in path.parts or 'LICENSES' in path.parts or 'tools' in path.parts:
+        continue
+    public_files.append(path)
+public_text='\n'.join(p.read_text(encoding='utf-8',errors='ignore') for p in public_files)
+placeholder_patterns={
+    'TODO marker': r'(?i)\bTODO\b',
+    'TBD marker': r'(?i)\bTBD\b',
+    'FIXME marker': r'(?i)\bFIXME\b',
+    'CHANGEME marker': r'(?i)\bCHANGEME\b',
+    'example domain': r'(?i)\bexample\.(?:com|org|net)\b',
+    'owner/repo placeholder': r'(?i)\bowner/repo\b',
+    'unresolved canonical-repository note': r'(?i)once the canonical public repository url is established',
+}
+for label,pattern in placeholder_patterns.items():
+    if re.search(pattern,public_text): errors.append(f'publication placeholder/residue found: {label}')
+
 # Private-baseline live identifiers are stored only as hashes, never as literals.
 import hashlib
 text='\n'.join(p.read_text(encoding='utf-8',errors='ignore') for p in ROOT.rglob('*') if p.is_file() and '.git' not in p.parts)
@@ -41,9 +66,9 @@ for token in candidates:
         errors.append('known private-baseline identifier leaked')
 # Broad MAC scan: public docs should not contain captured MAC literals.
 macs=set(re.findall(r'(?i)\b(?:[0-9a-f]{2}:){5}[0-9a-f]{2}\b',text))
-if macs: errors.append('MAC-like literal(s) present; replace with placeholders')
+if macs: errors.append('MAC-like literal(s) present; replace with documentation-safe values')
 if errors:
     print('PUBLIC REPO VALIDATION FAILED')
     for e in errors: print('-',e)
     sys.exit(1)
-print(f'OK: {len(methods)} methods, {len(set(m["namespace"] for m in methods))} namespaces, no known live identifier leakage')
+print(f'OK: {len(methods)} methods, {len(set(m["namespace"] for m in methods))} namespaces, no known live identifier leakage, publication placeholders checked')
