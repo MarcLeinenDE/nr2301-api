@@ -31,15 +31,33 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `sms`.
+```json
+{
+  "sms": {
+    "id": 123
+  }
+}
+```
+
+The stock frontend uses its default `toStringData=true`, so a numeric logical ID is serialized as a JSON string on the wire.
 
 ### Response
 
-Known/observed response fields: `cds_list`, `result`, `sms`.
+```json
+{
+  "sms": {
+    "resp": 0,
+    "smsDelSucc": 1,
+    "smsDelFail": 0
+  }
+}
+```
 
 ### Notes
 
-- Single-ID delete verified for Draft, Inbox and Outbox; Inbox/Outbox each resp=0, smsDelSucc=1, smsDelFail=0 with ID absent on read-back.
+- Exact frontend request: `{sms:{id:<message id>}}`.
+- Single-ID delete was live verified for Draft, Inbox and Outbox.
+- Verified success is `resp=0`, `smsDelSucc=1`, `smsDelFail=0`; Inbox/Outbox deletion was additionally confirmed by mailbox read-back with the ID absent.
 
 <a id="smsget-brief-info"></a>
 
@@ -310,13 +328,46 @@ No stable response schema is currently documented.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `sms`.
+```json
+{
+  "sms": {
+    "id": -1,
+    "gsm7": 1,
+    "address": "<recipient>,",
+    "body": "<UTF-16BE uppercase hex>",
+    "date": "26,8,25,6,23,57,%2B2",
+    "protocol": "0"
+  }
+}
+```
+
+The stock frontend uses default `toStringData=true`; numeric request values such as `id` and `gsm7` are therefore stringified on the wire.
+
+Field contract:
+
+- `id`: `-1` for a new message.
+- `gsm7`: `1` when all characters are in the GSM 03.38 basic/extension sets, otherwise `0`.
+- `address`: comma-separated recipients with a trailing comma; a single recipient is therefore `<recipient>,`.
+- `body`: frontend `UniEncode`, equivalent to UTF-16BE code units encoded as uppercase hexadecimal.
+- `date`: local `YY,M,D,H,M,S,timezone`; the frontend encodes a positive timezone sign as `%2B`.
+- `protocol`: normal SMS flow was live verified with `"0"`.
 
 ### Response
 
-No stable response schema is currently documented.
+```json
+{
+  "sms": {
+    "resp": 0,
+    "smsSendSucc": 1,
+    "smsSendFail": 0
+  }
+}
+```
+
+An optional modem `smsRef` may also be present.
 
 ### Notes
 
-- Normal SMS end-to-end verified: resp=0, smsSendSucc=1, smsSendFail=0, Outbox status=0, physical receipt confirmed.
-
+- Normal SMS was end-to-end live verified: `resp=0`, `smsSendSucc=1`, `smsSendFail=0`, matching Outbox entry `status=0`, and physical receipt confirmed.
+- Recipient and message content were deliberately not retained in canonical/public evidence.
+- Clients should inspect the SMS-specific success/failure fields; HTTP 200 alone is not sufficient.

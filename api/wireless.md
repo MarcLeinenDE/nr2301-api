@@ -412,14 +412,46 @@ No stable response schema is currently documented.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `mode`, `wifi_if_GUEST`, `wifi_timed_off`, `wifi_if_5G`, `wifi_if_24G`, `wifi_if_DUAL`.
+Known optional top-level request fields/blocks from the shipped frontend and verified app contract:
 
-Observed frontend transport variants:
+- `switch`
+- `maxassoc`
+- `mode`
+- `wifi_if_24G`
+- `wifi_if_5G`
+- `wifi_if_DUAL`
+- `wifi_if_GUEST`
+- `wifi_timed_off`
 
-- `direct_ajaxHandler` via `POST`; body present: `True`
-- `direct_ajaxHandler` via `POST`; body present: `True`; keys: mode, wifi_if_GUEST
-- `direct_ajaxHandler` via `POST`; body present: `True`; keys: wifi_timed_off
-- `direct_ajaxHandler` via `POST`; body present: `True`; keys: wifi_if_5G, wifi_if_24G, wifi_if_DUAL
+Verified mode tokens on firmware `V1.00(ACIY.3)C0`:
+
+```text
+DUAL             = combined main 2.4/5 GHz SSID, Guest off
+DUAL GUEST       = combined main 2.4/5 GHz SSID, Guest on
+2.4G 5G          = separate main 2.4 GHz and 5 GHz settings, Guest off
+2.4G 5G GUEST    = separate main 2.4 GHz and 5 GHz settings, Guest on
+```
+
+There is no separate Guest-enable property: Guest is controlled by the presence of the `GUEST` token in `mode`.
+
+For DUAL/split transitions, preserve current participating blocks instead of reconstructing them from defaults. The live-verified application flow copied `wifi_if_DUAL`, `wifi_if_24G`, `wifi_if_5G` and `wifi_if_GUEST`, changed only `mode`, then recovered and required exact mode read-back. This verified:
+
+```text
+DUAL
+-> DUAL GUEST
+-> 2.4G 5G GUEST
+-> DUAL GUEST
+-> DUAL
+```
+
+with Main/Guest configuration and secrets preserved and the original state restored.
+
+Guest enable/disable can use `mode` plus the complete current `wifi_if_GUEST` block. Guest fields evidenced by the frontend are `band_mode`, `ssid`, `encryption`, `key`, `hidden`, `isolate`, `maxassoc`.
+
+> [!CAUTION]
+> On ACIY.3, do not expose `wifi_if_GUEST.isolate` as an independently round-trippable setting. The getter does not return it, while the stock frontend sources the written value from the main 5 GHz isolation control.
+
+Guest `maxassoc` was live verified `10 -> 9 -> 10` with read-back/restore; frontend-supported normal range is `1..10`.
 
 ### Response
 

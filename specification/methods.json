@@ -1,7 +1,7 @@
 {
   "schema": "nr2301.public_api_specification",
   "schema_version": 1,
-  "release": "0.1.0",
+  "release": "0.1.1.dev0",
   "generated": "2026-08-26",
   "device": {
     "vendor": "Zyxel",
@@ -4805,8 +4805,12 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "sms": {
+            "id": "message ID; numeric values are stringified on wire by the stock frontend"
+          }
+        },
+        "basis": "exact shipped frontend request + live delete/read-back verification",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -4820,7 +4824,13 @@
           }
         ]
       },
-      "response_schema": null,
+      "response_schema": {
+        "sms": {
+          "resp": "integer",
+          "smsDelSucc": "integer",
+          "smsDelFail": "integer"
+        }
+      },
       "response_fields": [
         "cds_list",
         "result",
@@ -4828,7 +4838,10 @@
       ],
       "semantic_contracts": [],
       "live_note": "Single-ID delete verified for Draft, Inbox and Outbox; Inbox/Outbox each resp=0, smsDelSucc=1, smsDelFail=0 with ID absent on read-back.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "The stock frontend request is {sms:{id:<message id>}} with default toStringData=true.",
+        "Verified success is sms.resp=0, sms.smsDelSucc=1 and sms.smsDelFail=0; tested Inbox/Outbox IDs were absent on mailbox read-back."
+      ]
     },
     {
       "method_id": "sms/sms.get_brief_info",
@@ -5169,8 +5182,17 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "sms": {
+            "id": "-1 for a new message; stock frontend stringifies it on wire",
+            "gsm7": "1 when message uses GSM 03.38 basic/extension characters, otherwise 0",
+            "address": "comma-separated recipient list with a trailing comma",
+            "body": "frontend UniEncode: UTF-16BE code units as uppercase hexadecimal",
+            "date": "YY,M,D,H,M,S,timezone; positive timezone sign is %2B",
+            "protocol": "0 for the live-verified normal SMS flow"
+          }
+        },
+        "basis": "exact shipped frontend request + live end-to-end SMS verification",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -5184,11 +5206,22 @@
           }
         ]
       },
-      "response_schema": null,
+      "response_schema": {
+        "sms": {
+          "resp": "integer",
+          "smsSendSucc": "integer",
+          "smsSendFail": "integer",
+          "smsRef": "optional modem reference"
+        }
+      },
       "response_fields": [],
       "semantic_contracts": [],
       "live_note": "Normal SMS end-to-end verified: resp=0, smsSendSucc=1, smsSendFail=0, Outbox status=0, physical receipt confirmed.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "Default frontend serialization uses toStringData=true, so numeric request fields are stringified on wire.",
+        "Live normal-SMS success returned sms.resp=0, smsSendSucc=1 and smsSendFail=0; a matching Outbox status=0 entry and physical receipt were confirmed.",
+        "Recipient and message content were deliberately excluded from canonical/public evidence."
+      ]
     },
     {
       "method_id": "statistics/clear_offline_user",
@@ -6574,8 +6607,17 @@
       "safety_class": "DISRUPTIVE_RECOVERY_REQUIRED",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "switch": "on|off (optional)",
+          "maxassoc": "string (optional)",
+          "mode": "DUAL|DUAL GUEST|2.4G 5G|2.4G 5G GUEST (optional; verified on tested firmware)",
+          "wifi_if_24G": "object (optional; preserve current block when participating in a mode transition)",
+          "wifi_if_5G": "object (optional; preserve current block when participating in a mode transition)",
+          "wifi_if_DUAL": "object (optional; preserve current block when participating in a mode transition)",
+          "wifi_if_GUEST": "object (optional; preserve current block; fields include band_mode, ssid, encryption, key, hidden, isolate, maxassoc)",
+          "wifi_timed_off": "object (optional)"
+        },
+        "basis": "exact shipped frontend contracts + live reset/recovery/read-back transitions",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -6634,13 +6676,35 @@
         {
           "id": "wifi.guest",
           "evidence": "live DUAL -> DUAL GUEST -> DUAL with reset/read-back/exact restore"
+        },
+        {
+          "id": "wifi.mode_tokens.aci_y3.v1",
+          "evidence": "LIVE_VERIFIED_WITH_RESET_READBACK_RESTORE",
+          "field": "mode",
+          "values": [
+            "DUAL",
+            "DUAL GUEST",
+            "2.4G 5G",
+            "2.4G 5G GUEST"
+          ]
+        },
+        {
+          "id": "wifi.guest_token.v1",
+          "evidence": "LIVE_VERIFIED_WITH_RESET_READBACK_RESTORE",
+          "field": "mode",
+          "rule": "Guest is enabled by presence of the GUEST token; preserve it across DUAL/split transitions."
         }
       ],
       "live_note": "Timed-off same-state and main DUAL AP same-state both returned result=0. Calls took ~15.8 s / ~13.9 s and required recovery handling.",
       "implementation_notes": [
         "Treat lost HTTP response as inconclusive until recovery/re-login/read-back; Guest toggle was verified this way.",
         "2026-08-25: DUAL GUEST -> 2.4G 5G GUEST -> DUAL GUEST live verified over USB recovery. Guest config and Wi-Fi secrets preserved; final original DUAL/Guest-off state restored.",
-        "Guest maxassoc 10->9->10 live read/write/restore verified. Frontend maximum 10."
+        "Guest maxassoc 10->9->10 live read/write/restore verified. Frontend maximum 10.",
+        "DUAL means a combined main SSID for 2.4/5 GHz in the tested frontend contract; do not label this Band Steering unless separately proven.",
+        "DUAL GUEST <-> 2.4G 5G GUEST and final restore were live verified with Guest/Main configuration and secrets preserved.",
+        "Guest enable/disable is controlled by the GUEST token in mode; there is no separate Guest-enable field.",
+        "Guest maxassoc 10->9->10 was live read/write/read-back/restored; frontend range is 1..10.",
+        "Do not expose Guest isolate independently on ACIY.3: the getter does not round-trip that field and the stock frontend sources it from main 5 GHz isolation."
       ]
     },
     {
