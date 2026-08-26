@@ -289,170 +289,649 @@
     },
     "cm/get_cell_info.celluar_basic_info.data_mode": {
       "values": {
-        "1": {"meaning":"GPRS","rat":"2G","frontend_mode_token":"GPRS","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "2": {"meaning":"EDGE","rat":"2G","frontend_mode_token":"EDGE","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "3": {"meaning":"UMTS","rat":"3G","frontend_mode_token":"UMTS","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "4": {"meaning":"IS95A","rat":"2G","frontend_mode_token":"IS95A","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "5": {"meaning":"IS95B","rat":"2G","frontend_mode_token":"IS95B","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "6": {"meaning":"1xRTT","rat":"2G","frontend_mode_token":"1xRTT","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "7": {"meaning":"EVDO_REV_0","rat":"3G","frontend_mode_token":"EVDO_REV_0","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "8": {"meaning":"EVDO_REV_A","rat":"3G","frontend_mode_token":"EVDO_REV_A","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "9": {"meaning":"GSM","rat":"2G","frontend_mode_token":"GSM","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "10": {"meaning":"HSDPA","rat":"3G","frontend_mode_token":"HSDPA","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "11": {"meaning":"HSUPA","rat":"3G","frontend_mode_token":"HSUPA","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "12": {"meaning":"HSPA","rat":"3G","frontend_mode_token":"HSPA","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "13": {"meaning":"EVDO_REV_B","rat":"3G","frontend_mode_token":"EVDO_REV_B","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "14": {"meaning":"LTE","rat":"4G","frontend_mode_token":"LTE","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED","live_observed":true},
-        "15": {"meaning":"EHRPD","rat":"3G","frontend_mode_token":"EHRPD","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "16": {"meaning":"HSPAP","rat":"3G","frontend_mode_token":"HSPAP","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "17": {"meaning":"GSM and WCDMA","rat":"mixed legacy","frontend_mode_token":"GSM_WCDMA","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "18": {"meaning":"LTE and WCDMA","rat":"mixed","frontend_mode_token":"LTE_WCDMA","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "19": {"meaning":"LTE Advanced / 4G+","rat":"4G","frontend_mode_token":"LTE_CA","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED","live_observed":true},
-        "20": {"meaning":"5G SA","rat":"5G","frontend_mode_token":"NR5G_SA","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "21": {"meaning":"5G","rat":"5G","frontend_mode_token":"NR5G","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED","live_observed":true},
-        "22": {"meaning":"5G NSA","rat":"5G","frontend_mode_token":"NR5G_NSA","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED","live_observed":true}
+        "1": {
+          "meaning": "GPRS",
+          "rat": "2G",
+          "frontend_mode_token": "GPRS",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "2": {
+          "meaning": "EDGE",
+          "rat": "2G",
+          "frontend_mode_token": "EDGE",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "3": {
+          "meaning": "UMTS",
+          "rat": "3G",
+          "frontend_mode_token": "UMTS",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "4": {
+          "meaning": "IS95A",
+          "rat": "2G",
+          "frontend_mode_token": "IS95A",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "5": {
+          "meaning": "IS95B",
+          "rat": "2G",
+          "frontend_mode_token": "IS95B",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "6": {
+          "meaning": "1xRTT",
+          "rat": "2G",
+          "frontend_mode_token": "1xRTT",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "7": {
+          "meaning": "EVDO_0",
+          "rat": "3G",
+          "frontend_mode_token": "EVDO_0",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "8": {
+          "meaning": "EVDO_A",
+          "rat": "3G",
+          "frontend_mode_token": "EVDO_A",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "9": {
+          "meaning": "HSDPA",
+          "rat": "3G",
+          "frontend_mode_token": "HSDPA",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "10": {
+          "meaning": "HSUPA",
+          "rat": "3G",
+          "frontend_mode_token": "HSUPA",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "11": {
+          "meaning": "HSPA",
+          "rat": "3G",
+          "frontend_mode_token": "HSPA",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "12": {
+          "meaning": "EVDO_B",
+          "rat": "3G",
+          "frontend_mode_token": "EVDO_B",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "13": {
+          "meaning": "EHRPD",
+          "rat": "3G",
+          "frontend_mode_token": "EHRPD",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "14": {
+          "meaning": "LTE",
+          "rat": "4G",
+          "frontend_mode_token": "LTE",
+          "severity": "neutral",
+          "evidence": "LIVE_AND_STATIC_VERIFIED"
+        },
+        "15": {
+          "meaning": "HSPAP",
+          "rat": "3G",
+          "frontend_mode_token": "HSPAP",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "16": {
+          "meaning": "GSM",
+          "rat": "2G",
+          "frontend_mode_token": "GSM",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "17": {
+          "meaning": "SCDMA",
+          "rat": "3G",
+          "frontend_mode_token": "SCDMA",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "18": {
+          "meaning": "IWLAN",
+          "rat": "3G",
+          "frontend_mode_token": "IWLAN",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "19": {
+          "meaning": "LTE / 4G+",
+          "rat": "4G+",
+          "frontend_mode_token": "LTEP",
+          "severity": "neutral",
+          "evidence": "LIVE_AND_STATIC_VERIFIED"
+        },
+        "20": {
+          "meaning": "HSPA",
+          "rat": "3G",
+          "frontend_mode_token": "HSPA",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "21": {
+          "meaning": "5G SA",
+          "rat": "5G",
+          "frontend_mode_token": "5G-SA",
+          "severity": "neutral",
+          "evidence": "LIVE_AND_STATIC_VERIFIED"
+        },
+        "22": {
+          "meaning": "5G NSA",
+          "rat": "5G",
+          "frontend_mode_token": "5G-NSA",
+          "severity": "neutral",
+          "evidence": "LIVE_AND_STATIC_VERIFIED"
+        }
+      }
+    },
+    "cm/get_cell_info.signal_info[].level": {
+      "values": {
+        "0": {
+          "meaning": "0/5 signal bars",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "1": {
+          "meaning": "1/5 signal bars",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "2": {
+          "meaning": "2/5 signal bars",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "3": {
+          "meaning": "3/5 signal bars",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED_AND_LIVE"
+        },
+        "4": {
+          "meaning": "4/5 signal bars",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED_AND_LIVE"
+        },
+        "5": {
+          "meaning": "5/5 signal bars",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        }
+      },
+      "important": "6 and 7 are NOT canonicalized as raw API values. The frontend synthesizes render level 6 when rat == \"no service\" and render level 7 when SIM status != 1 before drawing.",
+      "derived_frontend_render_states": {
+        "6": {
+          "meaning": "No service",
+          "severity": "error",
+          "condition": "signal_info[].rat == \"no service\""
+        },
+        "7": {
+          "meaning": "No SIM / SIM error",
+          "severity": "error",
+          "condition": "dashboard SIM status != 1"
+        }
       }
     },
     "package/get_package_status.status": {
       "values": {
-        "0": {"meaning":"Normal / no alert","severity":"ok","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "1": {"meaning":"Warning threshold reached","severity":"warning","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "2": {"meaning":"Configured data limit exceeded","severity":"error","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "3": {"meaning":"Package period expired","severity":"warning","evidence":"STATIC_FRONTEND_VERIFIED"}
+        "0": {
+          "meaning": "No active package alert / normal display",
+          "severity": "ok",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "1": {
+          "meaning": "Warning threshold reached",
+          "severity": "warning",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "2": {
+          "meaning": "Data limit exceeded",
+          "severity": "error",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "3": {
+          "meaning": "Data package expired",
+          "severity": "error",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        }
+      }
+    },
+    "ddns/get_ddns.ddns_state": {
+      "coercion": "Frontend uses loose equality; accept integer or numeric string.",
+      "values": {
+        "0": {
+          "meaning": "Ready / idle",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "1": {
+          "meaning": "Updating",
+          "severity": "info",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "2": {
+          "meaning": "Updating",
+          "severity": "info",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "3": {
+          "meaning": "Updated / OK",
+          "severity": "ok",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "4": {
+          "meaning": "Blocked",
+          "severity": "error",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        }
       }
     },
     "ota/new_query.response": {
       "values": {
-        "idle": {"meaning":"Neutral/ready state","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED_PLUS_LIVE_IDLE"},
-        "checking": {"meaning":"Checking for update","severity":"info","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "checked": {"meaning":"Update available","severity":"info","evidence":"STATIC_FRONTEND_VERIFIED_NOT_LIVE_OBSERVED"},
-        "updating,manual_fota": {"meaning":"Manual firmware update in progress","severity":"info","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "updating,local": {"meaning":"Local firmware update in progress","severity":"info","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "updating,auto_fota": {"meaning":"Automatic firmware update in progress","severity":"info","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "success": {"meaning":"Update succeeded","severity":"ok","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "failed": {"meaning":"Update failed","severity":"error","evidence":"STATIC_FRONTEND_VERIFIED"}
+        "idle": {
+          "meaning": "Idle / ready to check",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "note": "Idle alone does NOT mean firmware current. In the WebUI only, when a user-triggered check remains idle for ~30 one-second polls, it displays “No new update were found”."
+        },
+        "checking": {
+          "meaning": "Checking for update",
+          "severity": "info",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "checked": {
+          "meaning": "Update available",
+          "severity": "info",
+          "evidence": "STATIC_FRONTEND_VERIFIED_NOT_LIVE_OBSERVED",
+          "note": "Source comment says update found and render_release_note() is invoked."
+        },
+        "updating,manual_fota": {
+          "meaning": "Manual firmware update in progress",
+          "severity": "warning",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "updating,local": {
+          "meaning": "Local firmware update in progress",
+          "severity": "warning",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "updating,auto_fota": {
+          "meaning": "Automatic firmware update in progress",
+          "severity": "warning",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "success": {
+          "meaning": "Update succeeded",
+          "severity": "ok",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "failed": {
+          "meaning": "Update failed",
+          "severity": "error",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        }
       },
       "context_rule": "After manual_check_update, do not map immediate idle to no-update. The original WebUI waits approximately 30 polling cycles before presenting its no-update message."
     },
     "ota/get_updated_status.fota_auto_upgrade_status": {
       "values": {
-        "1": {"meaning":"Trigger notification that firmware was updated automatically","severity":"info","evidence":"STATIC_FRONTEND_VERIFIED"},
-        "0": {"meaning":"No automatic-update-completed notification","severity":"neutral","evidence":"STATIC_FRONTEND_VERIFIED"}
+        "1": {
+          "meaning": "Trigger notification that firmware was updated automatically",
+          "severity": "info",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "0": {
+          "meaning": "No automatic-update-completed notification",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        }
       },
       "important": "This is a notification/status flag, NOT an “Automatic updates” user setting."
     },
     "wireless/wps_status.pbc_status": {
       "values": {
-        "Disabled": {"meaning":"Disabled","severity":"neutral","evidence":"STATIC_FRONTEND_COMMENT_VERIFIED"},
-        "Active": {"meaning":"Active","severity":"info","evidence":"STATIC_FRONTEND_COMMENT_AND_EXECUTABLE_BRANCH_VERIFIED"},
-        "Timed-out": {"meaning":"Timed out","severity":"warning","evidence":"STATIC_FRONTEND_COMMENT_VERIFIED"},
-        "Overlap": {"meaning":"Multiple / overlapping WPS devices detected","severity":"error","evidence":"STATIC_FRONTEND_COMMENT_VERIFIED"},
-        "Unknown": {"meaning":"Unknown","severity":"neutral","evidence":"STATIC_FRONTEND_COMMENT_VERIFIED"}
+        "Disabled": {
+          "meaning": "Disabled",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_COMMENT_VERIFIED"
+        },
+        "Active": {
+          "meaning": "Active",
+          "severity": "info",
+          "evidence": "STATIC_FRONTEND_COMMENT_AND_EXECUTABLE_BRANCH_VERIFIED"
+        },
+        "Timed-out": {
+          "meaning": "Timed out",
+          "severity": "warning",
+          "evidence": "STATIC_FRONTEND_COMMENT_VERIFIED"
+        },
+        "Overlap": {
+          "meaning": "Multiple / overlapping WPS devices detected",
+          "severity": "error",
+          "evidence": "STATIC_FRONTEND_COMMENT_VERIFIED"
+        },
+        "Unknown": {
+          "meaning": "Unknown",
+          "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_COMMENT_VERIFIED"
+        }
       },
       "capitalization": "Preserve backend tokens exactly as shown above."
     },
     "router/router_get_timed_reboot.repeat": {
       "type": "bitmask",
-      "bits": {"0":"Sunday","1":"Monday","2":"Tuesday","3":"Wednesday","4":"Thursday","5":"Friday","6":"Saturday","7":"No repeat"},
+      "bits": {
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday",
+        "7": "No repeat"
+      },
       "important": "Executable option/save/load logic proves bit0=Sunday. The nearby source comment claiming bit0=Monday is stale/inconsistent and is rejected."
     },
     "aoc/get_bat_info.status": {
       "evidence": "FIRMWARE_BACKEND_VERIFIED",
-      "values": {"0":{"meaning":"Unknown / unrecognized charger-state fallback","severity":"neutral"},"1":{"meaning":"Charging","severity":"info"},"2":{"meaning":"Not charging OR Discharging","severity":"neutral"},"4":{"meaning":"Full","severity":"ok"}},
-      "unresolved": {"3":"No producer found in inspected current backend path; do not invent a meaning."}
+      "values": {
+        "0": {
+          "meaning": "Unknown / unrecognized charger-state fallback",
+          "severity": "neutral"
+        },
+        "1": {
+          "meaning": "Charging",
+          "severity": "info"
+        },
+        "2": {
+          "meaning": "Not charging OR Discharging",
+          "severity": "neutral"
+        },
+        "4": {
+          "meaning": "Full",
+          "severity": "ok"
+        }
+      },
+      "unresolved": {
+        "3": "No producer found in inspected current backend path; do not invent a meaning."
+      }
     },
     "aoc/get_bat_info.ind": {
       "evidence": "FIRMWARE_BACKEND_VERIFIED",
-      "ranges": [{"capacity_percent":"0","value":0},{"capacity_percent":"1..33","value":1},{"capacity_percent":"34..66","value":2},{"capacity_percent":"67..100","value":3}],
+      "ranges": [
+        {
+          "capacity_percent": "0",
+          "value": 0
+        },
+        {
+          "capacity_percent": "1..33",
+          "value": 1
+        },
+        {
+          "capacity_percent": "34..66",
+          "value": 2
+        },
+        {
+          "capacity_percent": "67..100",
+          "value": 3
+        }
+      ],
       "note": "Full/>99 is additionally normalized by backend full/100 handling."
     },
     "wireless/get_extender_status.status": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "values": {"0":{"meaning":"Disconnected"},"1":{"meaning":"Password error"},"2":{"meaning":"Searching Wi-Fi"},"3":{"meaning":"Connecting"},"4":{"meaning":"Try to Get IP"},"5":{"meaning":"Connected"}}
+      "values": {
+        "0": {
+          "meaning": "Disconnected"
+        },
+        "1": {
+          "meaning": "Password error"
+        },
+        "2": {
+          "meaning": "Searching Wi-Fi"
+        },
+        "3": {
+          "meaning": "Connecting"
+        },
+        "4": {
+          "meaning": "Try to Get IP"
+        },
+        "5": {
+          "meaning": "Connected"
+        }
+      }
     },
     "account/login.result": {
       "evidence": "FRONTEND_SOURCE_VERIFIED_WITH_LIVE_SUBSET",
-      "values": {"0":"Username or password error","1":"Password error","2":"Username error","3":"Success","4":"Login timeout, please retry","5":"Hacking detected","6":"Account locked"},
-      "live_observed": [1,2,3]
+      "values": {
+        "0": "Username or password error",
+        "1": "Password error",
+        "2": "Username error",
+        "3": "Success",
+        "4": "Login timeout, please retry",
+        "5": "Hacking detected",
+        "6": "Account locked"
+      },
+      "live_observed": [
+        1,
+        2,
+        3
+      ]
     },
     "cm/get_current_wan_info.contextlist[].connection_status": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "values": {"0":"Upstream/link disconnected","1":"Upstream/link connected"},
+      "values": {
+        "0": "Upstream/link disconnected",
+        "1": "Upstream/link connected"
+      },
       "note": "Keep separate from internet_status."
     },
     "cm/get_current_wan_info.contextlist[].internet_status": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "values": {"0":"Internet unavailable","1":"Internet available"},
+      "values": {
+        "0": "Internet unavailable",
+        "1": "Internet available"
+      },
       "note": "Upstream/link may be connected while Internet is unavailable."
     },
     "mobile.roaming": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "values": {"0":"Not roaming","1":"Roaming"},
+      "values": {
+        "0": "Not roaming",
+        "1": "Roaming"
+      },
       "other_policy": "Do not invent named meanings for unknown nonzero values."
     },
     "util_wan.operator_scan.status": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "values": {"current":"Registered","forbidden":"Forbidden","available":"Available"}
+      "values": {
+        "current": "Registered",
+        "forbidden": "Forbidden",
+        "available": "Available"
+      }
     },
     "util_wan.operator_scan.act": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "values": {"E_UTRAN_NR":"5G NSA","NR":"5G SA","E_UTRAN":"4G","UTRAN":"3G","GSM":"2G"},
+      "values": {
+        "E_UTRAN_NR": "5G NSA",
+        "NR": "5G SA",
+        "E_UTRAN": "4G",
+        "UTRAN": "3G",
+        "GSM": "2G"
+      },
       "unknown_policy": "Original frontend AUTO fallback is presentation behavior, not a claimed unknown-token meaning."
     },
     "cm.network_settings.enums": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "ip_type": {"0":"IPv4/IPv6","1":"IPv4","2":"IPv6"},
-      "auth_type": ["AUTO","PAP","CHAP","NONE"],
-      "network_mode": ["auto","5g-sa","5g-nsa","4g","3g","2g"],
-      "data_roaming": {"0":"off","1":"on"},
-      "connect_mode": ["auto","manual"],
-      "profile_mode": ["auto","manual"]
+      "ip_type": {
+        "0": "IPv4/IPv6",
+        "1": "IPv4",
+        "2": "IPv6"
+      },
+      "auth_type": [
+        "AUTO",
+        "PAP",
+        "CHAP",
+        "NONE"
+      ],
+      "network_mode": [
+        "auto",
+        "5g-sa",
+        "5g-nsa",
+        "4g",
+        "3g",
+        "2g"
+      ],
+      "data_roaming": {
+        "0": "off",
+        "1": "on"
+      },
+      "connect_mode": [
+        "auto",
+        "manual"
+      ],
+      "profile_mode": [
+        "auto",
+        "manual"
+      ]
     },
     "vpn.connection_status_raw_tokens": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "tokens": ["connecting","connected","Disconnected"],
+      "tokens": [
+        "connecting",
+        "connected",
+        "Disconnected"
+      ],
       "note": "Capital-D Disconnected is source-exact."
     },
     "sms.endpoint_scoped_status": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
       "global_enum_forbidden": true,
       "mappings": {
-        "message.read": {"0":"Unread","1":"Read"},
-        "message.location": {"0":"Device","1":"SIM"},
-        "sms.query.type": {"0":"Inbox","1":"Outbox","2":"Drafts","3":"SIM Inbox","4":"All-type count"},
-        "sms.query.read": {"0":"Unread","1":"Read","2":"All"},
-        "outbox.status": {"0":"Send success","1":"Send failed","2":"Delivered","3":"Not delivered"},
-        "sms.get_cds.status": {"0":"Success group","1":"Success group","2":"Success group","other":"Failure group"}
+        "message.read": {
+          "0": "Unread",
+          "1": "Read"
+        },
+        "message.location": {
+          "0": "Device",
+          "1": "SIM"
+        },
+        "sms.query.type": {
+          "0": "Inbox",
+          "1": "Outbox",
+          "2": "Drafts",
+          "3": "SIM Inbox",
+          "4": "All-type count"
+        },
+        "sms.query.read": {
+          "0": "Unread",
+          "1": "Read",
+          "2": "All"
+        },
+        "outbox.status": {
+          "0": "Send success",
+          "1": "Send failed",
+          "2": "Delivered",
+          "3": "Not delivered"
+        },
+        "sms.get_cds.status": {
+          "0": "Success group",
+          "1": "Success group",
+          "2": "Success group",
+          "other": "Failure group"
+        }
       }
     },
     "endpoint_scoped_error_codes": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
       "global_error_enum_forbidden": true,
       "scopes": {
-        "client_filter": {"-1095":"MAC address already exists","-1049":"Invalid Wi-Fi MAC address"},
-        "dhcp": {"-1098":"IP address conflicts with upstream gateway"},
-        "password_or_wifi_wizard_setters": {"-1001":"New password must not be identical to the default password"},
-        "phonebook": {"-1":"Return failed","-2":"File error","-3":"SIM is full","-4":"Location flash is full","-5":"Argument error","-6":"No contacts","-7":"Location init error","-8":"SIM init error","-9":"Contact name is too long","-10":"Contact name is empty","-11":"Email address is too long","-12":"Number is too long","-13":"Memory is not enough","-14":"Phonebook is full (<=500)","-103":"Phone number already exists"},
-        "ota/download_update": {"-2":"Battery capacity insufficient for upgrade; frontend text names 40% threshold"}
+        "client_filter": {
+          "-1095": "MAC address already exists",
+          "-1049": "Invalid Wi-Fi MAC address"
+        },
+        "dhcp": {
+          "-1098": "IP address conflicts with upstream gateway"
+        },
+        "password_or_wifi_wizard_setters": {
+          "-1001": "New password must not be identical to the default password"
+        },
+        "phonebook": {
+          "-1": "Return failed",
+          "-2": "File error",
+          "-3": "SIM is full",
+          "-4": "Location flash is full",
+          "-5": "Argument error",
+          "-6": "No contacts",
+          "-7": "Location init error",
+          "-8": "SIM init error",
+          "-9": "Contact name is too long",
+          "-10": "Contact name is empty",
+          "-11": "Email address is too long",
+          "-12": "Number is too long",
+          "-13": "Memory is not enough",
+          "-14": "Phonebook is full (<=500)",
+          "-103": "Phone number already exists"
+        },
+        "ota/download_update": {
+          "-2": "Battery capacity insufficient for upgrade; frontend text names 40% threshold"
+        }
       }
     },
     "router/router_get_work_mode.mode": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "nr2301_normal_values": ["router","bridge"],
-      "platform_conditional": {"passthrough":"IS_OUTDOOR_CPE path only; do not expose as normal NR2301 H01 value"}
+      "nr2301_normal_values": [
+        "router",
+        "bridge"
+      ],
+      "platform_conditional": {
+        "passthrough": "IS_OUTDOOR_CPE path only; do not expose as normal NR2301 H01 value"
+      }
     },
     "wan.type": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "tokens": ["mobile","pppoe","static","dhcp","wifi_extender"]
+      "tokens": [
+        "mobile",
+        "pppoe",
+        "static",
+        "dhcp",
+        "wifi_extender"
+      ]
     },
     "volte_status": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "values": {"1":"Show VoLTE indicator"},
+      "values": {
+        "1": "Show VoLTE indicator"
+      },
       "other_policy": "Values other than 1 only prove that frontend does not show the indicator; do not label 0 unsupported."
     },
     "cm/query_eng_info.radio_invalid_sentinel": {
       "evidence": "LIVE_OBSERVED_NR2301_PLUS_QUALCOMM_QMI_CORROBORATED",
-      "required": {"sinr":{"-32768":"INVALID_OR_UNAVAILABLE_MEASUREMENT"}},
+      "required": {
+        "sinr": {
+          "-32768": "INVALID_OR_UNAVAILABLE_MEASUREMENT"
+        }
+      },
       "scope_guard": "Do not globalize to unrelated integer fields."
     }
   }
