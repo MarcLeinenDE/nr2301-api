@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+Publication cleanup after the repository URL became final.
+
+- replaced the remaining canonical-repository placeholder in `ATTRIBUTION.md` with `https://github.com/MarcLeinenDE/nr2301-api`
+- added the canonical repository link to the recommended attribution text
+- extended `tools/validate_public_repo.py` to reject common publication placeholders and require the canonical attribution URL
+- no API method, request/response or raw-value semantics changed
+
 ## 0.1-rc3 — 2026-08-26
 
 Public-documentation readability and consistency pass.
