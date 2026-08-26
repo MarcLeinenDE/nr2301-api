@@ -2,6 +2,8 @@
 
 The current catalog contains **157 methods across 16 namespaces**.
 
+If you start with a task rather than a method name — for example **change DNS**, **configure Wi-Fi**, **send SMS** or **switch mobile network mode** — use the [practical API recipes](../docs/recipes/README.md) first.
+
 | Namespace | Methods | Documentation |
 |---|---:|---|
 | `account` | 6 | [account.md](account.md) |
@@ -22,6 +24,7 @@ The current catalog contains **157 methods across 16 namespaces**.
 | `wireless` | 14 | [wireless.md](wireless.md) |
 
 Each namespace page is generated from the normalized public specification. The machine-readable source is [`../specification/methods.json`](../specification/methods.json).
+
 ## How to read a method entry
 
 Each method entry separates four different questions:
@@ -32,4 +35,3 @@ Each method entry separates four different questions:
 - **Safety** — whether the method is low-impact, state-changing, disruptive, or intentionally not exercised for coverage.
 
 Request and response schemas are intentionally conservative: fields are documented when they were observed or reconstructed with sufficient evidence. Missing fields should not be interpreted as proof that the firmware can never return additional data.
-
