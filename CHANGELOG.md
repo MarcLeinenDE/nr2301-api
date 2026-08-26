@@ -8,12 +8,13 @@ Publication cleanup and task-oriented documentation after the release-candidate 
 
 - replaced the remaining canonical-repository placeholder in `ATTRIBUTION.md` with `https://github.com/MarcLeinenDE/nr2301-api`
 - added the canonical repository link to the recommended attribution text
-- extended `tools/validate_public_repo.py` to reject common publication placeholders and require the canonical attribution URL
+- extended `tools/validate_public_repo.py` to reject common publication placeholders, require the canonical attribution URL, verify recipe coverage and enforce matching machine-readable release metadata
+- added GitHub Actions validation on pushes and pull requests to `main`
 - added `docs/recipes/` as a task-oriented "How do I …?" layer covering all 16 API namespaces
 - added detailed workflows for authentication, diagnostics, mobile network, VPN, Wi-Fi/WPS, LAN/DHCP/DNS, firewall/NAT, client management, SMS, phonebook, SIM/PIN, traffic/package tracking, DDNS, OTA, TR-069 and system maintenance
 - documented the live-verified manual-DNS workflow (`auto`/`manual`, upstream DNS-proxy behavior and read-back/recovery pattern)
 - linked the recipe index prominently from the root README and API namespace index
-- finalized the machine-readable release metadata as `0.1.0`
+- finalized both machine-readable specifications as release `0.1.0`
 - no API method IDs were added or removed by the recipe layer
 
 ## 0.1-rc3 — 2026-08-26
