@@ -22,20 +22,23 @@ The current catalog contains **157 unique API methods across 16 namespaces**. Co
 | `NOT_IMPLEMENTED` | 2 |
 | **Total** | **157** |
 
-In addition, the repository documents the administrator authentication/session flow, single-call and multicall transport, endpoint-scoped raw-value semantics, safety classifications and a machine-readable method catalog.
+In addition, the repository documents the administrator authentication/session flow, single-call and multicall transport, endpoint-scoped raw-value semantics, safety classifications, a machine-readable method catalog, and a task-oriented recipe layer for common operations.
 
 `157 methods` means 157 distinct methods have been normalized into the catalog. It does **not** mean that every request/response field, privilege boundary, side effect or firmware variant is fully understood. Each method therefore carries its own evidence state and notes.
 
 ## Start here
 
 1. [Getting started](docs/getting-started.md)
-2. [Authentication](docs/authentication.md)
-3. [Transport](docs/transport.md)
-4. [Multicall](docs/multicall.md)
-5. [Method verification status](docs/method-status.md)
-6. [Raw values and semantics](docs/raw-values.md)
-7. [Security and safety](docs/security-safety.md)
-8. [API namespace index](api/README.md)
+2. [Practical API recipes — "How do I …?"](docs/recipes/README.md)
+3. [Authentication](docs/authentication.md)
+4. [Transport](docs/transport.md)
+5. [Multicall](docs/multicall.md)
+6. [Method verification status](docs/method-status.md)
+7. [Raw values and semantics](docs/raw-values.md)
+8. [Security and safety](docs/security-safety.md)
+9. [API namespace index](api/README.md)
+
+Use the namespace index when you already know the API method. Use the practical recipes when you start with a task such as changing DNS, switching mobile network mode, configuring Wi-Fi, sending SMS or managing clients.
 
 ## Core endpoint
 
@@ -109,4 +112,3 @@ The repository intentionally uses copyleft licenses so that improvements to this
 - **Software/tooling in this repository:** [GPL-3.0-or-later](LICENSE.md)
 
 Original work is attributed to **Marc Leinen**. See [`ATTRIBUTION.md`](ATTRIBUTION.md) and [`LICENSE.md`](LICENSE.md) for the exact scope and terms. Commercial use is permitted by these licenses; the ShareAlike/GPL obligations apply to covered adaptations and derivative works when they are shared or conveyed.
-
