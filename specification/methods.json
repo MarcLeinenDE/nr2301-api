@@ -1,7 +1,7 @@
 {
   "schema": "nr2301.public_api_specification",
   "schema_version": 1,
-  "release": "0.1-rc3",
+  "release": "0.1.0",
   "generated": "2026-08-26",
   "device": {
     "vendor": "Zyxel",
