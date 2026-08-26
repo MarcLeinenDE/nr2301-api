@@ -33,6 +33,21 @@ canonical_repo='https://github.com/MarcLeinenDE/nr2301-api'
 if canonical_repo not in attribution:
     errors.append('canonical repository URL missing from ATTRIBUTION.md')
 
+# The task-oriented recipe layer is part of the public documentation contract.
+recipe_names=[
+    'README.md', 'authentication-session.md', 'device-status-diagnostics.md',
+    'mobile-network.md', 'vpn-client.md', 'wifi-wps-extender.md',
+    'lan-dhcp-dns.md', 'firewall-nat.md', 'client-management.md', 'sms.md',
+    'phonebook.md', 'sim-pin.md', 'traffic-data-package.md', 'ddns.md',
+    'firmware-ota.md', 'tr069-xmpp.md', 'system-maintenance.md'
+]
+for name in recipe_names:
+    path=ROOT/'docs'/'recipes'/name
+    if not path.is_file(): errors.append(f'missing API recipe: docs/recipes/{name}')
+root_readme=(ROOT/'README.md').read_text(encoding='utf-8')
+if 'docs/recipes/README.md' not in root_readme:
+    errors.append('root README does not link the practical recipe index')
+
 # Reject common publication-time placeholders/residue in public-facing material.
 public_files=[]
 for path in ROOT.rglob('*'):
@@ -64,11 +79,16 @@ candidates.update(re.findall(r'\b(?:\d{1,3}\.){3}\d{1,3}\b',text))
 for token in candidates:
     if hashlib.sha256(token.lower().encode()).hexdigest() in forbidden_hashes:
         errors.append('known private-baseline identifier leaked')
-# Broad MAC scan: public docs should not contain captured MAC literals.
+
+# Broad MAC scan: only explicitly documented synthetic examples are allowed.
+allowed_example_macs={'02:00:00:00:00:01'}
 macs=set(re.findall(r'(?i)\b(?:[0-9a-f]{2}:){5}[0-9a-f]{2}\b',text))
-if macs: errors.append('MAC-like literal(s) present; replace with documentation-safe values')
+unexpected_macs={m for m in macs if m.lower() not in allowed_example_macs}
+if unexpected_macs:
+    errors.append('unexpected MAC-like literal(s) present; replace with documentation-safe values')
+
 if errors:
     print('PUBLIC REPO VALIDATION FAILED')
     for e in errors: print('-',e)
     sys.exit(1)
-print(f'OK: {len(methods)} methods, {len(set(m["namespace"] for m in methods))} namespaces, no known live identifier leakage, publication placeholders checked')
+print(f'OK: {len(methods)} methods, {len(set(m["namespace"] for m in methods))} namespaces, recipes present, no known live identifier leakage, publication placeholders checked')
