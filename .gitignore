@@ -1,0 +1,31 @@
+# Local/private captures and router data
+.private/
+*.pcap
+*.pcapng
+*.har
+*.cap
+*.log
+*.bak
+*.bin
+*.cfg
+*.conf
+*.env
+.env.*
+
+# Secrets / local configs
+*credentials*
+*secrets*
+*session*
+local-config.*
+
+# Python/tooling
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Editors/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
