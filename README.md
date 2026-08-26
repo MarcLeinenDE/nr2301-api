@@ -109,3 +109,4 @@ The repository intentionally uses copyleft licenses so that improvements to this
 - **Software/tooling in this repository:** [GPL-3.0-or-later](LICENSE.md)
 
 Original work is attributed to **Marc Leinen**. See [`ATTRIBUTION.md`](ATTRIBUTION.md) and [`LICENSE.md`](LICENSE.md) for the exact scope and terms. Commercial use is permitted by these licenses; the ShareAlike/GPL obligations apply to covered adaptations and derivative works when they are shared or conveyed.
+
