@@ -5,7 +5,12 @@ import json,re,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 spec=json.loads((ROOT/'specification/methods.json').read_text(encoding='utf-8'))
+semantics=json.loads((ROOT/'specification/semantics.json').read_text(encoding='utf-8'))
 errors=[]
+if not spec.get('release'):
+    errors.append('methods specification release is missing')
+if spec.get('release') != semantics.get('release'):
+    errors.append(f"specification release mismatch: methods={spec.get('release')!r}, semantics={semantics.get('release')!r}")
 methods=spec.get('methods',[])
 if len(methods)!=157: errors.append(f'expected 157 methods, got {len(methods)}')
 ids=[m.get('method_id') for m in methods]
@@ -91,4 +96,4 @@ if errors:
     print('PUBLIC REPO VALIDATION FAILED')
     for e in errors: print('-',e)
     sys.exit(1)
-print(f'OK: {len(methods)} methods, {len(set(m["namespace"] for m in methods))} namespaces, recipes present, no known live identifier leakage, publication placeholders checked')
+print(f'OK: release {spec.get("release")}, {len(methods)} methods, {len(set(m["namespace"] for m in methods))} namespaces, recipes present, no known live identifier leakage, publication placeholders checked')
