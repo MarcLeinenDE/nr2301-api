@@ -49,17 +49,79 @@ This method is classified `READ_WITH_SIDE_EFFECT`: reading a message may affect 
 
 ## Save a draft
 
-Use `sms/sms.save` with the frontend-shaped `sms` object. The method is live verified, but the complete public request object has not yet been normalized. Preserve the frontend/current object shape instead of inventing fields.
+Use `sms/sms.save` with the frontend-shaped `sms` object. The complete draft/edit request object is not yet normalized as a stable public contract. Preserve a separately verified frontend/current object shape instead of inventing fields.
 
-## Send an SMS
+## Send a normal SMS
 
-Use `sms/sms.send` with the frontend-shaped `sms` object.
+POST `sms/sms.send` with the exact normal-SMS frontend shape:
 
-End-to-end live verification observed semantic success, an Outbox record and physical receipt. A production client should still verify the returned SMS-specific success/failure fields rather than relying on HTTP 200.
+```json
+{
+  "sms": {
+    "id": -1,
+    "gsm7": 1,
+    "address": "<recipient>,",
+    "body": "<UTF-16BE uppercase hex>",
+    "date": "26,8,25,6,23,57,%2B2",
+    "protocol": "0"
+  }
+}
+```
 
-## Delete messages
+Field rules:
 
-Use `sms/sms.delete` with the documented `sms` object/IDs. Single-message deletion was live verified for Draft, Inbox and Outbox and checked by read-back.
+- `id`: `-1` for a new message.
+- `gsm7`: `1` if every character is in the GSM 03.38 basic/extension character sets, otherwise `0`.
+- `address`: comma-separated recipient numbers with a trailing comma; one number is therefore `<recipient>,`.
+- `body`: the frontend `UniEncode` representation, equivalent to UTF-16BE code units written as uppercase hexadecimal.
+- `date`: local `YY,M,D,H,M,S,timezone`; a positive timezone sign is encoded as `%2B`.
+- `protocol`: the end-to-end live-verified normal SMS flow uses `"0"`.
+
+The stock frontend uses its default `toStringData=true`, so numeric fields such as `id` and `gsm7` are strings on the actual wire request.
+
+Verified semantic success:
+
+```json
+{
+  "sms": {
+    "resp": 0,
+    "smsSendSucc": 1,
+    "smsSendFail": 0
+  }
+}
+```
+
+The live test also found a matching Outbox entry with `status=0`, and physical receipt was confirmed. Recipient and message content were deliberately excluded from canonical/public evidence.
+
+A client must inspect the SMS-specific success/failure fields rather than relying on HTTP 200.
+
+## Delete one message
+
+POST `sms/sms.delete`:
+
+```json
+{
+  "sms": {
+    "id": 123
+  }
+}
+```
+
+The stock frontend again uses default `toStringData=true`, so a numeric logical ID is serialized as a string on the wire.
+
+Verified success:
+
+```json
+{
+  "sms": {
+    "resp": 0,
+    "smsDelSucc": 1,
+    "smsDelFail": 0
+  }
+}
+```
+
+Single-ID deletion was live verified for Draft, Inbox and Outbox. Inbox/Outbox tests also confirmed by mailbox read-back that the deleted ID was absent.
 
 ## Methods not implemented on the tested backend
 
@@ -72,8 +134,8 @@ They are retained because the shipped frontend references them, but the tested r
 
 For any SMS write:
 
-1. capture the current relevant mailbox list/count;
-2. perform the action;
-3. inspect SMS-specific response values;
-4. refresh the target mailbox and verify the resulting record/state;
+1. capture the current relevant mailbox list/count when useful for verification;
+2. perform the action using the endpoint-specific request contract;
+3. inspect the SMS-specific response values;
+4. refresh the target mailbox when an exact post-action read-back is practical;
 5. never log message bodies or recipient/sender numbers by default.
