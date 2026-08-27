@@ -14,6 +14,12 @@ For API claims, please state:
 
 Do not submit real credentials, session cookies, IMSI/ICCID/IMEI values, phone numbers, SMS content, private SSIDs, VPN secrets, full configuration backups, or unredacted captures.
 
+## AI coding agents
+
+AI coding agents and automated contributors should read [`AGENTS.md`](AGENTS.md) before changing protocol contracts. It documents the repository's evidence hierarchy, source-of-truth rules, safety boundaries, known protocol pitfalls, privacy requirements and definition of done.
+
+The central rule is that protocol semantics must be supported by evidence and normalized in this repository before downstream SDKs or applications treat them as protocol truth.
+
 ## Maintainer availability
 
 This is a personal spare-time project. The maintainer has a young child and limited free time, so there is no guaranteed response or review time for issues and pull requests. Please do not interpret a delayed response as rejection. Well-documented contributions that are easy to reproduce and review are especially helpful.
