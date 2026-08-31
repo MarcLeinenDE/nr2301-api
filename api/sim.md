@@ -6,7 +6,7 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 
 | Method | Verification | Auth evidence | Safety |
 |---|---|---|---|
-| [`change_pin`](#change-pin) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
+| [`change_pin`](#change-pin) | `LIVE_VERIFIED` | `ADMIN_OK` | `DO_NOT_TEST_FOR_COVERAGE` |
 | [`disable_pin`](#disable-pin) | `LIVE_VERIFIED` | `ADMIN_OK` | `DO_NOT_TEST_FOR_COVERAGE` |
 | [`enable_pin`](#enable-pin) | `LIVE_VERIFIED` | `ADMIN_OK` | `DO_NOT_TEST_FOR_COVERAGE` |
 | [`get_lock_info`](#get-lock-info) | `LIVE_VERIFIED_LIMITED` | `ADMIN_OK_EMPTY_RESPONSE` | `READ_OR_LOW_SIDE_EFFECT` |
@@ -21,12 +21,12 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 **Method ID:** `sim/change_pin`  
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
-**Verification:** `STATIC_CONFIRMED`  
-**Auth evidence:** `UNTESTED`  
+**Verification:** `LIVE_VERIFIED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `DO_NOT_TEST_FOR_COVERAGE`
 
 > [!CAUTION]
-> This method was deliberately not exercised merely to improve coverage because its potential impact outweighed the documentation value. Treat the contract as static evidence only.
+> This remains a retry-sensitive SIM mutation. Live verification used known-correct original and temporary PIN values, checked retry counters, and restored the original PIN plus PIN-protection state. Never probe with guessed credentials.
 
 ### Request
 
@@ -50,6 +50,10 @@ The PIN/PUK/new-PIN values are secrets and must be redacted. The corresponding W
 ### Response
 
 Known/observed response fields: `pin_puk`, `response`.
+
+### Physical evidence — 2026-08-31
+
+On ACIY.3, a guarded SDK sequence enabled PIN protection, changed the known-correct original PIN to a temporary local PIN, changed it back to the original PIN, and disabled PIN protection again. Both `change_pin` calls returned `response.setting_response="OK"`; `pin_attempts` stayed at 3 and `puk_attempts` at 10 throughout. No real PIN value was logged or published.
 
 <a id="disable-pin"></a>
 
