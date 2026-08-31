@@ -65,6 +65,16 @@ Safety classifications remain important documentation and planning metadata. The
 
 Authorization boundaries still matter: do not brute-force or repeatedly guess supervisor/engineering credentials merely because the device can be reset.
 
+## Jurisdiction-neutral capability documentation
+
+The API contract is global and must not hard-code Germany-, EU-, FCC-, or other jurisdiction-specific Wi-Fi channel, band or transmit-power policy merely because the maintainer or physical test router is located in one jurisdiction.
+
+Document the raw capabilities, option tokens, firmware regulatory-domain behavior and acceptance/rejection results that are actually evidenced. A documented capability is **not** a claim that using it is lawful in every country or deployment.
+
+Do not invent unsupported radio values and do not bypass firmware/hardware enforcement. If firmware rejects or masks a value, record that behavior. Deployment-specific legal/regulatory policy belongs to the consumer/integrator/operator and/or the router firmware's regulatory domain, not to the protocol abstraction itself.
+
+Physical lab testing on the dedicated non-production router may exercise evidenced or deliberately exploratory router-accepted radio settings to establish the technical contract. Clearly distinguish WebUI-proven enums, live-accepted values and unresolved exploratory values.
+
 ## Core rule: evidence before convenience
 
 Never invent protocol semantics because they look plausible or make an API nicer.

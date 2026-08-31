@@ -6573,12 +6573,61 @@
             }
           },
           "scope": "Observed runtime values, not universal allowed-value enums."
+        },
+        {
+          "id": "wifi.webui.net_mode_24g.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/wireless.html control wifi_24g_80211_mode",
+          "field": "wifi_if_24G.net_mode",
+          "values": [
+            "11b",
+            "11bg",
+            "11bgn",
+            "11bgnax"
+          ]
+        },
+        {
+          "id": "wifi.webui.net_mode_5g.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/wireless.html control wifi_5g_80211_mode",
+          "field": "wifi_if_5G.net_mode",
+          "values": [
+            "11a",
+            "11an",
+            "11anac",
+            "11anacax"
+          ]
+        },
+        {
+          "id": "wifi.webui.bandwidth_24g.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/wireless.html control wifi_24g_channel_band",
+          "field": "wifi_if_24G.bandwidth",
+          "values": [
+            "HT20/HT40",
+            "HT20",
+            "HT40"
+          ]
+        },
+        {
+          "id": "wifi.webui.bandwidth_5g.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/wireless.html control wifi_5g_channel_band",
+          "field": "wifi_if_5G.bandwidth",
+          "values": [
+            "HT20/HT40/HT80",
+            "HT20",
+            "HT40",
+            "HT80"
+          ]
         }
       ],
       "live_note": null,
       "implementation_notes": [
         "2026-08-31 physical SDK capability snapshot observed 2.4-GHz auto channel=0 with live channel 6 and first/last channel 1..13; 5-GHz auto channel=0 with live channel 44 and explicit indoor/DFS channel lists.",
-        "Observed bandwidth/net_mode/power_level values are runtime observations only; do not infer complete allowed-value sets from the getter alone."
+        "Observed bandwidth/net_mode/power_level values are runtime observations only; do not infer complete allowed-value sets from the getter alone.",
+        "The original NR2301 WebUI exposes exact per-band net_mode and bandwidth option tokens; these are protocol/UI capability evidence, not jurisdiction-specific legality rules.",
+        "Do not impose Germany/EU-specific channel, band or transmit-power policy in the protocol contract. Record what firmware exposes/accepts and keep deployment legality separate."
       ]
     },
     {
@@ -6847,6 +6896,53 @@
           "host": "http://zyxel.home",
           "lifecycle": "write -> exact read-back -> restore original -> exact read-back",
           "auth": "normal administrator session"
+        },
+        {
+          "id": "wifi.webui.net_mode_24g.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/wireless.html control wifi_24g_80211_mode",
+          "field": "wifi_if_24G.net_mode",
+          "values": [
+            "11b",
+            "11bg",
+            "11bgn",
+            "11bgnax"
+          ]
+        },
+        {
+          "id": "wifi.webui.net_mode_5g.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/wireless.html control wifi_5g_80211_mode",
+          "field": "wifi_if_5G.net_mode",
+          "values": [
+            "11a",
+            "11an",
+            "11anac",
+            "11anacax"
+          ]
+        },
+        {
+          "id": "wifi.webui.bandwidth_24g.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/wireless.html control wifi_24g_channel_band",
+          "field": "wifi_if_24G.bandwidth",
+          "values": [
+            "HT20/HT40",
+            "HT20",
+            "HT40"
+          ]
+        },
+        {
+          "id": "wifi.webui.bandwidth_5g.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/wireless.html control wifi_5g_channel_band",
+          "field": "wifi_if_5G.bandwidth",
+          "values": [
+            "HT20/HT40/HT80",
+            "HT20",
+            "HT40",
+            "HT80"
+          ]
         }
       ],
       "live_note": "Timed-off same-state and main DUAL AP same-state both returned result=0. Calls took ~15.8 s / ~13.9 s and required recovery handling.",
@@ -6859,7 +6955,9 @@
         "Guest enable/disable is controlled by the GUEST token in mode; there is no separate Guest-enable field.",
         "Guest maxassoc 10->9->10 was live read/write/read-back/restored; frontend range is 1..10.",
         "Do not expose Guest isolate independently on ACIY.3: the getter does not round-trip that field and the stock frontend sources it from main 5 GHz isolation.",
-        "2026-08-31 public-SDK physical test: normal admin toggled Guest state and combined/separate main-SSID mode, verified preservation of the other mode dimension after each write, then restored and verified the original state via http://zyxel.home."
+        "2026-08-31 public-SDK physical test: normal admin toggled Guest state and combined/separate main-SSID mode, verified preservation of the other mode dimension after each write, then restored and verified the original state via http://zyxel.home.",
+        "The original NR2301 WebUI exposes exact per-band net_mode and bandwidth option tokens; these are protocol/UI capability evidence, not jurisdiction-specific legality rules.",
+        "Do not impose Germany/EU-specific channel, band or transmit-power policy in the protocol contract. Record what firmware exposes/accepts and keep deployment legality separate."
       ]
     },
     {

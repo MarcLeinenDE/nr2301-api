@@ -426,6 +426,18 @@ Known optional top-level request fields/blocks from the shipped frontend and ver
 - `wifi_if_GUEST`
 - `wifi_timed_off`
 
+Original WebUI option contracts additionally map exactly to the setter/getter fields:
+
+```text
+wifi_if_24G.net_mode: 11b | 11bg | 11bgn | 11bgnax
+wifi_if_5G.net_mode:  11a | 11an | 11anac | 11anacax
+
+wifi_if_24G.bandwidth: HT20/HT40 | HT20 | HT40
+wifi_if_5G.bandwidth:  HT20/HT40/HT80 | HT20 | HT40 | HT80
+```
+
+These are firmware/WebUI capability tokens. They are not a statement that every option is lawful in every deployment jurisdiction. The API reference intentionally does not encode Germany/EU-specific radio-policy restrictions; firmware regulatory behavior and deployment policy are separate from the raw protocol contract.
+
 Verified mode tokens on firmware `V1.00(ACIY.3)C0`:
 
 ```text
