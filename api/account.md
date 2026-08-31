@@ -4,6 +4,9 @@
 
 Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/method-status.md).
 
+> [!IMPORTANT]
+> On tested firmware `V1.00(ACIY.3)C0`, administrator pre-auth is host/authority sensitive. `zyxel.home` and `192.168.1.1` resolve to the same router address, but the direct-IP path returned `result=4` for both pre-auth methods while `http://zyxel.home` returned normal `result=0` responses. Use `http://zyxel.home` for the administrator challenge/login flow on this firmware. See [`../docs/authentication.md`](../docs/authentication.md).
+
 | Method | Verification | Auth evidence | Safety |
 |---|---|---|---|
 | [`get_info`](#get-info) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
@@ -80,9 +83,21 @@ HTTP method: `POST`
 }
 ```
 
+### Semantics
+
+- **`account.preauth_host_authority.v1`**
+  - `evidence`: LIVE_AB_VERIFIED_2026_08_31
+  - tested firmware: `V1.00(ACIY.3)C0`
+  - canonical management URL: `http://zyxel.home`
+  - direct-IP observation: `http://192.168.1.1` → `result=4`
+  - canonical-host observation: `http://zyxel.home` → `result=0`
+  - scope: host/authority-dependent behavior; this does **not** define `4` as a universal `get_rand` error enum
+
 ### Notes
 
 - Live pre-auth helper used successfully by normal admin login.
+- Historical live-working clients used an eight-character lowercase-alphanumeric `user_id` and reused it for `account/login`.
+- During the physical USB A/B test, user-id length, requests-vs-urllib transport, compact JSON/header reproduction, WebUI bootstrap and prior explicit WebUI logout did not explain the direct-IP failure; switching only to the canonical host made pre-auth succeed.
 
 <a id="get-retrytimes-and-time"></a>
 
@@ -115,9 +130,19 @@ HTTP method: `POST`
 }
 ```
 
+### Semantics
+
+- **`account.preauth_host_authority.v1`**
+  - `evidence`: LIVE_AB_VERIFIED_2026_08_31
+  - tested firmware: `V1.00(ACIY.3)C0`
+  - canonical management URL: `http://zyxel.home`
+  - direct-IP observation: `http://192.168.1.1` → `result=4`
+  - canonical-host observation: `http://zyxel.home` → `result=0`, `retry_times=5`, `remain_time=0`
+
 ### Notes
 
-- Live pre-auth helper; normal admin retry_times remained 5 before/after login.
+- Live pre-auth helper; normal admin `retry_times` remained 5 before/after login in earlier research.
+- Use this method as a lockout guard before requesting the challenge.
 
 <a id="login"></a>
 
@@ -161,6 +186,7 @@ HTTP method: `POST`
 ### Notes
 
 - Normal admin login returned result=3 and established CGISID.
+- On tested firmware, perform the challenge/login flow through `http://zyxel.home`; direct-IP pre-auth can fail before the password is submitted.
 
 <a id="logout"></a>
 
@@ -207,4 +233,3 @@ Known/observed response fields: `result`.
 ### Notes
 
 - Platform WW_OPERATOR_ZYXEL. Same-state total_time=900 with current session_id returned result=0; numeric total_time was stringified on wire.
-
