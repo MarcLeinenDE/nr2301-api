@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- completed a public-SDK real SMS exchange: send returned `resp=0/smsSendSucc=1/smsSendFail=0` and was physically received; the handset reply appeared as a new Inbox item and `sms.get_by_id` returned the complete documented field set; Inbox/Outbox bodies were observed as UTF-16BE hex, with all phone numbers and message contents excluded from repository evidence
 - normalized the exact `sms/sms.save` new/update-draft request and live success triple, including draft `type=2`, GSM7 boolean wire behavior and stock stringification of id/type/protocol; normalized `sms/sms.get_by_id` as exact `{sms:{id}}` POST and retained its unread-read side-effect warning
 - live-verified SDK `set_allow` + `clear_offline_user` with a synthetic locally-administered MAC in Black mode: allow returned result=0 with expected inactive-view semantics, then synthetic history was cleared with result=0 and verified absent from all explicit views
 - live-verified SDK reversible Statistics writes for `set_alias` (synthetic alias + exact restore) and `set_forbidden` (synthetic locally-administered MAC add/readback/remove), with no real identifiers logged

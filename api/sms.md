@@ -123,7 +123,7 @@ The exact shipped-frontend request is `{sms:{id:<message id>}}`. With the stock 
 {
   "sms": {
     "address": "string",
-    "body": "string",
+    "body": "string (UTF-16BE hexadecimal observed live)",
     "contact_id": "integer",
     "date": "string",
     "id": "integer",
@@ -136,6 +136,11 @@ The exact shipped-frontend request is `{sms:{id:<message id>}}`. With the stock 
   }
 }
 ```
+
+
+### 2026-08-31 SDK inbound-reply evidence
+
+A real reply to an SDK-originated SMS was detected as a new Inbox item and then read with `sms.get_by_id`. Before the call, the Inbox row reported `read=0`. The returned `sms` object contained exactly these observed fields: `address`, `body`, `contact_id`, `date`, `id`, `location`, `protocol`, `read`, `resp`, `status`, `type`. The body was decodable as UTF-16BE hexadecimal. Sender and body values were deliberately not retained. No post-read Inbox check was performed, so this run does **not** prove that `get_by_id` changed the read flag.
 
 <a id="smsget-cds"></a>
 
@@ -255,6 +260,11 @@ HTTP method: `POST`
 ### Notes
 
 - Live resp=0,count=1,total=1,page_count=1. Raw SMS values were not stored. Anonymous live response: HTTP 200 {'system_err':'session no exist'}.
+
+
+### 2026-08-31 SDK list representation evidence
+
+During a real SDK-send / handset-reply exchange, both the matching Outbox body and the new Inbox body were observed as UTF-16BE hexadecimal strings. The values themselves were not retained. An initial E2E test that required byte-for-byte equality against the entire sent body was unnecessarily brittle even though delivery succeeded; correlation should primarily use a newly appearing message ID plus normalized address, with body content as secondary evidence.
 
 <a id="smsquery"></a>
 
@@ -403,5 +413,6 @@ An optional modem `smsRef` may also be present.
 ### Notes
 
 - Normal SMS was end-to-end live verified: `resp=0`, `smsSendSucc=1`, `smsSendFail=0`, matching Outbox entry `status=0`, and physical receipt confirmed.
+- 2026-08-31 public-SDK E2E: the verified success triple was followed by physical handset receipt; the handset reply was subsequently observed in the router Inbox.
 - Recipient and message content were deliberately not retained in canonical/public evidence.
 - Clients should inspect the SMS-specific success/failure fields; HTTP 200 alone is not sufficient.

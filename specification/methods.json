@@ -5380,12 +5380,35 @@
             }
           },
           "side_effect_note": "Reading an unread inbox item may alter read state."
+        },
+        {
+          "id": "sms.get_by_id.inbound_reply.live_2026_08_31.v1",
+          "evidence": "LIVE_VERIFIED_SDK_REAL_INBOUND_REPLY",
+          "precondition": "new inbound reply was present in Inbox with read=0 before get_by_id",
+          "response_fields": [
+            "address",
+            "body",
+            "contact_id",
+            "date",
+            "id",
+            "location",
+            "protocol",
+            "read",
+            "resp",
+            "status",
+            "type"
+          ],
+          "body_representation": "UTF-16BE hexadecimal string",
+          "read_side_effect": "not re-read after get_by_id in this campaign; do not claim a read-state transition from this evidence alone",
+          "privacy": "sender/body values deliberately not retained"
         }
       ],
-      "live_note": null,
+      "live_note": "Live verified through the public SDK on a newly arrived real inbound reply. The prior Inbox row had read=0; get_by_id returned the complete documented field set and a UTF-16BE-hex body. No post-read state check was performed, so this run does not prove whether read state changed.",
       "implementation_notes": [
         "Exact shipped frontend request is {sms:{id:<message id>}}.",
-        "Opening an unread inbound SMS may mark it read; use a known draft/outbox item for side-effect-free contract testing where possible."
+        "Opening an unread inbound SMS may mark it read; use a known draft/outbox item for side-effect-free contract testing where possible.",
+        "2026-08-31 public-SDK E2E: get_by_id succeeded on a newly arrived real inbound reply; response fields matched the documented schema and body decoded from UTF-16BE hex.",
+        "The reply was observed with read=0 before get_by_id, but no post-read Inbox state was captured; preserve the side-effect warning without asserting a transition occurred."
       ]
     },
     {
@@ -5530,10 +5553,23 @@
         },
         {
           "id": "sms.list.draft"
+        },
+        {
+          "id": "sms.list.body_representation.live_2026_08_31.v1",
+          "evidence": "LIVE_VERIFIED_REAL_SEND_REPLY_EXCHANGE",
+          "observed": {
+            "outbox.body": "UTF-16BE hexadecimal string",
+            "inbox.body": "UTF-16BE hexadecimal string"
+          },
+          "correlation_note": "A real SDK send was delivered successfully but an initial byte-exact full-body Outbox correlation was too strict. A recovery read decoded the expected synthetic prefix. Prefer new message ID + normalized address for correlation; treat body representation as raw data.",
+          "privacy": "body/address values deliberately not retained"
         }
       ],
       "live_note": "Live resp=0,count=1,total=1,page_count=1. Raw SMS values were not stored. Anonymous live response: HTTP 200 {'system_err':'session no exist'}.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-08-31 real send/reply exchange: both Outbox and Inbox list body values were decodable as UTF-16BE hexadecimal; message values were not retained.",
+        "Do not require byte-exact full-body equality as the sole Outbox correlation key; use message ID/address and content only as secondary evidence."
+      ]
     },
     {
       "method_id": "sms/sms.query",
@@ -5709,12 +5745,25 @@
         }
       },
       "response_fields": [],
-      "semantic_contracts": [],
-      "live_note": "Normal SMS end-to-end verified: resp=0, smsSendSucc=1, smsSendFail=0, Outbox status=0, physical receipt confirmed.",
+      "semantic_contracts": [
+        {
+          "id": "sms.send.sdk_external_e2e.live_2026_08_31.v1",
+          "evidence": "LIVE_VERIFIED_SDK_PLUS_PHYSICAL_RECEIPT",
+          "verified_success": {
+            "resp": 0,
+            "smsSendSucc": 1,
+            "smsSendFail": 0
+          },
+          "external_path": "SDK send -> mobile network -> physical handset receipt confirmed by operator",
+          "privacy": "recipient and body deliberately omitted from canonical evidence"
+        }
+      ],
+      "live_note": "Normal SMS was end-to-end live verified through the public SDK: sms.resp=0, smsSendSucc=1, smsSendFail=0 and physical handset receipt were confirmed. Recipient/body were not retained.",
       "implementation_notes": [
         "Default frontend serialization uses toStringData=true, so numeric request fields are stringified on wire.",
         "Live normal-SMS success returned sms.resp=0, smsSendSucc=1 and smsSendFail=0; a matching Outbox status=0 entry and physical receipt were confirmed.",
-        "Recipient and message content were deliberately excluded from canonical/public evidence."
+        "Recipient and message content were deliberately excluded from canonical/public evidence.",
+        "2026-08-31 public-SDK E2E: a real handset received the synthetic test SMS after the verified send success triple."
       ]
     },
     {
