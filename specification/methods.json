@@ -6813,6 +6813,31 @@
           },
           "dfs_note": "Configured-channel persistence was verified. DFS/CAC operating-channel timing was intentionally not conflated with setter persistence.",
           "jurisdiction_note": "These are technical firmware/API capabilities, not a claim of legal use in every jurisdiction."
+        },
+        {
+          "id": "wifi.encryption.presentation_tokens.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/wireless.html get_encryption_tag() lines 658-689 + security controls",
+          "field": "encryption",
+          "values": {
+            "psk+ccmp": "WPA-PSK / AES-CCMP",
+            "psk+tkip": "WPA-PSK / TKIP",
+            "psk+tkip+ccmp": "WPA-PSK / TKIP+AES-CCMP",
+            "psk2+ccmp": "WPA2-PSK / AES-CCMP",
+            "psk2+tkip": "WPA2-PSK / TKIP",
+            "psk2+tkip+ccmp": "WPA2-PSK / TKIP+AES-CCMP",
+            "psk-mixed+ccmp": "WPA/WPA2-PSK / AES-CCMP",
+            "psk-mixed+tkip": "WPA/WPA2-PSK / TKIP",
+            "psk-mixed+tkip+ccmp": "WPA/WPA2-PSK / TKIP+AES-CCMP",
+            "sae": "WPA3-SAE",
+            "sae-mixed": "WPA2-PSK/WPA3-SAE",
+            "wep-mixed": "WEP",
+            "none": "Open / no encryption"
+          },
+          "scope": "frontend presentation/backend raw tokens; physical setter acceptance is not yet established for every token",
+          "setter_evidence": {
+            "sae-mixed": "shipped frontend explicitly constructs wifi_if_5G, wifi_if_24G and wifi_if_DUAL writes with encryption='sae-mixed' when updating the key"
+          }
         }
       ],
       "live_note": null,
@@ -6825,7 +6850,9 @@
         "Do not generalize the representative live channel transitions to every advertised channel without additional physical evidence; use runtime channel lists for capability discovery.",
         "2026-08-31 extended public-SDK Wi-Fi matrix passed 18/18 physical cases with read-back and restore, including power_level 0/1/2, Guest band_mode 2.4G/5G, synthetic SSID writes, additional channel categories and every original-WebUI net-mode/bandwidth token.",
         "power_level raw values 0, 1 and 2 are live round-trippable on ACIY.3, but their human meaning and whether the enum is exhaustive remain unresolved.",
-        "Synthetic SSID writes were verified for 24G, 5G, DUAL and Guest; no live SSID values are published."
+        "Synthetic SSID writes were verified for 24G, 5G, DUAL and Guest; no live SSID values are published.",
+        "The shipped WebUI defines 13 exact encryption display/raw tokens. Treat these as frontend-proven tokens until physical write acceptance is established per token/section.",
+        "The shipped frontend separately provides exact setter evidence for encryption='sae-mixed' on wifi_if_24G, wifi_if_5G and wifi_if_DUAL when changing the Wi-Fi key."
       ]
     },
     {
@@ -7336,6 +7363,31 @@
           },
           "dfs_note": "Configured-channel persistence was verified. DFS/CAC operating-channel timing was intentionally not conflated with setter persistence.",
           "jurisdiction_note": "These are technical firmware/API capabilities, not a claim of legal use in every jurisdiction."
+        },
+        {
+          "id": "wifi.encryption.presentation_tokens.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/wireless.html get_encryption_tag() lines 658-689 + security controls",
+          "field": "encryption",
+          "values": {
+            "psk+ccmp": "WPA-PSK / AES-CCMP",
+            "psk+tkip": "WPA-PSK / TKIP",
+            "psk+tkip+ccmp": "WPA-PSK / TKIP+AES-CCMP",
+            "psk2+ccmp": "WPA2-PSK / AES-CCMP",
+            "psk2+tkip": "WPA2-PSK / TKIP",
+            "psk2+tkip+ccmp": "WPA2-PSK / TKIP+AES-CCMP",
+            "psk-mixed+ccmp": "WPA/WPA2-PSK / AES-CCMP",
+            "psk-mixed+tkip": "WPA/WPA2-PSK / TKIP",
+            "psk-mixed+tkip+ccmp": "WPA/WPA2-PSK / TKIP+AES-CCMP",
+            "sae": "WPA3-SAE",
+            "sae-mixed": "WPA2-PSK/WPA3-SAE",
+            "wep-mixed": "WEP",
+            "none": "Open / no encryption"
+          },
+          "scope": "frontend presentation/backend raw tokens; physical setter acceptance is not yet established for every token",
+          "setter_evidence": {
+            "sae-mixed": "shipped frontend explicitly constructs wifi_if_5G, wifi_if_24G and wifi_if_DUAL writes with encryption='sae-mixed' when updating the key"
+          }
         }
       ],
       "live_note": "Timed-off same-state and main DUAL AP same-state both returned result=0. Calls took ~15.8 s / ~13.9 s and required recovery handling.",
@@ -7355,7 +7407,9 @@
         "Do not generalize the representative live channel transitions to every advertised channel without additional physical evidence; use runtime channel lists for capability discovery.",
         "2026-08-31 extended public-SDK Wi-Fi matrix passed 18/18 physical cases with read-back and restore, including power_level 0/1/2, Guest band_mode 2.4G/5G, synthetic SSID writes, additional channel categories and every original-WebUI net-mode/bandwidth token.",
         "power_level raw values 0, 1 and 2 are live round-trippable on ACIY.3, but their human meaning and whether the enum is exhaustive remain unresolved.",
-        "Synthetic SSID writes were verified for 24G, 5G, DUAL and Guest; no live SSID values are published."
+        "Synthetic SSID writes were verified for 24G, 5G, DUAL and Guest; no live SSID values are published.",
+        "The shipped WebUI defines 13 exact encryption display/raw tokens. Treat these as frontend-proven tokens until physical write acceptance is established per token/section.",
+        "The shipped frontend separately provides exact setter evidence for encryption='sae-mixed' on wifi_if_24G, wifi_if_5G and wifi_if_DUAL when changing the Wi-Fi key."
       ]
     },
     {

@@ -933,6 +933,67 @@
         }
       },
       "scope_guard": "Do not globalize to unrelated integer fields."
+    },
+    "wireless/wifi_get_ap_config.encryption": {
+      "source": "/html/wireless.html get_encryption_tag() lines 658-689 + security controls",
+      "layer": "PRESENTATION_TOKEN",
+      "evidence": "STATIC_FRONTEND_VERIFIED",
+      "values": {
+        "psk+ccmp": {
+          "meaning": "WPA-PSK / AES-CCMP",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "psk+tkip": {
+          "meaning": "WPA-PSK / TKIP",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "psk+tkip+ccmp": {
+          "meaning": "WPA-PSK / TKIP+AES-CCMP",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "psk2+ccmp": {
+          "meaning": "WPA2-PSK / AES-CCMP",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "psk2+tkip": {
+          "meaning": "WPA2-PSK / TKIP",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "psk2+tkip+ccmp": {
+          "meaning": "WPA2-PSK / TKIP+AES-CCMP",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "psk-mixed+ccmp": {
+          "meaning": "WPA/WPA2-PSK / AES-CCMP",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "psk-mixed+tkip": {
+          "meaning": "WPA/WPA2-PSK / TKIP",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "psk-mixed+tkip+ccmp": {
+          "meaning": "WPA/WPA2-PSK / TKIP+AES-CCMP",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "sae": {
+          "meaning": "WPA3-SAE",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "sae-mixed": {
+          "meaning": "WPA2-PSK/WPA3-SAE",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "wep-mixed": {
+          "meaning": "WEP",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "none": {
+          "meaning": "Open / no encryption",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        }
+      },
+      "setter_scope_note": "Do not infer universal write acceptance from the display mapping. Physical testing must establish accepted/coerced/rejected behavior by section.",
+      "explicit_setter_evidence": "sae-mixed appears in exact shipped-frontend wifi_set_ap_config writes for 24G, 5G and DUAL key updates."
     }
   }
 }

@@ -468,6 +468,28 @@ Guest enable/disable can use `mode` plus the complete current `wifi_if_GUEST` bl
 
 Guest `maxassoc` was live verified `10 -> 9 -> 10` with read-back/restore; frontend-supported normal range is `1..10`.
 
+### Frontend encryption tokens
+
+The shipped `wireless.html` frontend contains an exact display/raw-token mapping for the `encryption` field:
+
+```text
+psk+ccmp              WPA-PSK / AES-CCMP
+psk+tkip              WPA-PSK / TKIP
+psk+tkip+ccmp         WPA-PSK / TKIP+AES-CCMP
+psk2+ccmp             WPA2-PSK / AES-CCMP
+psk2+tkip             WPA2-PSK / TKIP
+psk2+tkip+ccmp        WPA2-PSK / TKIP+AES-CCMP
+psk-mixed+ccmp        WPA/WPA2-PSK / AES-CCMP
+psk-mixed+tkip        WPA/WPA2-PSK / TKIP
+psk-mixed+tkip+ccmp   WPA/WPA2-PSK / TKIP+AES-CCMP
+sae                    WPA3-SAE
+sae-mixed              WPA2-PSK/WPA3-SAE
+wep-mixed              WEP
+none                   Open / no encryption
+```
+
+This mapping is **frontend-source verified**, not yet a claim that every token is accepted by every AP block on ACIY.3. The shipped frontend separately constructs `wifi_set_ap_config` writes using `encryption="sae-mixed"` for `wifi_if_24G`, `wifi_if_5G` and `wifi_if_DUAL` when changing the key. Physical matrix testing should classify each remaining token/section as accepted, coerced or rejected before a high-level SDK enum is treated as fully live verified.
+
 ### Response
 
 No stable response schema is currently documented.
