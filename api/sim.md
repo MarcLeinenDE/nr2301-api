@@ -7,8 +7,8 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 | Method | Verification | Auth evidence | Safety |
 |---|---|---|---|
 | [`change_pin`](#change-pin) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
-| [`disable_pin`](#disable-pin) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
-| [`enable_pin`](#enable-pin) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
+| [`disable_pin`](#disable-pin) | `LIVE_VERIFIED` | `ADMIN_OK` | `DO_NOT_TEST_FOR_COVERAGE` |
+| [`enable_pin`](#enable-pin) | `LIVE_VERIFIED` | `ADMIN_OK` | `DO_NOT_TEST_FOR_COVERAGE` |
 | [`get_lock_info`](#get-lock-info) | `LIVE_VERIFIED_LIMITED` | `ADMIN_OK_EMPTY_RESPONSE` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`get_sim_status`](#get-sim-status) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`provide_pin`](#provide-pin) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
@@ -58,12 +58,12 @@ Known/observed response fields: `pin_puk`, `response`.
 **Method ID:** `sim/disable_pin`  
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
-**Verification:** `STATIC_CONFIRMED`  
-**Auth evidence:** `UNTESTED`  
+**Verification:** `LIVE_VERIFIED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `DO_NOT_TEST_FOR_COVERAGE`
 
 > [!CAUTION]
-> This method was deliberately not exercised merely to improve coverage because its potential impact outweighed the documentation value. Treat the contract as static evidence only.
+> This remains a retry-sensitive SIM mutation. Live verification used a known-correct local PIN, checked retry counters before the write, and restored the original PIN-protection state. Never probe with guessed credentials.
 
 ### Request
 
@@ -87,6 +87,10 @@ The PIN/PUK/new-PIN values are secrets and must be redacted. The corresponding W
 
 Known/observed response fields: `pin_puk`, `response`.
 
+### Physical evidence — 2026-08-31
+
+On ACIY.3, a guarded SDK sequence started from `pin_enabled=0`, returned `response.setting_response="OK"`, read back `pin_enabled=1`, then restored with the complementary action to `pin_enabled=0`. `pin_attempts` remained 3 and `puk_attempts` remained 10 throughout. The actual PIN was never logged or published.
+
 <a id="enable-pin"></a>
 
 ## `enable_pin`
@@ -94,12 +98,12 @@ Known/observed response fields: `pin_puk`, `response`.
 **Method ID:** `sim/enable_pin`  
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
-**Verification:** `STATIC_CONFIRMED`  
-**Auth evidence:** `UNTESTED`  
+**Verification:** `LIVE_VERIFIED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `DO_NOT_TEST_FOR_COVERAGE`
 
 > [!CAUTION]
-> This method was deliberately not exercised merely to improve coverage because its potential impact outweighed the documentation value. Treat the contract as static evidence only.
+> This remains a retry-sensitive SIM mutation. Live verification used a known-correct local PIN, checked retry counters before the write, and restored the original PIN-protection state. Never probe with guessed credentials.
 
 ### Request
 
@@ -122,6 +126,10 @@ The PIN/PUK/new-PIN values are secrets and must be redacted. The corresponding W
 ### Response
 
 Known/observed response fields: `pin_puk`, `response`.
+
+### Physical evidence — 2026-08-31
+
+On ACIY.3, a guarded SDK sequence started from `pin_enabled=0`, returned `response.setting_response="OK"`, read back `pin_enabled=1`, then restored with the complementary action to `pin_enabled=0`. `pin_attempts` remained 3 and `puk_attempts` remained 10 throughout. The actual PIN was never logged or published.
 
 <a id="get-lock-info"></a>
 

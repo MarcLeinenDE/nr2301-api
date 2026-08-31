@@ -4677,10 +4677,10 @@
       "method": "disable_pin",
       "endpoint": "/api.cgi",
       "operation_type": "WRITE_OR_ACTION",
-      "verification": "STATIC_CONFIRMED",
+      "verification": "LIVE_VERIFIED",
       "observed_status": "UNTESTED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "DO_NOT_TEST_FOR_COVERAGE",
       "request": {
         "http_method": "POST",
@@ -4722,13 +4722,51 @@
             "scope": "maxlength=8 is source-verified; no stricter minimum length or character-set rule is asserted by this contract"
           },
           "testing_policy": "Do not consume SIM retries merely for coverage. Read pin_attempts/puk_attempts before any physical mutation and use only known-correct locally supplied credentials."
+        },
+        {
+          "id": "sim.pin_protection_toggle.live_2026_08_31.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "management_url": "http://zyxel.home",
+          "admin_session": true,
+          "initial_state": {
+            "sim_status": 1,
+            "pin_status": 5,
+            "pin_enabled": 0,
+            "pin_attempts": 3,
+            "puk_attempts": 10
+          },
+          "sequence": [
+            {
+              "method": "sim/enable_pin",
+              "setting_response": "OK",
+              "pin_enabled_after": 1
+            },
+            {
+              "method": "sim/disable_pin",
+              "setting_response": "OK",
+              "pin_enabled_after": 0
+            }
+          ],
+          "final_state": {
+            "sim_status": 1,
+            "pin_status": 5,
+            "pin_enabled": 0,
+            "pin_attempts": 3,
+            "puk_attempts": 10
+          },
+          "retry_result": "No PIN or PUK retry was consumed by either known-correct credential operation.",
+          "secret_handling": "The real SIM PIN remained local and was not logged, stored or published."
         }
       ],
       "live_note": null,
       "implementation_notes": [
         "Exact shipped-frontend POST payload reconstructed from /html/set_pin.html line 277: {pin_puk:{pin:pin}}.",
         "PIN/PUK values are secrets and must not be copied into fixtures, logs, public reports or documentation examples.",
-        "The source-verified HTML fields use maxlength=8; do not invent stricter validation without separate evidence."
+        "The source-verified HTML fields use maxlength=8; do not invent stricter validation without separate evidence.",
+        "2026-08-31 known-correct physical SDK sequence verified PIN protection 0->1->0 with response.setting_response='OK' for both enable_pin and disable_pin.",
+        "pin_attempts remained 3 and puk_attempts remained 10 across the complete enable/read-back/disable/read-back sequence.",
+        "The real SIM PIN was supplied only from the local test environment and was not published."
       ],
       "accepted_request": {
         "http_method": "POST",
@@ -4746,10 +4784,10 @@
       "method": "enable_pin",
       "endpoint": "/api.cgi",
       "operation_type": "WRITE_OR_ACTION",
-      "verification": "STATIC_CONFIRMED",
+      "verification": "LIVE_VERIFIED",
       "observed_status": "UNTESTED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "DO_NOT_TEST_FOR_COVERAGE",
       "request": {
         "http_method": "POST",
@@ -4791,13 +4829,51 @@
             "scope": "maxlength=8 is source-verified; no stricter minimum length or character-set rule is asserted by this contract"
           },
           "testing_policy": "Do not consume SIM retries merely for coverage. Read pin_attempts/puk_attempts before any physical mutation and use only known-correct locally supplied credentials."
+        },
+        {
+          "id": "sim.pin_protection_toggle.live_2026_08_31.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "management_url": "http://zyxel.home",
+          "admin_session": true,
+          "initial_state": {
+            "sim_status": 1,
+            "pin_status": 5,
+            "pin_enabled": 0,
+            "pin_attempts": 3,
+            "puk_attempts": 10
+          },
+          "sequence": [
+            {
+              "method": "sim/enable_pin",
+              "setting_response": "OK",
+              "pin_enabled_after": 1
+            },
+            {
+              "method": "sim/disable_pin",
+              "setting_response": "OK",
+              "pin_enabled_after": 0
+            }
+          ],
+          "final_state": {
+            "sim_status": 1,
+            "pin_status": 5,
+            "pin_enabled": 0,
+            "pin_attempts": 3,
+            "puk_attempts": 10
+          },
+          "retry_result": "No PIN or PUK retry was consumed by either known-correct credential operation.",
+          "secret_handling": "The real SIM PIN remained local and was not logged, stored or published."
         }
       ],
       "live_note": null,
       "implementation_notes": [
         "Exact shipped-frontend POST payload reconstructed from /html/set_pin.html line 273: {pin_puk:{pin:pin}}.",
         "PIN/PUK values are secrets and must not be copied into fixtures, logs, public reports or documentation examples.",
-        "The source-verified HTML fields use maxlength=8; do not invent stricter validation without separate evidence."
+        "The source-verified HTML fields use maxlength=8; do not invent stricter validation without separate evidence.",
+        "2026-08-31 known-correct physical SDK sequence verified PIN protection 0->1->0 with response.setting_response='OK' for both enable_pin and disable_pin.",
+        "pin_attempts remained 3 and puk_attempts remained 10 across the complete enable/read-back/disable/read-back sequence.",
+        "The real SIM PIN was supplied only from the local test environment and was not published."
       ],
       "accepted_request": {
         "http_method": "POST",

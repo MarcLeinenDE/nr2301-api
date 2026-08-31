@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- live-verified `sim/enable_pin` and `sim/disable_pin` with a known-correct locally supplied PIN: `pin_enabled` round-tripped 0 -> 1 -> 0, both writes returned `response.setting_response=OK`, and PIN/PUK retry counters remained unchanged at 3/10
 - reconstructed and normalized the exact shipped-frontend SIM PIN/PUK POST payloads for provide/enable/disable/change/reset, with explicit secret-redaction and retry-preservation policy; physical status remains unchanged pending deliberate known-credential testing
 - completed the physical WPS action contract on 2026-08-31: PBC and PIN return nested `wireless.*_result=OK`, while Cancel returns flat top-level `wps_call_cancel_result=OK` after both actions; the public SDK integration test passed in 1.44 s and restored the original WPS-enable state
 - recorded action-specific WPS response envelopes from the 2026-08-31 physical SDK run: PBC returned `wireless.wps_call_pbc_result=OK`, while Cancel returned flat top-level `wps_call_cancel_result=OK`; PIN envelope remains to be observed in the resumed run
