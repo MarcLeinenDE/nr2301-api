@@ -5689,9 +5689,19 @@
         "clients_info",
         "mode"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "statistics.clear_offline_user.sdk_synthetic.live_2026_08_31.v1",
+          "evidence": "LIVE_SDK_SYNTHETIC_WRITE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "sequence": "same synthetic inactive row -> clear_offline_user result=0 -> confirmed absent from all explicit client views",
+          "privacy": "No real inactive-history row was deleted."
+        }
+      ],
       "live_note": "Live verification used source-correct get_inactive_users. 3 inactive records before; clear_offline_user returned result=0; selected record disappeared and 2 remained.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-08-31 SDK synthetic test cleared only the synthetic inactive row with result=0 and verified final absence from active, inactive, allow and forbidden views."
+      ]
     },
     {
       "method_id": "statistics/get_black_white_mode",
@@ -6012,13 +6022,22 @@
       "response_fields": [
         "result"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "statistics.set_allow.sdk_blackmode_synthetic.live_2026_08_31.v1",
+          "evidence": "LIVE_SDK_SYNTHETIC_WRITE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "sequence": "synthetic locally-administered MAC absent -> set_allow(enable=1) result=0 -> inactive-view readback with forbidden=0 -> allow-view remains absent in Black mode",
+          "privacy": "Synthetic identifier only; no real client identifier was printed or published."
+        }
+      ],
       "live_note": "Distinct locally-administered fake MAC add returned result=0 and disable/remove call returned result=0.",
       "implementation_notes": [
         "Do not model as independent Allow-list CRUD. Live black-mode test: enable=1 created an inactive client with forbidden=0 but did not appear in get_allow_users; enable=0 changed it to forbidden=1 and it appeared in get_forbidden_users.",
         "Original user.html invokes set_allow only when MAC filter mode is WHITE. White-mode live transition/read-back remains intentionally untested due management-lockout risk.",
         "2026-08-25 White-mode real Wi-Fi test: set_allow(enable=1) returned result0, client appeared in get_allow_users with allow=1, and the same Wi-Fi client successfully reconnected and became active. enable=0 removed it from Allow and restored allow=0.",
-        "During safe Black->White provisioning, success is not complete until intended MAC(s) are present in get_allow_users with allow=1. Failure triggers mandatory Black restore over verified recovery path."
+        "During safe Black->White provisioning, success is not complete until intended MAC(s) are present in get_allow_users with allow=1. Failure triggers mandatory Black restore over verified recovery path.",
+        "2026-08-31 SDK Black-mode synthetic test returned result=0 for set_allow(enable=1); the row appeared in the inactive view with forbidden=0 and correctly remained absent from get_allow_users in Black mode."
       ]
     },
     {

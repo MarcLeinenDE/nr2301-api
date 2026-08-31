@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- live-verified SDK `set_allow` + `clear_offline_user` with a synthetic locally-administered MAC in Black mode: allow returned result=0 with expected inactive-view semantics, then synthetic history was cleared with result=0 and verified absent from all explicit views
 - live-verified SDK reversible Statistics writes for `set_alias` (synthetic alias + exact restore) and `set_forbidden` (synthetic locally-administered MAC add/readback/remove), with no real identifiers logged
 - live-confirmed all four normalized `statistics/get_conn_clients_info` explicit client-view tokens in one sanitized SDK read (`get_active_users`, `get_inactive_users`, `get_allow_users`, `get_forbidden_users`); also observed `get_black_white_mode` returning `mode=black` with `result=1`, so Statistics read `result` values remain endpoint-specific
 - normalized the exact `statistics/get_conn_clients_info.request_type` tokens from shipped-frontend evidence: `get_active_users`, `get_inactive_users`, `get_allow_users`, and `get_forbidden_users`; explicitly rejected the earlier guessed `get_offline_users` spelling

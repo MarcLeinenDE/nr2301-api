@@ -42,6 +42,7 @@ Known/observed response fields: `clients_info`, `mode`.
 ### Notes
 
 - Live verification used source-correct get_inactive_users. 3 inactive records before; clear_offline_user returned result=0; selected record disappeared and 2 remained.
+- 2026-08-31 SDK synthetic cleanup: `clear_offline_user` returned `result=0` for the synthetic row created by the preceding Black-mode allow test; final reads confirmed it absent from all four explicit client views, so no real history row was deleted.
 
 <a id="get-black-white-mode"></a>
 
@@ -233,6 +234,7 @@ Known/observed response fields: `result`.
 - Do not model as independent Allow-list CRUD. Live black-mode test: enable=1 created an inactive client with forbidden=0 but did not appear in get_allow_users; enable=0 changed it to forbidden=1 and it appeared in get_forbidden_users.
 - Original user.html invokes set_allow only when MAC filter mode is WHITE. White-mode live transition/read-back remains intentionally untested due management-lockout risk.
 - 2026-08-25 White-mode real Wi-Fi test: set_allow(enable=1) returned result0, client appeared in get_allow_users with allow=1, and the same Wi-Fi client successfully reconnected and became active. enable=0 removed it from Allow and restored allow=0.
+- 2026-08-31 SDK Black-mode synthetic round-trip: `set_allow(enable=1)` returned `result=0`; the synthetic row appeared in the inactive view with `forbidden=0` and correctly remained absent from `get_allow_users`. No real client was modified.
 - During safe Black->White provisioning, success is not complete until intended MAC(s) are present in get_allow_users with allow=1. Failure triggers mandatory Black restore over verified recovery path.
 
 <a id="set-black-white-mode"></a>
