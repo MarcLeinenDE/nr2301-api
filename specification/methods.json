@@ -5804,6 +5804,19 @@
         {
           "id": "clients.forbidden_list",
           "evidence": "frontend exact + live add/read/remove verification"
+        },
+        {
+          "id": "clients.request_type.tokens.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED_PLUS_PRIOR_LIVE_VIEW_READBACK",
+          "field": "request_type",
+          "raw_tokens": {
+            "get_active_users": "active clients view",
+            "get_inactive_users": "inactive/offline clients view",
+            "get_allow_users": "allow-list view; semantics depend on current MAC-filter mode",
+            "get_forbidden_users": "forbidden/block-list view; semantics depend on current MAC-filter mode"
+          },
+          "important": "The inactive token is exactly get_inactive_users; get_offline_users is not a source-backed token.",
+          "transport": "POST with top-level request_type for explicit views; a body-less GET variant also exists and remains separately documented."
         }
       ],
       "live_note": null,
@@ -5811,7 +5824,10 @@
         "get_allow_users/get_forbidden_users are mode-oriented views. In live black mode, an unknown MAC allowed via set_allow did not appear in get_allow_users; the same record was visible in inactive state.",
         "2026-08-25 USB path test: with laptop Wi-Fi manually disabled, a fresh Admin session and normal reads remained available over USB; active inventory contained a USB client.",
         "During White, existing shared client rows switched from forbidden-field view to allow-field view with allow=0; get_allow_users remained empty.",
-        "White-mode get_allow_users now live verified with a real Wi-Fi client: absent/allow=0 before set_allow, present/allow=1 after set_allow, active/allow=1 after actual WLAN reconnect, absent again after cleanup."
+        "White-mode get_allow_users now live verified with a real Wi-Fi client: absent/allow=0 before set_allow, present/allow=1 after set_allow, active/allow=1 after actual WLAN reconnect, absent again after cleanup.",
+        "Exact shipped-frontend request_type tokens are get_active_users, get_inactive_users, get_allow_users and get_forbidden_users.",
+        "Do not substitute get_offline_users for the source-correct inactive token get_inactive_users.",
+        "Allow/forbidden views are mode-sensitive; callers should read statistics/get_black_white_mode before presenting policy semantics."
       ]
     },
     {

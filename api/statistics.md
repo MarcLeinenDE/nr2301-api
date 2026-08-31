@@ -115,6 +115,21 @@ Observed frontend transport variants:
 }
 ```
 
+### Exact `request_type` tokens
+
+The shipped frontend uses these four raw values when requesting explicit client views:
+
+| Raw token | View |
+|---|---|
+| `get_active_users` | active clients |
+| `get_inactive_users` | inactive/offline clients |
+| `get_allow_users` | allow-list view |
+| `get_forbidden_users` | forbidden/block-list view |
+
+`get_inactive_users` is the exact source-backed token. Do **not** replace it with the previously guessed `get_offline_users`. Explicit views are sent as a top-level POST field, for example `{"request_type":"get_inactive_users"}`. The separately observed body-less GET variant remains valid and is not redefined here as one of these four explicit tokens.
+
+Allow/forbidden semantics depend on the current Black/White MAC-filter mode; read `get_black_white_mode` before presenting them as policy state.
+
 ### Semantics
 
 - **`clients.active`**
