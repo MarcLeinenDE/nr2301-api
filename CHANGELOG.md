@@ -6,9 +6,11 @@ Development metadata: `0.1.1.dev0`.
 
 - documented the administrator pre-login lockout guard using `account/get_retrytimes_and_time`
 - normalized the historically live-working login `user_id` shape as eight lowercase alphanumeric characters (`[a-z0-9]{8}`), reused across `account/get_rand` and `account/login`
-- recorded the 2026-08-31 physical USB observation that `account/get_rand` reproducibly returned `result=4` before password submission with the initial 32-character SDK user-id
-- corrected the interim user-id-length hypothesis after the physical retest with the historical eight-character `[a-z0-9]{8}` format produced the same `account/get_rand result=4`; the current cause remains unresolved and must not be attributed to user-id length alone
-- clarified that the documented 0..6 login result table is scoped to `account/login` and must not be applied automatically to `account/get_rand.result`
+- recorded the 2026-08-31 physical USB observation that administrator pre-auth is host/authority sensitive on firmware `V1.00(ACIY.3)C0`: `zyxel.home` and `192.168.1.1` resolve to the same router address, but the direct-IP path returns `result=4` for both `account/get_retrytimes_and_time` and `account/get_rand`, while `http://zyxel.home` returns normal `result=0` responses
+- corrected the interim user-id-length hypothesis: both 32-character and historical `[a-z0-9]{8}` user IDs failed through the direct IP, while the historical format succeeded through `zyxel.home`; user-id length was not the cause of the observed direct-IP failure
+- documented that the direct-IP result was independent of requests-vs-urllib transport, compact JSON/header reproduction, WebUI bootstrap and prior explicit WebUI logout
+- clarified that successful anonymous/status API reads through `192.168.1.1` do not prove that the direct IP is suitable for administrator login
+- clarified that the documented 0..6 login result table is scoped to `account/login` and must not be applied automatically to `account/get_rand.result` or `get_retrytimes_and_time.result`
 - documented the dedicated non-production physical-router test policy: systematic read/write/disruptive verification is permitted with staged recovery, while USB-management-mode mutation remains excluded for the current campaign
 - established the API/SDK feedback rule that successful SDK live tests must promote stale API verification status and that every newly observed protocol fact must be normalized here
 - normalized the exact live-verified `sms/sms.send` normal-SMS request and response contract, including GSM7 flagging, UTF-16BE hexadecimal body encoding, timestamp format, trailing-comma recipient representation and SMS-specific success fields
