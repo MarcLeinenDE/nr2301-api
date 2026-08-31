@@ -107,7 +107,15 @@ No request body has been reconstructed as necessary for this method.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `sms`.
+```json
+{
+  "sms": {
+    "id": 123
+  }
+}
+```
+
+The exact shipped-frontend request is `{sms:{id:<message id>}}`. With the stock frontend's default serialization, numeric IDs are stringified on the wire. Reading an unread inbound SMS may mark it read, so contract tests should prefer a known draft or otherwise disposable item.
 
 ### Response
 
@@ -307,11 +315,37 @@ HTTP method: `POST`
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `sms`.
+New draft:
+
+```json
+{
+  "sms": {
+    "id": -1,
+    "gsm7": true,
+    "address": "<recipient>,",
+    "body": "<UTF-16BE uppercase hex>",
+    "date": "26,8,24,14,46,40,+2",
+    "type": 2,
+    "protocol": 0
+  }
+}
+```
+
+Updating an existing draft uses the same object with `id=<existing smsId>`. `type=2` is the exact draft token. Historical live wire evidence using the stock frontend-compatible serializer showed `id`, `type` and `protocol` as JSON strings on the wire while `gsm7` remained a JSON boolean. `address` keeps the trailing comma and `body` uses the same frontend `UniEncode` representation as SMS send.
 
 ### Response
 
-No stable response schema is currently documented.
+```json
+{
+  "sms": {
+    "resp": 0,
+    "smsSaveSucc": 1,
+    "smsSaveFail": 0
+  }
+}
+```
+
+This success triple was live verified for a new draft. Recipient and message content are private data and should not be logged.
 
 <a id="smssend"></a>
 

@@ -5333,8 +5333,12 @@
       "safety_class": "READ_OR_LOW_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "sms": {
+            "id": "message ID; stock frontend default serialization stringifies numeric values on wire"
+          }
+        },
+        "basis": "exact shipped frontend request + existing live response verification",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -5366,9 +5370,23 @@
       "response_fields": [
         "sms"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "sms.get_by_id.request.v1",
+          "evidence": "STATIC_FRONTEND_EXACT_PLUS_LIVE_RESPONSE",
+          "request": {
+            "sms": {
+              "id": "<message id>"
+            }
+          },
+          "side_effect_note": "Reading an unread inbox item may alter read state."
+        }
+      ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "Exact shipped frontend request is {sms:{id:<message id>}}.",
+        "Opening an unread inbound SMS may mark it read; use a known draft/outbox item for side-effect-free contract testing where possible."
+      ]
     },
     {
       "method_id": "sms/sms.get_cds",
@@ -5581,8 +5599,18 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "sms": {
+            "id": "-1 for a new draft, existing draft ID for update; numeric value is stringified on stock wire",
+            "gsm7": "boolean: true when message is GSM 03.38 basic/extension encodable, else false",
+            "address": "comma-separated recipients with trailing comma",
+            "body": "frontend UniEncode: UTF-16BE code units as uppercase hexadecimal",
+            "date": "YY,M,D,H,M,S,timezone",
+            "type": "2 for draft; stringified on stock wire",
+            "protocol": "protocol value; normal draft flow live-verified with 0 and stringified on stock wire"
+          }
+        },
+        "basis": "exact shipped frontend request + historical live write/response verification",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -5596,11 +5624,44 @@
           }
         ]
       },
-      "response_schema": null,
-      "response_fields": [],
-      "semantic_contracts": [],
+      "response_schema": {
+        "sms": {
+          "resp": "integer",
+          "smsSaveSucc": "integer",
+          "smsSaveFail": "integer"
+        }
+      },
+      "response_fields": [
+        "sms"
+      ],
+      "semantic_contracts": [
+        {
+          "id": "sms.save.draft.live.v1",
+          "evidence": "STATIC_FRONTEND_EXACT_PLUS_HISTORICAL_LIVE_WRITE",
+          "new_draft": {
+            "id": -1,
+            "type": 2
+          },
+          "update_draft": {
+            "id": "<existing smsId>",
+            "type": 2
+          },
+          "verified_protocol": 0,
+          "verified_success": {
+            "resp": 0,
+            "smsSaveSucc": 1,
+            "smsSaveFail": 0
+          },
+          "wire_note": "id/type/protocol stringified; gsm7 retained boolean in captured stock-compatible write"
+        }
+      ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "New-draft frontend request uses id=-1 and type=2; existing-draft update uses the current smsId and type=2.",
+        "Historical live write returned sms.resp=0, smsSaveSucc=1, smsSaveFail=0.",
+        "Historical stock-wire evidence stringified id/type/protocol while gsm7 remained a JSON boolean.",
+        "Recipient and body are message content/private data and should not be logged by clients."
+      ]
     },
     {
       "method_id": "sms/sms.send",
