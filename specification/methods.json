@@ -5730,7 +5730,8 @@
       "live_note": null,
       "implementation_notes": [
         "Live client-list semantics depend on mode. Current test capture returned mode='black'. Read this before presenting allow/block controls.",
-        "Real transition read-back verified: black -> white -> black, HTTP200/result0 writes and immediate mode read-back."
+        "Real transition read-back verified: black -> white -> black, HTTP200/result0 writes and immediate mode read-back.",
+        "2026-08-31 sanitized admin read returned mode='black' with result=1. Treat the result field as endpoint-specific; do not impose a generic result==0 read-success rule."
       ]
     },
     {
@@ -5817,6 +5818,54 @@
           },
           "important": "The inactive token is exactly get_inactive_users; get_offline_users is not a source-backed token.",
           "transport": "POST with top-level request_type for explicit views; a body-less GET variant also exists and remains separately documented."
+        },
+        {
+          "id": "clients.request_type.tokens.live_2026_08_31.v1",
+          "evidence": "LIVE_SDK_SANITIZED_EXPLICIT_CLIENT_VIEWS_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "admin_session": true,
+          "filter_mode": {
+            "mode": "black",
+            "result": 1
+          },
+          "views": {
+            "get_active_users": {
+              "count": 2,
+              "fields": [
+                "alias",
+                "client_type",
+                "cur_conn_time",
+                "forbidden",
+                "ip",
+                "mac",
+                "name",
+                "type"
+              ]
+            },
+            "get_inactive_users": {
+              "count": 1,
+              "fields": [
+                "alias",
+                "client_type",
+                "cur_conn_time",
+                "forbidden",
+                "ip",
+                "mac",
+                "name",
+                "type"
+              ]
+            },
+            "get_allow_users": {
+              "count": 0,
+              "fields": []
+            },
+            "get_forbidden_users": {
+              "count": 0,
+              "fields": []
+            }
+          },
+          "privacy": "Physical test emitted only view counts and field names; no MAC/IP/name/alias values were published.",
+          "important": "get_black_white_mode returned mode='black' with result=1 in this read. Do not assume result=0 is a universal success value across statistics read endpoints."
         }
       ],
       "live_note": null,
@@ -5827,7 +5876,9 @@
         "White-mode get_allow_users now live verified with a real Wi-Fi client: absent/allow=0 before set_allow, present/allow=1 after set_allow, active/allow=1 after actual WLAN reconnect, absent again after cleanup.",
         "Exact shipped-frontend request_type tokens are get_active_users, get_inactive_users, get_allow_users and get_forbidden_users.",
         "Do not substitute get_offline_users for the source-correct inactive token get_inactive_users.",
-        "Allow/forbidden views are mode-sensitive; callers should read statistics/get_black_white_mode before presenting policy semantics."
+        "Allow/forbidden views are mode-sensitive; callers should read statistics/get_black_white_mode before presenting policy semantics.",
+        "2026-08-31 sanitized SDK read confirmed all four explicit request_type tokens in one admin session: active, inactive, allow and forbidden views all returned successfully.",
+        "Active/inactive rows exposed alias, client_type, cur_conn_time, forbidden, ip, mac, name and type on ACIY.3; empty allow/forbidden views returned zero rows."
       ]
     },
     {

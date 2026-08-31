@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- live-confirmed all four normalized `statistics/get_conn_clients_info` explicit client-view tokens in one sanitized SDK read (`get_active_users`, `get_inactive_users`, `get_allow_users`, `get_forbidden_users`); also observed `get_black_white_mode` returning `mode=black` with `result=1`, so Statistics read `result` values remain endpoint-specific
 - normalized the exact `statistics/get_conn_clients_info.request_type` tokens from shipped-frontend evidence: `get_active_users`, `get_inactive_users`, `get_allow_users`, and `get_forbidden_users`; explicitly rejected the earlier guessed `get_offline_users` spelling
 - live-verified `sim/provide_pin` in its real post-reboot PIN-required lifecycle: after enabling PIN protection and confirming a true management outage/recovery, the SIM stabilized at `pin_status=2`, one known-correct local PIN returned `response.setting_response=OK`, read-back changed to `pin_status=5`, retry counters stayed at 3/10, and PIN protection was restored to disabled
 - live-verified `sim/change_pin` with a known-correct original PIN and temporary local PIN: original -> temporary -> original returned `response.setting_response=OK` both times, PIN protection was restored to disabled, and retry counters remained unchanged at 3/10

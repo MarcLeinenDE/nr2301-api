@@ -73,6 +73,7 @@ No request body has been reconstructed as necessary for this method.
 
 - Live client-list semantics depend on mode. Current test capture returned mode='black'. Read this before presenting allow/block controls.
 - Real transition read-back verified: black -> white -> black, HTTP200/result0 writes and immediate mode read-back.
+- 2026-08-31 sanitized read returned `mode='black'` with `result=1`; do not treat `result=0` as a universal success requirement for Statistics read endpoints.
 
 <a id="get-conn-clients-info"></a>
 
@@ -147,6 +148,7 @@ Allow/forbidden semantics depend on the current Black/White MAC-filter mode; rea
 - 2026-08-25 USB path test: with laptop Wi-Fi manually disabled, a fresh Admin session and normal reads remained available over USB; active inventory contained a USB client.
 - During White, existing shared client rows switched from forbidden-field view to allow-field view with allow=0; get_allow_users remained empty.
 - White-mode get_allow_users now live verified with a real Wi-Fi client: absent/allow=0 before set_allow, present/allow=1 after set_allow, active/allow=1 after actual WLAN reconnect, absent again after cleanup.
+- 2026-08-31 sanitized SDK explicit-view sweep confirmed all four exact POST tokens in one Black-mode admin session: active=2, inactive=1, allow=0, forbidden=0. Active/inactive rows exposed `alias`, `client_type`, `cur_conn_time`, `forbidden`, `ip`, `mac`, `name`, `type`; only counts/schema keys were logged.
 
 <a id="get-login-client-mac"></a>
 
