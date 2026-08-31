@@ -143,9 +143,9 @@
         "http_method": "POST",
         "schema": {
           "type": "admin",
-          "user_id": "8 lowercase alphanumeric characters matching [a-z0-9]{8}; known live-working compatibility shape"
+          "user_id": "historically live-working shape: 8 lowercase alphanumeric characters matching [a-z0-9]{8}; current 2026-08-31 USB retest still returns result=4 with this shape"
         },
-        "basis": "live-working application evidence + 2026-08-31 physical USB compatibility observation",
+        "basis": "historical live-working application evidence + 2026-08-31 physical USB retest",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -171,17 +171,32 @@
       "semantic_contracts": [
         {
           "id": "account.login_user_id.compat.v1",
-          "evidence": "LIVE_WORKING_CLIENT_PLUS_PHYSICAL_COMPATIBILITY_OBSERVATION",
+          "evidence": "HISTORICAL_LIVE_VERIFIED_CLIENT",
           "field": "user_id",
           "known_working_shape": "[a-z0-9]{8}",
-          "reuse": "reuse the same user_id in the subsequent account/login request"
+          "reuse": "reuse the same user_id in the subsequent account/login request",
+          "current_retest_note": "The historical shape remains proven working evidence, but the 2026-08-31 USB retest also returned account/get_rand result=4 with this shape; user-id length is therefore not established as the cause of the current failure."
+        },
+        {
+          "id": "account.get_rand_result4.usb_retest.v1",
+          "evidence": "LIVE_REPRODUCED_2026_08_31",
+          "field": "result",
+          "value": 4,
+          "context": "physical USB SDK pre-auth smoke before password submission",
+          "reproduced_with_user_id_shapes": [
+            "32-character hexadecimal",
+            "[a-z0-9]{8}"
+          ],
+          "meaning": "UNRESOLVED_ENDPOINT_SPECIFIC",
+          "constraint": "Do not apply the account/login result-code table to this get_rand result without separate evidence."
         }
       ],
       "live_note": "Live pre-auth helper used successfully by normal admin login.",
       "implementation_notes": [
         "Historical live-working NR2301 clients used exactly eight lowercase alphanumeric characters for user_id.",
-        "During the 2026-08-31 physical USB SDK smoke, a 32-character hexadecimal user_id reproducibly received result=4 before password submission; do not map that result through the account/login result table.",
-        "Use [a-z0-9]{8} for compatibility until broader firmware acceptance is separately verified."
+        "On 2026-08-31 the physical USB SDK smoke returned result=4 before password submission with both the initial 32-character hexadecimal user_id and the corrected historical [a-z0-9]{8} user_id.",
+        "The current result=4 cannot be attributed to user-id length alone; its account/get_rand meaning/cause remains unresolved.",
+        "Compare the exact historically working transport/request behavior before changing further authentication semantics."
       ]
     },
     {
@@ -247,7 +262,7 @@
           "type": "admin",
           "username": "<admin>",
           "password": "<md5 challenge response>",
-          "user_id": "same 8-character [a-z0-9]{8} value used for account/get_rand"
+          "user_id": "same user_id used for account/get_rand; historical live-working clients used [a-z0-9]{8}"
         },
         "basis": "live observation",
         "known_frontend_variants": [
