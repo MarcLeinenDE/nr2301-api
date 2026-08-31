@@ -4,6 +4,32 @@
 
 The stock NR2301 web UI uses an application-level challenge flow for the normal administrator account.
 
+## Canonical management host on tested firmware
+
+Administrator pre-auth is **host/authority sensitive** on tested firmware `V1.00(ACIY.3)C0`.
+
+During a controlled physical USB A/B test on 2026-08-31, `zyxel.home` resolved to the same management address as `192.168.1.1`, but the pre-auth account methods behaved differently:
+
+```text
+http://192.168.1.1
+  account/get_retrytimes_and_time -> result=4
+  account/get_rand                -> result=4
+
+http://zyxel.home
+  account/get_retrytimes_and_time -> result=0, retry_times=5, remain_time=0
+  account/get_rand                -> result=0, rand=<8-byte challenge>
+```
+
+The same result was reproduced with normal `requests` JSON POSTs, compact historical request bodies/headers and `urllib`. Loading the WebUI first did not create a prerequisite cookie, and explicit WebUI logout did not change the direct-IP failure. This establishes that anonymous/status reads succeeding on `192.168.1.1` do **not** prove that the direct IP is suitable for administrator login.
+
+For this firmware, use the canonical management URL:
+
+```text
+http://zyxel.home
+```
+
+The current evidence establishes host/authority-dependent behavior. It does not justify assigning a universal semantic meaning to `result=4` on these pre-auth endpoints.
+
 ### 0. Check the administrator lockout state
 
 Before requesting a challenge, a defensive client should POST `account/get_retrytimes_and_time`:
@@ -14,7 +40,7 @@ Before requesting a challenge, a defensive client should POST `account/get_retry
 }
 ```
 
-Known response fields include `remain_time`, `retry_times` and `result`.
+Known successful response fields include `remain_time`, `retry_times` and `result`.
 
 The earlier live-working NR2301 application used this call as a lockout guard:
 
@@ -25,7 +51,7 @@ This guard does not authenticate the client and does not send the administrator 
 
 ### 1. Request a login random value
 
-`account/get_rand` is part of the historically live-verified normal administrator login flow.
+`account/get_rand` is part of the live-verified normal administrator login flow.
 
 ```json
 {
@@ -34,17 +60,11 @@ This guard does not authenticate the client and does not send the administrator 
 }
 ```
 
-The historical live-working clients generated `user_id` as **exactly eight lowercase alphanumeric characters** (`[a-z0-9]{8}`) and reused the same value in the subsequent `account/login` request.
+Historical live-working clients generated `user_id` as **exactly eight lowercase alphanumeric characters** (`[a-z0-9]{8}`) and reused the same value in the subsequent `account/login` request.
 
-Current physical retest note (2026-08-31):
+The initial public SDK temporarily used a 32-character hexadecimal `user_id`, but a controlled retest showed that user-id length was not the cause of the observed `result=4`: both that format and the corrected historical `[a-z0-9]{8}` format failed through the direct IP, while the historical eight-character format succeeded immediately through `zyxel.home`.
 
-- the initial public SDK used a 32-character hexadecimal `user_id` and reproducibly received `result = 4` from `account/get_rand` before any password challenge was submitted;
-- the SDK was then corrected to the historical eight-character `[a-z0-9]{8}` format and the same physical USB test was repeated;
-- `account/get_rand` still returned `result = 4`.
-
-Therefore the current `result = 4` **cannot be attributed to the 32-character user-id format alone**. Eight characters remain the historically proven working shape, but the present USB-test failure has another, still unresolved cause (for example request/session/router state or another transport detail). Do not claim that user-id length is the cause until a controlled physical comparison proves it.
-
-Known successful response fields from historical/live research:
+Known successful response fields:
 
 ```json
 {
@@ -53,9 +73,7 @@ Known successful response fields from historical/live research:
 }
 ```
 
-The current 2026-08-31 USB retest establishes an additional endpoint-specific observation: `account/get_rand` can reproducibly return `result = 4` before password submission. The meaning of that `4` on **this endpoint** is currently unresolved.
-
-Do **not** automatically apply the `account/login` result-code table below to `account/get_rand`; result semantics are endpoint-specific unless separately verified.
+On the direct-IP path, `account/get_rand` reproducibly returned `result=4` before password submission. Do **not** apply the `account/login` result-code table below to that value; result semantics are endpoint-specific unless separately verified.
 
 ### 2. Build the challenge response
 
@@ -78,7 +96,7 @@ The hexadecimal MD5 result is sent in the `password` field. The plaintext passwo
 }
 ```
 
-A successful normal administrator login was observed historically with `result = 3` and establishes the `CGISID` session cookie.
+A successful normal administrator login was observed with `result = 3` and establishes the `CGISID` session cookie.
 
 ### 4. Authenticated requests
 
@@ -104,12 +122,8 @@ Values 1, 2 and 3 were observed live during the original research. The full mapp
 
 A robust client should treat session/authentication failures separately from ordinary API errors, reacquire a session only once for a failed operation, and then retry that operation once. Avoid unbounded re-login loops.
 
-## Current authentication research priority
-
-Because the 2026-08-31 physical SDK retest still receives `account/get_rand result=4` with the historically correct eight-character `user_id`, the next authentication test should compare the exact historically working request transport against the current SDK request while preserving raw/sanitized pre-auth responses. Do not keep changing unrelated login semantics by guesswork.
-
 ## Other authentication surfaces
 
-The tested runtime also exposes a Digest challenge at `/login.cgi`, but existence of that challenge is **not** evidence that it participates in the web UI's normal `CGISID` session flow. The documented client flow in this repository is the `/api.cgi` administrator flow above.
+The tested runtime also exposes a Digest challenge at `/login.cgi`. Earlier live work also showed host canonicalization toward `zyxel.home` on that surface, which is consistent with the later `/api.cgi` administrator pre-auth A/B result. Existence of the Digest challenge is still **not** evidence that it participates in the normal web UI `CGISID` session flow.
 
 Engineering/supervisor credentials are intentionally not documented here. The API catalog may still contain engineering methods when their behavior or authorization boundary is relevant.
