@@ -298,6 +298,7 @@ Known/observed response fields: `result`.
 
 - Live verification used a distinct locally-administered fake MAC. Add returned result=0, read-back in get_forbidden_users confirmed presence; remove returned result=0 and read-back confirmed absence.
 - In black-list mode, an arbitrary previously unknown locally-administered unicast MAC can be added with enable=1, appears in get_forbidden_users with forbidden=1, and is removed from that list with enable=0.
+- 2026-08-31 SDK round-trip repeated this with a synthetic locally-administered MAC: add `result=0`, read-back present, remove `result=0`, final read-back absent.
 
 <a id="stat-clear-common-data"></a>
 

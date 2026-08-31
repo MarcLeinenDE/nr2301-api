@@ -5953,9 +5953,19 @@
       "response_fields": [
         "clients_info"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "statistics.set_alias.sdk_roundtrip.live_2026_08_31.v1",
+          "evidence": "LIVE_SDK_REVERSIBLE_WRITE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "sequence": "existing inactive row -> synthetic alias -> inactive-view readback -> original alias restore -> restore readback",
+          "privacy": "Real MAC and alias values were used only locally and never emitted."
+        }
+      ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-08-31 SDK integration test changed one existing inactive client alias to a synthetic value, verified read-back, restored the exact original alias, and verified restoration."
+      ]
     },
     {
       "method_id": "statistics/set_allow",
@@ -6102,10 +6112,19 @@
       "response_fields": [
         "result"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "statistics.set_forbidden.synthetic_roundtrip.live_2026_08_31.v1",
+          "evidence": "LIVE_SDK_REVERSIBLE_WRITE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "sequence": "synthetic locally-administered MAC absent -> set_forbidden(enable=1) result=0 -> forbidden-view readback -> set_forbidden(enable=0) result=0 -> confirmed absent",
+          "privacy": "No real client identifier was printed or published."
+        }
+      ],
       "live_note": "Live verification used a distinct locally-administered fake MAC. Add returned result=0, read-back in get_forbidden_users confirmed presence; remove returned result=0 and read-back confirmed absence.",
       "implementation_notes": [
-        "In black-list mode, an arbitrary previously unknown locally-administered unicast MAC can be added with enable=1, appears in get_forbidden_users with forbidden=1, and is removed from that list with enable=0."
+        "In black-list mode, an arbitrary previously unknown locally-administered unicast MAC can be added with enable=1, appears in get_forbidden_users with forbidden=1, and is removed from that list with enable=0.",
+        "2026-08-31 SDK integration test added a previously absent locally-administered synthetic MAC in Black mode, verified forbidden-view presence, removed it, and verified final absence."
       ]
     },
     {
