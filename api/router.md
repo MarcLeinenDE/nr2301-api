@@ -27,7 +27,7 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 | [`router_get_timed_reboot`](#router-get-timed-reboot) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`router_get_work_mode`](#router-get-work-mode) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`router_restart_adb`](#router-restart-adb) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
-| [`router_set_dhcp_settings_comb`](#router-set-dhcp-settings-comb) | `LIVE_VERIFIED` | `UNKNOWN` | `DISRUPTIVE_RECOVERY_REQUIRED` |
+| [`router_set_dhcp_settings_comb`](#router-set-dhcp-settings-comb) | `LIVE_VERIFIED` | `ADMIN_OK` | `DISRUPTIVE_RECOVERY_REQUIRED` |
 | [`router_set_dhcp_static_ip`](#router-set-dhcp-static-ip) | `LIVE_VERIFIED` | `UNKNOWN` | `DISRUPTIVE_RECOVERY_REQUIRED` |
 | [`router_set_lan_ip`](#router-set-lan-ip) | `LIVE_VERIFIED` | `ADMIN_OK` | `DISRUPTIVE_RECOVERY_REQUIRED` |
 | [`router_set_timed_reboot`](#router-set-timed-reboot) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
@@ -714,7 +714,7 @@ Known/observed response fields: `result`.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNKNOWN`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `DISRUPTIVE_RECOVERY_REQUIRED`
 
 > [!WARNING]
@@ -752,6 +752,7 @@ Known/observed response fields: `router.setting_response`, `router.result`.
 
 ### Notes
 
+- 2026-08-31 public-SDK physical test through normal admin: DNS-only mutation preserved all seven non-DNS fields; the original complete 12-field DHCP/DNS object was restored and matched exactly on final read-back.
 - Frontend-form multicall reset TCP connection; recovery succeeded and read-back unchanged.
 - Original UI normally sends this as a multicall member with outer toStringData=false; LAN/DHCP changes can reset management TCP.
 - Manual DNS is upstream DNS for the NR2301 DNS proxy, not direct DHCP option-6 distribution of the configured public resolvers.

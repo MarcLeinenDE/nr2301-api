@@ -4338,7 +4338,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED_WITH_SIDE_EFFECT",
       "frontend_reference": false,
-      "auth_evidence": "UNKNOWN",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "DISRUPTIVE_RECOVERY_REQUIRED",
       "request": {
         "http_method": "POST",
@@ -4392,10 +4392,12 @@
           "evidence": "live same-state frontend-form multicall reset + recovery/read-back"
         }
       ],
-      "live_note": "Frontend-form multicall reset TCP connection; recovery succeeded and read-back unchanged.",
+      "live_note": "2026-08-31 public-SDK physical test via normal admin and http://zyxel.home: combined DHCP/DNS write succeeded, all seven non-DNS fields remained unchanged, and the complete original 12-field object was restored exactly.",
       "implementation_notes": [
         "Original UI normally sends this as a multicall member with outer toStringData=false; LAN/DHCP changes can reset management TCP.",
-        "Manual DNS is upstream DNS for the NR2301 DNS proxy, not direct DHCP option-6 distribution of the configured public resolvers."
+        "Manual DNS is upstream DNS for the NR2301 DNS proxy, not direct DHCP option-6 distribution of the configured public resolvers.",
+        "Public SDK physical verification on 2026-08-31 confirmed normal-admin write/read-back/restore through the combined DHCP/DNS setter.",
+        "The test changed only DNS fields, asserted all seven non-DNS fields stayed unchanged, then required the complete restored object to equal the original object."
       ]
     },
     {
