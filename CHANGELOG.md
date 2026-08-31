@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- recorded the 2026-08-31 sanitized physical Wi-Fi capability snapshot, including runtime channel/range lists and the finding that `wifi_get_timed_off_status.status=on` can coexist with `wifi_timed_off.enable=0`; the status field is therefore not a direct schedule-enable flag
 - recorded the 2026-08-31 public-SDK physical combined DHCP/DNS write pass: normal-admin write succeeded, all seven non-DNS fields were preserved, and the complete original 12-field object was restored exactly; `router/router_set_dhcp_settings_comb` auth evidence is now `ADMIN_OK`
 - recorded the 2026-08-31 public-SDK physical reversible-write pass: normal-admin data-roaming/network-mode, WPS and Wi-Fi Guest/combined-separate transitions all succeeded with exact read-back and original-state restore; `cm/set_network_settings` auth evidence is now `ADMIN_OK`
 - documented the administrator pre-login lockout guard using `account/get_retrytimes_and_time`

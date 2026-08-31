@@ -6525,10 +6525,61 @@
         {
           "id": "wifi.presentation_tokens.v1",
           "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        {
+          "id": "wifi.runtime_capability_snapshot.2026_08_31",
+          "evidence": "LIVE_PHYSICAL_SDK_READ",
+          "firmware": "V1.00(ACIY.3)C0",
+          "management": "USB via http://zyxel.home",
+          "observed": {
+            "mode": "DUAL",
+            "switch": "on",
+            "maxassoc": "32",
+            "power_level": "1",
+            "wifi_if_24G": {
+              "channel": "0",
+              "cur_channel": "6",
+              "first_channel": "1",
+              "last_channel": "13",
+              "bandwidth": "HT20/HT40",
+              "net_mode": "11bgnax",
+              "hidden": "0",
+              "isolate": "0"
+            },
+            "wifi_if_5G": {
+              "channel": "0",
+              "cur_channel": "44",
+              "channel_list": {
+                "indoor": "36 40 44 48",
+                "indoor_or_dfs": "52 56 60 64",
+                "dfs": "100 104 108 112 116 120 124 128 132 136 140"
+              },
+              "bandwidth": "HT20/HT40/HT80",
+              "net_mode": "11anacax",
+              "hidden": "0",
+              "isolate": "0"
+            },
+            "wifi_if_GUEST": {
+              "band_mode": "2.4G",
+              "maxassoc": "10",
+              "hidden": "0"
+            },
+            "wifi_timed_off": {
+              "enable": 0,
+              "start_hour": 0,
+              "start_minute": 0,
+              "end_hour": 0,
+              "end_minute": 0
+            }
+          },
+          "scope": "Observed runtime values, not universal allowed-value enums."
         }
       ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-08-31 physical SDK capability snapshot observed 2.4-GHz auto channel=0 with live channel 6 and first/last channel 1..13; 5-GHz auto channel=0 with live channel 44 and explicit indoor/DFS channel lists.",
+        "Observed bandwidth/net_mode/power_level values are runtime observations only; do not infer complete allowed-value sets from the getter alone."
+      ]
     },
     {
       "method_id": "wireless/wifi_get_basic_info",
@@ -6601,9 +6652,23 @@
         "status": "string"
       },
       "response_fields": [],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "wifi.timed_off_status_not_enable.v1",
+          "evidence": "LIVE_SIMULTANEOUS_READ_2026_08_31",
+          "observation": {
+            "wifi_get_ap_config.config.wifi_timed_off.enable": 0,
+            "wifi_get_timed_off_status.status": "on",
+            "wifi_get_timed_off_status.result": 0
+          },
+          "constraint": "status='on' must not be documented as equivalent to timed-off schedule enable=1.",
+          "meaning": "UNRESOLVED_BEYOND_NON_EQUIVALENCE"
+        }
+      ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-08-31: status='on' was returned while wifi_timed_off.enable=0 in the simultaneous AP-config read. Therefore status is not a direct schedule-enabled flag; its exact positive-state meaning remains unresolved."
+      ]
     },
     {
       "method_id": "wireless/wifi_get_wps_disable",

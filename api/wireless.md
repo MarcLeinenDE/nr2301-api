@@ -341,6 +341,9 @@ No request body has been reconstructed as necessary for this method.
   "status": "string"
 }
 ```
+### Notes
+
+- 2026-08-31 simultaneous physical read returned `status="on"` while `wifi_get_ap_config.config.wifi_timed_off.enable=0`. Therefore `status` is not equivalent to the schedule-enable flag; exact semantics remain unresolved.
 
 <a id="wifi-get-wps-disable"></a>
 
@@ -468,6 +471,8 @@ No stable response schema is currently documented.
 
 ### Notes
 
+- 2026-08-31 sanitized physical SDK capability snapshot: 2.4 GHz reported configured channel `0` (auto), live channel `6`, first/last `1..13`, bandwidth `HT20/HT40`, net mode `11bgnax`; 5 GHz reported configured channel `0`, live channel `44`, explicit indoor/DFS channel lists, bandwidth `HT20/HT40/HT80`, net mode `11anacax`. These are observed runtime values, not complete allowed-value enums.
+- The same snapshot reported top-level `maxassoc=32`, `power_level=1`, `switch=on`, with 2.4/5 GHz `hidden=0` and `isolate=0`.
 - 2026-08-31 public-SDK physical test: Guest toggle and combined/separate mode transition both passed exact read-back and full original-state restore through normal admin via `http://zyxel.home`.
 - Timed-off same-state and main DUAL AP same-state both returned result=0. Calls took ~15.8 s / ~13.9 s and required recovery handling.
 - Treat lost HTTP response as inconclusive until recovery/re-login/read-back; Guest toggle was verified this way.
