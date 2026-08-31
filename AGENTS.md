@@ -21,6 +21,50 @@ consumer apps / integrations / tools
 
 Do not make the SDK or a consumer application the source of protocol truth.
 
+## Project target: complete evidenced coverage
+
+The long-term target is to reconstruct and document the complete locally reachable NR2301 management API and to make every sufficiently reconstructed method usable from `nr2301-python`.
+
+This is not permission to invent missing request fields or semantics. Instead, incomplete methods are research work items: use static/frontend evidence, historical captures and the dedicated physical test router to complete their contracts where feasible.
+
+When a downstream SDK test produces new protocol evidence, this repository must be updated as part of the same work stream. In particular:
+
+- a successfully exercised method previously marked `STATIC_CONFIRMED` or otherwise not live verified must be promoted to the appropriate live verification status;
+- newly observed request fields, response fields, raw values, result semantics, transport behavior and recovery behavior must be normalized here;
+- rejected, denied, not-applicable or not-implemented outcomes must also be recorded rather than hidden by the SDK;
+- only after the protocol truth is represented here should downstream helpers be considered complete.
+
+The API and SDK are therefore developed iteratively, but protocol findings always flow back into `nr2301-api`.
+
+## Dedicated physical test router authority
+
+The maintainer has explicitly designated the current NR2301 as a **non-production test device**. It is connected to the test PC through USB and may be used for deliberate read, write, disruptive and recovery testing.
+
+Recovery assumptions for this device:
+
+- configuration loss is acceptable during planned testing;
+- a physical factory-reset button is available as the final recovery path;
+- tests should still capture/read current state and restore it when practical, because successful restore behavior is valuable protocol evidence.
+
+### Current hard exclusion: USB management mode
+
+Do **not** change the router's USB/management mode (including engineering USB-mode setters) during routine API/SDK coverage work. Losing the USB management path could remove the very recovery/control channel used for the test campaign.
+
+Reading USB-mode state is acceptable when already authorized and non-disruptive. A future explicit test plan may change this exclusion, but the general permission to test the dedicated router does not implicitly authorize USB-mode mutation.
+
+### Test levels
+
+Use explicit levels rather than treating every write equally:
+
+1. **read-only** — no configuration mutation;
+2. **reversible write** — state is read first and restored/verified afterwards;
+3. **disruptive/recovery** — connectivity or service interruption is expected and a recovery path is prepared;
+4. **destructive/reset** — configuration loss or factory reset can occur and is deliberately accepted.
+
+Safety classifications remain important documentation and planning metadata. They are not permanent bans on testing this dedicated device. Methods marked `DO_NOT_TEST_FOR_COVERAGE` require a specific scenario and recovery rationale rather than broad automated probing.
+
+Authorization boundaries still matter: do not brute-force or repeatedly guess supervisor/engineering credentials merely because the device can be reset.
+
 ## Core rule: evidence before convenience
 
 Never invent protocol semantics because they look plausible or make an API nicer.
@@ -37,7 +81,7 @@ Relevant evidence/status concepts include:
 - `STATIC_CONFIRMED`
 - `NOT_IMPLEMENTED`
 
-Do not silently promote static evidence to live verification.
+Do not silently promote static evidence to live verification. Conversely, when a physical SDK/API test genuinely establishes live behavior, do not leave the public status stale.
 
 ## Canonical public files
 
@@ -78,36 +122,33 @@ Do not weaken validation merely to make a failing change pass. Fix the underlyin
 - Preserve unknown response fields and unknown raw values.
 - Do not create global enums from values that are only proven for one endpoint.
 - Do not reuse integer meanings across unrelated methods just because the numbers match.
-- If a complete write object is not reconstructed, document the limitation rather than filling gaps from guesses.
+- If a complete write object is not reconstructed, document the limitation and use the dedicated test router to close the gap where a deliberate test is possible rather than filling it from guesses.
 
-## Write safety
+## Write and recovery discipline
 
-Use the documented safety classification when describing or testing a method:
-
-- `READ_OR_LOW_SIDE_EFFECT`
-- `WRITE_OR_SIDE_EFFECT`
-- `DISRUPTIVE_RECOVERY_REQUIRED`
-- `DO_NOT_TEST_FOR_COVERAGE`
-
-Do not exercise dangerous operations merely to improve coverage.
-
-Examples that require special caution or deliberate non-testing include factory reset, engineering/supervisor operations and SIM PIN/PUK mutation paths.
-
-For disruptive writes, prefer evidence of the full lifecycle:
+For reversible/disruptive writes, prefer evidence of the full lifecycle:
 
 ```text
 read current state
 → preserve unrelated values
-→ write
+→ write the smallest evidenced change
 → tolerate expected management interruption
 → recover/re-authenticate
 → read back
 → verify exact intended state
+→ restore original state when practical
+→ verify the restore
 ```
 
 A lost HTTP response during a disruptive operation is inconclusive, not automatic failure or success.
 
+Factory reset is available as a final recovery mechanism on the dedicated test router, but it should not replace ordinary read-back/restore evidence where a reversible test is possible.
+
 ## Known protocol pitfalls
+
+### Authentication
+
+The administrator challenge flow has historical live-working evidence, but physical SDK retests can reveal environment/state-dependent behavior. Treat `result` meanings as endpoint-specific. In particular, do not transfer the `account/login` result table to `account/get_rand` without separate evidence.
 
 ### Wi-Fi
 
@@ -122,7 +163,7 @@ Verified mode tokens on the tested ACIY.3 firmware include:
 
 Guest enable/disable is represented by the `GUEST` token in the top-level mode. There is no independently verified Guest-enable field.
 
-Do not expose Guest `isolate` as independently round-trippable on ACIY.3: the getter does not return it as an independent Guest value.
+Do not expose Guest `isolate` as independently round-trippable on ACIY.3 until new physical evidence closes the getter/setter asymmetry.
 
 ### SMS
 
@@ -130,15 +171,15 @@ Normal SMS send and single-ID delete are live verified and normalized on `main`.
 
 For normal SMS send, preserve the documented frontend contract including GSM7 detection, UTF-16BE uppercase hexadecimal body representation, trailing-comma address format, timestamp representation and endpoint-specific success fields.
 
-Never include real SMS bodies or real phone numbers in public fixtures, logs or examples.
+Never include real SMS bodies or real phone numbers in public fixtures, logs or examples. Physical SMS testing may use controlled real values locally, but sanitize the published evidence.
 
 ### SIM
 
-Read-only status is documented. PIN/PUK mutation paths remain deliberately outside normal coverage unless new, explicit evidence and a safe test plan justify changing that status.
+Read-only status is documented. PIN/PUK paths are eligible for deliberate testing on the dedicated non-production router when a specific safe scenario exists, but they must not be broad/probabilistic coverage tests that risk exhausting retries without a recovery plan.
 
 ### Client/MAC filtering
 
-Allow/block semantics depend on current filter mode. Do not model `set_allow` or `set_forbidden` as context-free CRUD without reading the documented mode semantics and recovery requirements.
+Allow/block semantics depend on current filter mode. Do not model `set_allow` or `set_forbidden` as context-free CRUD. Physical verification must preserve a management/recovery path and should test restore behavior.
 
 ## Historical implementation evidence
 
@@ -148,8 +189,9 @@ When a newer SDK or consumer appears to have lost a previously working feature:
 
 1. compare against the canonical reverse-engineering evidence and historical implementation;
 2. decide whether the old behavior is sufficiently evidenced;
-3. if yes, normalize the protocol fact here first;
-4. only then update downstream SDKs/consumers.
+3. if yes, normalize the protocol fact here;
+4. implement/test it downstream;
+5. feed any new physical result back here, including changed verification status or corrected semantics.
 
 Historical code is evidence, not automatically canonical truth. Never copy an old implementation into the public contract without re-checking what was actually proven.
 
@@ -166,7 +208,7 @@ Never commit or publish real deployment secrets or private runtime identifiers, 
 - IMEI/serial identifiers from a real private device
 - live private MAC/IP identifiers from the maintainer's environment
 
-Use synthetic values and documentation-reserved addresses where examples need concrete data.
+The dedicated physical router may expose these values locally during testing. Redact/sanitize them before committing evidence, logs, fixtures or documentation. Use synthetic values and documentation-reserved addresses where examples need concrete data.
 
 ## Attribution and licensing
 
@@ -176,12 +218,13 @@ Preserve existing SPDX identifiers, attribution and copyright notices.
 
 ## Definition of done
 
-A protocol change is not complete until:
+A protocol change or physical verification step is not complete until:
 
-1. the evidence level is explicit;
+1. the evidence level is explicit and reflects the newest physical result;
 2. machine-readable and human-readable contracts agree;
-3. safety implications are documented;
-4. private data has been excluded;
+3. safety/recovery implications are documented;
+4. private data has been excluded from public artifacts;
 5. `python tools/validate_public_repo.py` passes;
 6. `CHANGELOG.md` is updated when the public development contract materially changes;
-7. downstream SDK changes, if needed, are made only after this repository contains the corresponding protocol truth.
+7. downstream SDK changes, if needed, are aligned with this repository;
+8. any new SDK-derived protocol evidence has been fed back into this repository rather than remaining SDK-only.
