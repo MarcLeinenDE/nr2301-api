@@ -1095,6 +1095,25 @@
       "observation": "remained 0 across all 52 encryption/key write/read-back/restore cases",
       "negative_semantic_finding": "not a generic latch for 'Wi-Fi password/security was changed by this admin API campaign'",
       "exact_meaning": "unresolved"
+    },
+    "wireless/wps_action_response_envelopes": {
+      "id": "wps.action_response_envelopes.2026_08_31.v1",
+      "evidence": "LIVE_SDK_WRITE_2026_08_31",
+      "firmware": "V1.00(ACIY.3)C0",
+      "management_url": "http://zyxel.home",
+      "observed": {
+        "wireless/wifi_call_wps_pbc": {
+          "response_envelope": "wireless",
+          "result_field": "wps_call_pbc_result",
+          "result_value": "OK"
+        },
+        "wireless/wifi_call_wps_cancel": {
+          "response_envelope": "top_level",
+          "result_field": "wps_call_cancel_result",
+          "result_value": "OK"
+        }
+      },
+      "scope": "Physical SDK run on 2026-08-31. PIN response envelope was not reached in this run because the pre-fix SDK rejected the successful flat Cancel response before the PIN step."
     }
   }
 }

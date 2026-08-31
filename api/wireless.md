@@ -140,11 +140,19 @@ No request body has been reconstructed as necessary for this method.
 
 ### Response
 
-Known/observed response fields: `wireless`.
+Physical ACIY.3 SDK evidence on 2026-08-31 returned the Cancel result directly at the top level:
+
+```json
+{
+  "wps_call_cancel_result": "OK"
+}
+```
+
+Do not require a `wireless` wrapper for this action on the tested firmware.
 
 ### Notes
 
-- GET returned wps_call_cancel_result='OK' after both PBC and PIN tests.
+- The earlier live observation that Cancel returned `wps_call_cancel_result='OK'` is now shape-qualified by the 2026-08-31 SDK run: the field is top-level.
 
 <a id="wifi-call-wps-pbc"></a>
 
@@ -165,11 +173,19 @@ No request body has been reconstructed as necessary for this method.
 
 ### Response
 
-Known/observed response fields: `wireless`.
+Physical ACIY.3 SDK evidence on 2026-08-31 returned the action result nested under `wireless`:
+
+```json
+{
+  "wireless": {
+    "wps_call_pbc_result": "OK"
+  }
+}
+```
 
 ### Notes
 
-- GET returned wireless.wps_call_pbc_result='OK'; immediately cancelled in test.
+- GET returned `wireless.wps_call_pbc_result='OK'`; the same physical run then called Cancel immediately.
 
 <a id="wifi-call-wps-pin"></a>
 
