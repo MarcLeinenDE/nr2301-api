@@ -143,9 +143,9 @@
         "http_method": "POST",
         "schema": {
           "type": "admin",
-          "user_id": "<random>"
+          "user_id": "8 lowercase alphanumeric characters matching [a-z0-9]{8}; known live-working compatibility shape"
         },
-        "basis": "live observation",
+        "basis": "live-working application evidence + 2026-08-31 physical USB compatibility observation",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -168,9 +168,21 @@
         "rand",
         "result"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "account.login_user_id.compat.v1",
+          "evidence": "LIVE_WORKING_CLIENT_PLUS_PHYSICAL_COMPATIBILITY_OBSERVATION",
+          "field": "user_id",
+          "known_working_shape": "[a-z0-9]{8}",
+          "reuse": "reuse the same user_id in the subsequent account/login request"
+        }
+      ],
       "live_note": "Live pre-auth helper used successfully by normal admin login.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "Historical live-working NR2301 clients used exactly eight lowercase alphanumeric characters for user_id.",
+        "During the 2026-08-31 physical USB SDK smoke, a 32-character hexadecimal user_id reproducibly received result=4 before password submission; do not map that result through the account/login result table.",
+        "Use [a-z0-9]{8} for compatibility until broader firmware acceptance is separately verified."
+      ]
     },
     {
       "method_id": "account/get_retrytimes_and_time",
@@ -214,7 +226,9 @@
       ],
       "semantic_contracts": [],
       "live_note": "Live pre-auth helper; normal admin retry_times remained 5 before/after login.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "Recommended pre-login lockout guard: if remain_time > 0, wait; if retry_times <= 1, abort rather than consume the final password attempt."
+      ]
     },
     {
       "method_id": "account/login",
@@ -233,7 +247,7 @@
           "type": "admin",
           "username": "<admin>",
           "password": "<md5 challenge response>",
-          "user_id": "<random>"
+          "user_id": "same 8-character [a-z0-9]{8} value used for account/get_rand"
         },
         "basis": "live observation",
         "known_frontend_variants": [
@@ -266,7 +280,10 @@
         }
       ],
       "live_note": "Normal admin login returned result=3 and established CGISID.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "Reuse the exact user_id from the successful account/get_rand challenge request.",
+        "The documented 0..6 result-code mapping applies to account/login; do not generalize it to account/get_rand.result."
+      ]
     },
     {
       "method_id": "account/logout",
