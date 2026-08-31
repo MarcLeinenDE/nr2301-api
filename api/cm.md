@@ -25,7 +25,7 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 | [`open_close_vpn_clients`](#open-close-vpn-clients) | `LIVE_VERIFIED` | `UNTESTED` | `WRITE_OR_SIDE_EFFECT` |
 | [`query_eng_info`](#query-eng-info) | `LIVE_VERIFIED_LIMITED` | `ADMIN_MULTICALL_ONLY` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`set_eng_mode`](#set-eng-mode) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
-| [`set_network_settings`](#set-network-settings) | `LIVE_VERIFIED` | `UNTESTED` | `WRITE_OR_SIDE_EFFECT` |
+| [`set_network_settings`](#set-network-settings) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`set_wan_settings`](#set-wan-settings) | `LIVE_VERIFIED` | `UNTESTED` | `WRITE_OR_SIDE_EFFECT` |
 
 <a id="active-vpn-client-item"></a>
@@ -709,7 +709,7 @@ No stable response schema is currently documented.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `WRITE_OR_SIDE_EFFECT`
 
 ### Request
@@ -735,6 +735,7 @@ Known/observed response fields: `result`.
 
 ### Notes
 
+- 2026-08-31 public-SDK physical test: normal admin changed data_roaming and one router-reported alternative network_mode, exact-read-back verified both writes, then restored both original values successfully via `http://zyxel.home`.
 - Two same-state variants returned result=0; read-back unchanged.
 
 <a id="set-wan-settings"></a>

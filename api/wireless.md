@@ -468,6 +468,7 @@ No stable response schema is currently documented.
 
 ### Notes
 
+- 2026-08-31 public-SDK physical test: Guest toggle and combined/separate mode transition both passed exact read-back and full original-state restore through normal admin via `http://zyxel.home`.
 - Timed-off same-state and main DUAL AP same-state both returned result=0. Calls took ~15.8 s / ~13.9 s and required recovery handling.
 - Treat lost HTTP response as inconclusive until recovery/re-login/read-back; Guest toggle was verified this way.
 - 2026-08-25: DUAL GUEST -> 2.4G 5G GUEST -> DUAL GUEST live verified over USB recovery. Guest config and Wi-Fi secrets preserved; final original DUAL/Guest-off state restored.
@@ -499,6 +500,7 @@ Known/observed response fields: `wireless`.
 
 ### Notes
 
+- 2026-08-31 public-SDK physical test: WPS toggle passed exact read-back and original-state restore through normal admin via `http://zyxel.home`.
 - Same-state wps_enable=1 sent as string '1' returned wireless.setting_response='OK'; call took ~17.4 s and recovery succeeded.
 - 2026-08-25 controlled test with UPnP=0: WPS 0->1 did NOT enable UPnP. Manual statement about automatic UPnP enable is not true on live ACIY.3 runtime.
 

@@ -1367,7 +1367,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
@@ -1412,10 +1412,24 @@
         {
           "id": "mobile.network_mode",
           "evidence": "available modes read live; same-state network settings live verified"
+        },
+        {
+          "id": "cm.set_network_settings.sdk_restore.v1",
+          "evidence": "LIVE_SDK_PHYSICAL_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "host": "http://zyxel.home",
+          "verified_fields": [
+            "data_roaming",
+            "network_mode"
+          ],
+          "lifecycle": "read current -> write alternate value -> exact read-back -> restore original -> exact read-back",
+          "auth": "normal administrator session"
         }
       ],
       "live_note": "Two same-state variants returned result=0; read-back unchanged.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-08-31 public-SDK physical test: normal admin changed data_roaming and one router-reported alternative network_mode, exact-read-back verified both writes, then restored both original values successfully via http://zyxel.home."
+      ]
     },
     {
       "method_id": "cm/set_wan_settings",
@@ -6758,6 +6772,14 @@
           "evidence": "LIVE_VERIFIED_WITH_RESET_READBACK_RESTORE",
           "field": "mode",
           "rule": "Guest is enabled by presence of the GUEST token; preserve it across DUAL/split transitions."
+        },
+        {
+          "id": "wireless.wifi_set_ap_config.sdk_restore.v1",
+          "evidence": "LIVE_SDK_PHYSICAL_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "host": "http://zyxel.home",
+          "lifecycle": "write -> exact read-back -> restore original -> exact read-back",
+          "auth": "normal administrator session"
         }
       ],
       "live_note": "Timed-off same-state and main DUAL AP same-state both returned result=0. Calls took ~15.8 s / ~13.9 s and required recovery handling.",
@@ -6769,7 +6791,8 @@
         "DUAL GUEST <-> 2.4G 5G GUEST and final restore were live verified with Guest/Main configuration and secrets preserved.",
         "Guest enable/disable is controlled by the GUEST token in mode; there is no separate Guest-enable field.",
         "Guest maxassoc 10->9->10 was live read/write/read-back/restored; frontend range is 1..10.",
-        "Do not expose Guest isolate independently on ACIY.3: the getter does not round-trip that field and the stock frontend sources it from main 5 GHz isolation."
+        "Do not expose Guest isolate independently on ACIY.3: the getter does not round-trip that field and the stock frontend sources it from main 5 GHz isolation.",
+        "2026-08-31 public-SDK physical test: normal admin toggled Guest state and combined/separate main-SSID mode, verified preservation of the other mode dimension after each write, then restored and verified the original state via http://zyxel.home."
       ]
     },
     {
@@ -6804,10 +6827,20 @@
       "response_fields": [
         "wireless"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "wireless.wifi_set_wps_disable.sdk_restore.v1",
+          "evidence": "LIVE_SDK_PHYSICAL_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "host": "http://zyxel.home",
+          "lifecycle": "write -> exact read-back -> restore original -> exact read-back",
+          "auth": "normal administrator session"
+        }
+      ],
       "live_note": "Same-state wps_enable=1 sent as string '1' returned wireless.setting_response='OK'; call took ~17.4 s and recovery succeeded.",
       "implementation_notes": [
-        "2026-08-25 controlled test with UPnP=0: WPS 0->1 did NOT enable UPnP. Manual statement about automatic UPnP enable is not true on live ACIY.3 runtime."
+        "2026-08-25 controlled test with UPnP=0: WPS 0->1 did NOT enable UPnP. Manual statement about automatic UPnP enable is not true on live ACIY.3 runtime.",
+        "2026-08-31 public-SDK physical test: normal admin toggled WPS, exact-read-back verified the change, then restored and verified the original state via http://zyxel.home."
       ]
     },
     {

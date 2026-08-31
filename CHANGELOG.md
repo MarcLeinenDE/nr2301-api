@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- recorded the 2026-08-31 public-SDK physical reversible-write pass: normal-admin data-roaming/network-mode, WPS and Wi-Fi Guest/combined-separate transitions all succeeded with exact read-back and original-state restore; `cm/set_network_settings` auth evidence is now `ADMIN_OK`
 - documented the administrator pre-login lockout guard using `account/get_retrytimes_and_time`
 - normalized the historically live-working login `user_id` shape as eight lowercase alphanumeric characters (`[a-z0-9]{8}`), reused across `account/get_rand` and `account/login`
 - recorded the 2026-08-31 physical USB observation that administrator pre-auth is host/authority sensitive on firmware `V1.00(ACIY.3)C0`: `zyxel.home` and `192.168.1.1` resolve to the same router address, but the direct-IP path returns `result=4` for both `account/get_retrytimes_and_time` and `account/get_rand`, while `http://zyxel.home` returns normal `result=0` responses
