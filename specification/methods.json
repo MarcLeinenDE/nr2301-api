@@ -187,16 +187,31 @@
             "32-character hexadecimal",
             "[a-z0-9]{8}"
           ],
-          "meaning": "UNRESOLVED_ENDPOINT_SPECIFIC",
-          "constraint": "Do not apply the account/login result-code table to this get_rand result without separate evidence."
+          "meaning": "DIRECT_IP_HOST_AUTHORITY_OBSERVATION_ON_TESTED_FIRMWARE",
+          "constraint": "Do not generalize result=4 as a universal host error or apply the account/login result table to get_rand.",
+          "resolved_by_ab_test": "The same router and historical [a-z0-9]{8} user_id returned result=0 when addressed as http://zyxel.home."
+        },
+        {
+          "id": "account.preauth_host_authority.v1",
+          "evidence": "LIVE_AB_VERIFIED_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "canonical_management_url": "http://zyxel.home",
+          "dns_observation": "zyxel.home resolved to 192.168.1.1 on the tested USB-connected router",
+          "direct_ip_observation": "http://192.168.1.1 returned result=4 for administrator pre-auth",
+          "canonical_host_observation": "http://zyxel.home returned result=0 for administrator pre-auth",
+          "scope": "host/authority-dependent behavior; does not define result=4 as a universal error enum",
+          "method_id": "account/get_rand"
         }
       ],
       "live_note": "Live pre-auth helper used successfully by normal admin login.",
       "implementation_notes": [
         "Historical live-working NR2301 clients used exactly eight lowercase alphanumeric characters for user_id.",
         "On 2026-08-31 the physical USB SDK smoke returned result=4 before password submission with both the initial 32-character hexadecimal user_id and the corrected historical [a-z0-9]{8} user_id.",
-        "The current result=4 cannot be attributed to user-id length alone; its account/get_rand meaning/cause remains unresolved.",
-        "Compare the exact historically working transport/request behavior before changing further authentication semantics."
+        "On tested firmware V1.00(ACIY.3)C0, administrator pre-auth is host/authority sensitive.",
+        "zyxel.home and 192.168.1.1 reached the same router address during the USB A/B test, but the direct-IP path returned result=4 while http://zyxel.home returned result=0.",
+        "The behavior was unchanged by requests-vs-urllib transport, historical compact JSON/header reproduction, WebUI bootstrap, or explicit WebUI logout.",
+        "Use http://zyxel.home as the canonical administrator management URL on the tested firmware.",
+        "Do not assign a universal meaning to result=4 from this observation; the result-code table for account/login remains endpoint-specific."
       ]
     },
     {
@@ -239,10 +254,27 @@
         "result",
         "retry_times"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "account.preauth_host_authority.v1",
+          "evidence": "LIVE_AB_VERIFIED_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "canonical_management_url": "http://zyxel.home",
+          "dns_observation": "zyxel.home resolved to 192.168.1.1 on the tested USB-connected router",
+          "direct_ip_observation": "http://192.168.1.1 returned result=4 for administrator pre-auth",
+          "canonical_host_observation": "http://zyxel.home returned result=0 for administrator pre-auth",
+          "scope": "host/authority-dependent behavior; does not define result=4 as a universal error enum",
+          "method_id": "account/get_retrytimes_and_time"
+        }
+      ],
       "live_note": "Live pre-auth helper; normal admin retry_times remained 5 before/after login.",
       "implementation_notes": [
-        "Recommended pre-login lockout guard: if remain_time > 0, wait; if retry_times <= 1, abort rather than consume the final password attempt."
+        "Recommended pre-login lockout guard: if remain_time > 0, wait; if retry_times <= 1, abort rather than consume the final password attempt.",
+        "On tested firmware V1.00(ACIY.3)C0, administrator pre-auth is host/authority sensitive.",
+        "zyxel.home and 192.168.1.1 reached the same router address during the USB A/B test, but the direct-IP path returned result=4 while http://zyxel.home returned result=0.",
+        "The behavior was unchanged by requests-vs-urllib transport, historical compact JSON/header reproduction, WebUI bootstrap, or explicit WebUI logout.",
+        "Use http://zyxel.home as the canonical administrator management URL on the tested firmware.",
+        "Do not assign a universal meaning to result=4 from this observation; the result-code table for account/login remains endpoint-specific."
       ]
     },
     {
@@ -297,7 +329,8 @@
       "live_note": "Normal admin login returned result=3 and established CGISID.",
       "implementation_notes": [
         "Reuse the exact user_id from the successful account/get_rand challenge request.",
-        "The documented 0..6 result-code mapping applies to account/login; do not generalize it to account/get_rand.result."
+        "The documented 0..6 result-code mapping applies to account/login; do not generalize it to account/get_rand.result.",
+        "On tested firmware V1.00(ACIY.3)C0, use the canonical management host http://zyxel.home for the administrator challenge/login flow; direct-IP pre-auth returned result=4 before password submission."
       ]
     },
     {
