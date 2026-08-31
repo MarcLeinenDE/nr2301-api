@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- completed the 2026-08-31 Wi-Fi security matrix: all 13 source-known encryption tokens were live accepted on all four AP sections (52/52 cases), all protected modes round-tripped synthetic keys, open mode exposed section-specific key-field behavior, and password_modified remained 0 throughout the campaign
 - recorded the partial 2026-08-31 Wi-Fi security matrix: all 13 encryption tokens live-accepted on 24G, the first six live-accepted on 5G, open-mode key ignored as expected, password_modified stayed 0 through completed cases, and cur_channel was proven runtime/non-restorable after auto-channel reconfiguration
 - restored the source-verified 13-token Wi-Fi encryption presentation mapping from the shipped wireless.html frontend into the current public contract; physical per-section setter acceptance remains a dedicated matrix task, while sae-mixed has exact frontend setter evidence for 24G/5G/DUAL key updates
 - recorded the second 2026-08-31 public-SDK Wi-Fi matrix: 18/18 cases passed, adding live power_level 0/1/2 round-trips, Guest 2.4G/5G band mode, synthetic SSID writes, channels 13/52/100/140, every known WebUI net-mode/bandwidth option and normal-admin wifi_scan authentication

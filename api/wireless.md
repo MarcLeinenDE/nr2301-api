@@ -622,18 +622,23 @@ wifi_scan:                normal-admin authenticated call succeeded
 
 For DFS-class channel tests the configured `channel` read-back was the contract being verified. DFS/CAC timing and the eventual `cur_channel` were deliberately not treated as the same property.
 
-## Partial physical encryption/key matrix — 2026-08-31
+## Complete physical encryption/key matrix — 2026-08-31
 
-The first sanitized security-matrix run completed all 13 source-known encryption tokens on `wifi_if_24G` and the first six tokens on `wifi_if_5G` before the research runner stopped on a **restore-comparator false positive**.
+The sanitized SDK campaign completed the full **13 encryption tokens × 4 AP sections = 52 cases** on ACIY.3, using only synthetic test keys and restoring each section after every case.
 
-Completed live results:
+Live result: **all 13 source-known encryption tokens were accepted and read back on every tested AP section** (`wifi_if_24G`, `wifi_if_5G`, `wifi_if_DUAL`, `wifi_if_GUEST`). All 12 protected-mode tokens also round-tripped the synthetic test key exactly on every section.
 
-- `wifi_if_24G`: all 13 tokens were accepted and read back exactly;
-- for `none`, the open-mode token persisted while the synthetic key was not retained;
-- for the other 12 2.4-GHz tokens, the synthetic test key round-tripped exactly;
-- `wifi_if_5G`: `psk-mixed+ccmp`, `sae-mixed`, `sae`, `psk2+ccmp`, `psk+ccmp` and `psk2+tkip+ccmp` were accepted with the synthetic key;
-- `password_modified` remained `0 -> 0 -> 0` for every completed case in this partial run.
+Open mode has section-specific key-field behavior:
 
-The interruption itself produced a separate contract finding. After restoring the 5-GHz configuration, every configurable field matched the original block and only `cur_channel` differed. `cur_channel` is therefore treated as **runtime operating-channel state**, not as a restorable configuration value. The configured `channel` field is the write/read-back contract; with `channel=0` (auto), a later `cur_channel` may legitimately differ after radio reconfiguration.
+```text
+wifi_if_24G   encryption=none accepted; requested empty key not read back
+wifi_if_5G    encryption=none accepted; requested empty key not read back
+wifi_if_DUAL  encryption=none accepted; requested empty key not read back
+wifi_if_GUEST encryption=none accepted; empty key read back exactly
+```
 
-The remaining security matrix resumes at `wifi_if_5G / psk+tkip+ccmp`; the interrupted case is not classified from the failed runner because its result row had not yet been committed to the sanitized report.
+Therefore, `encryption="none"` is the open-mode write/read-back contract. A high-level client must **not** require `key=""` as a universal invariant for 24G/5G/DUAL; ACIY.3 can keep an internal/non-empty key field while the network is configured open.
+
+`password_modified` remained `0` before the write, after the write and after the restore for every completed case across the full 52-case campaign. This disproves the simple interpretation "this field becomes 1 whenever Wi-Fi credentials/security are changed through the admin API"; its exact meaning remains unresolved.
+
+Restore verification compares mutable configuration only. Runtime/capability metadata such as `cur_channel`, `first_channel`, `last_channel` and `channel_list` is not treated as restorable state.
