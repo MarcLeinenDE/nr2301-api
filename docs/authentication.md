@@ -25,7 +25,7 @@ This guard does not authenticate the client and does not send the administrator 
 
 ### 1. Request a login random value
 
-`account/get_rand` is available before an authenticated session exists.
+`account/get_rand` is part of the historically live-verified normal administrator login flow.
 
 ```json
 {
@@ -34,11 +34,17 @@ This guard does not authenticate the client and does not send the administrator 
 }
 ```
 
-The known live-working client format for `user_id` is **exactly eight lowercase alphanumeric characters** (`[a-z0-9]{8}`). The same value is reused in the subsequent `account/login` request.
+The historical live-working clients generated `user_id` as **exactly eight lowercase alphanumeric characters** (`[a-z0-9]{8}`) and reused the same value in the subsequent `account/login` request.
 
-During the first public-SDK physical USB smoke test on 2026-08-31, an SDK-generated 32-character hexadecimal `user_id` reproducibly received `result = 4` from `account/get_rand` before any password challenge was submitted. The historical live-working application used the eight-character format above. Until additional firmware evidence proves broader acceptance, clients should use the eight-character form for compatibility.
+Current physical retest note (2026-08-31):
 
-Known response fields:
+- the initial public SDK used a 32-character hexadecimal `user_id` and reproducibly received `result = 4` from `account/get_rand` before any password challenge was submitted;
+- the SDK was then corrected to the historical eight-character `[a-z0-9]{8}` format and the same physical USB test was repeated;
+- `account/get_rand` still returned `result = 4`.
+
+Therefore the current `result = 4` **cannot be attributed to the 32-character user-id format alone**. Eight characters remain the historically proven working shape, but the present USB-test failure has another, still unresolved cause (for example request/session/router state or another transport detail). Do not claim that user-id length is the cause until a controlled physical comparison proves it.
+
+Known successful response fields from historical/live research:
 
 ```json
 {
@@ -47,7 +53,9 @@ Known response fields:
 }
 ```
 
-`result = 0` is the observed successful `get_rand` outcome. Do **not** automatically apply the `account/login` result-code table below to `account/get_rand`; those result semantics are endpoint-specific unless separately verified.
+The current 2026-08-31 USB retest establishes an additional endpoint-specific observation: `account/get_rand` can reproducibly return `result = 4` before password submission. The meaning of that `4` on **this endpoint** is currently unresolved.
+
+Do **not** automatically apply the `account/login` result-code table below to `account/get_rand`; result semantics are endpoint-specific unless separately verified.
 
 ### 2. Build the challenge response
 
@@ -70,7 +78,7 @@ The hexadecimal MD5 result is sent in the `password` field. The plaintext passwo
 }
 ```
 
-A successful normal administrator login was observed with `result = 3` and establishes the `CGISID` session cookie.
+A successful normal administrator login was observed historically with `result = 3` and establishes the `CGISID` session cookie.
 
 ### 4. Authenticated requests
 
@@ -90,11 +98,15 @@ The following table applies to the **`account/login` response**. Do not transfer
 | 5 | Hacking detected |
 | 6 | Account locked |
 
-Values 1, 2 and 3 were observed live during the research. The full mapping is derived from the shipped frontend logic.
+Values 1, 2 and 3 were observed live during the original research. The full mapping is derived from the shipped frontend logic.
 
 ## Session failure handling
 
 A robust client should treat session/authentication failures separately from ordinary API errors, reacquire a session only once for a failed operation, and then retry that operation once. Avoid unbounded re-login loops.
+
+## Current authentication research priority
+
+Because the 2026-08-31 physical SDK retest still receives `account/get_rand result=4` with the historically correct eight-character `user_id`, the next authentication test should compare the exact historically working request transport against the current SDK request while preserving raw/sanitized pre-auth responses. Do not keep changing unrelated login semantics by guesswork.
 
 ## Other authentication surfaces
 
