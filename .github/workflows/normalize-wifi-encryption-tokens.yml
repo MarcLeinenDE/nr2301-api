@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: Normalize Wi-Fi encryption tokens
+
+on:
+  push:
+    paths:
+      - '.github/workflows/normalize-wifi-encryption-tokens.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/normalize_wifi_encryption_tokens_once.py
+      - run: python tools/validate_public_repo.py
+      - name: Commit normalized encryption semantics
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add specification/methods.json specification/semantics.json api/wireless.md CHANGELOG.md
+          git diff --cached --quiet && exit 0
+          git commit -m 'Normalize Wi-Fi encryption token semantics'
+          git push
