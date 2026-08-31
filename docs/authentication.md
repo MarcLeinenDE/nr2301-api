@@ -4,6 +4,25 @@
 
 The stock NR2301 web UI uses an application-level challenge flow for the normal administrator account.
 
+### 0. Check the administrator lockout state
+
+Before requesting a challenge, a defensive client should POST `account/get_retrytimes_and_time`:
+
+```json
+{
+  "type": "admin"
+}
+```
+
+Known response fields include `remain_time`, `retry_times` and `result`.
+
+The earlier live-working NR2301 application used this call as a lockout guard:
+
+- if `remain_time > 0`, wait instead of attempting a login;
+- if `retry_times <= 1`, abort rather than consume the final password attempt.
+
+This guard does not authenticate the client and does not send the administrator password.
+
 ### 1. Request a login random value
 
 `account/get_rand` is available before an authenticated session exists.
@@ -11,9 +30,13 @@ The stock NR2301 web UI uses an application-level challenge flow for the normal 
 ```json
 {
   "type": "admin",
-  "user_id": "<random-client-value>"
+  "user_id": "a1b2c3d4"
 }
 ```
+
+The known live-working client format for `user_id` is **exactly eight lowercase alphanumeric characters** (`[a-z0-9]{8}`). The same value is reused in the subsequent `account/login` request.
+
+During the first public-SDK physical USB smoke test on 2026-08-31, an SDK-generated 32-character hexadecimal `user_id` reproducibly received `result = 4` from `account/get_rand` before any password challenge was submitted. The historical live-working application used the eight-character format above. Until additional firmware evidence proves broader acceptance, clients should use the eight-character form for compatibility.
 
 Known response fields:
 
@@ -23,6 +46,8 @@ Known response fields:
   "result": 0
 }
 ```
+
+`result = 0` is the observed successful `get_rand` outcome. Do **not** automatically apply the `account/login` result-code table below to `account/get_rand`; those result semantics are endpoint-specific unless separately verified.
 
 ### 2. Build the challenge response
 
@@ -41,7 +66,7 @@ The hexadecimal MD5 result is sent in the `password` field. The plaintext passwo
   "type": "admin",
   "username": "<admin-username>",
   "password": "<md5-challenge-response>",
-  "user_id": "<same-random-client-value>"
+  "user_id": "<same-8-character-client-value>"
 }
 ```
 
@@ -51,7 +76,9 @@ A successful normal administrator login was observed with `result = 3` and estab
 
 Preserve and send the `CGISID` cookie. Some account requests also carry the session identifier in a JSON `session_id` field.
 
-## Observed login result values
+## Observed `account/login` result values
+
+The following table applies to the **`account/login` response**. Do not transfer these meanings to unrelated `result` fields without endpoint-specific evidence.
 
 | Value | Meaning |
 |---:|---|
