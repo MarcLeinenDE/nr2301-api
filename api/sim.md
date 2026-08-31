@@ -32,7 +32,20 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `pin_puk`.
+Exact shipped-frontend payload:
+
+```json
+{
+  "pin_puk": {
+    "pin": "<secret>",
+    "new_pin": "<secret>"
+  }
+}
+```
+
+Static source: `/html/set_pin.html line 281`; frontend expression `{pin_puk:{pin:pin,new_pin:new_pin}}`.
+
+The PIN/PUK/new-PIN values are secrets and must be redacted. The corresponding WebUI password inputs are source-verified with `maxlength=8`; no stricter minimum length or character-set rule is asserted here.
 
 ### Response
 
@@ -56,7 +69,19 @@ Known/observed response fields: `pin_puk`, `response`.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `pin_puk`.
+Exact shipped-frontend payload:
+
+```json
+{
+  "pin_puk": {
+    "pin": "<secret>"
+  }
+}
+```
+
+Static source: `/html/set_pin.html line 277`; frontend expression `{pin_puk:{pin:pin}}`.
+
+The PIN/PUK/new-PIN values are secrets and must be redacted. The corresponding WebUI password inputs are source-verified with `maxlength=8`; no stricter minimum length or character-set rule is asserted here.
 
 ### Response
 
@@ -80,7 +105,19 @@ Known/observed response fields: `pin_puk`, `response`.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `pin_puk`.
+Exact shipped-frontend payload:
+
+```json
+{
+  "pin_puk": {
+    "pin": "<secret>"
+  }
+}
+```
+
+Static source: `/html/set_pin.html line 273`; frontend expression `{pin_puk:{pin:pin}}`.
+
+The PIN/PUK/new-PIN values are secrets and must be redacted. The corresponding WebUI password inputs are source-verified with `maxlength=8`; no stricter minimum length or character-set rule is asserted here.
 
 ### Response
 
@@ -168,7 +205,19 @@ No request body has been reconstructed as necessary for this method.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `pin_puk`.
+Exact shipped-frontend payload:
+
+```json
+{
+  "pin_puk": {
+    "pin": "<secret>"
+  }
+}
+```
+
+Static source: `/html/set_pin.html line 269`; frontend expression `{pin_puk:{pin:pin}}`.
+
+The PIN/PUK/new-PIN values are secrets and must be redacted. The corresponding WebUI password inputs are source-verified with `maxlength=8`; no stricter minimum length or character-set rule is asserted here.
 
 ### Response
 
@@ -192,9 +241,31 @@ Known/observed response fields: `pin_puk`, `response`.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `pin_puk`.
+Exact shipped-frontend payload:
+
+```json
+{
+  "pin_puk": {
+    "puk": "<secret>",
+    "new_pin": "<secret>"
+  }
+}
+```
+
+Static source: `/html/set_pin.html line 328`; frontend expression `{pin_puk:{puk:puk,new_pin:pin}}`.
+
+The PIN/PUK/new-PIN values are secrets and must be redacted. The corresponding WebUI password inputs are source-verified with `maxlength=8`; no stricter minimum length or character-set rule is asserted here.
 
 ### Response
 
 Known/observed response fields: `pin_puk`, `response`.
 
+## PIN/PUK physical-testing policy — 2026-08-31
+
+The public contract now contains the exact shipped-frontend request shapes for all five PIN/PUK mutation methods. This does **not** promote their physical verification status. Physical testing must be deliberate rather than coverage-driven:
+
+- obtain PIN/PUK only from local secret storage/environment; never publish them;
+- read `get_sim_status` before every mutation and refuse exploratory writes when retry counts are low or unavailable;
+- never send a deliberately incorrect PIN/PUK merely to discover error behavior;
+- prefer reversible enable/disable/change-PIN sequences with read-back and restoration;
+- `reset_pin_using_puk` remains a separate recovery-path capability and should not be exercised by intentionally exhausting PIN retries solely for coverage.

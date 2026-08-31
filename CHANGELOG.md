@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- reconstructed and normalized the exact shipped-frontend SIM PIN/PUK POST payloads for provide/enable/disable/change/reset, with explicit secret-redaction and retry-preservation policy; physical status remains unchanged pending deliberate known-credential testing
 - completed the physical WPS action contract on 2026-08-31: PBC and PIN return nested `wireless.*_result=OK`, while Cancel returns flat top-level `wps_call_cancel_result=OK` after both actions; the public SDK integration test passed in 1.44 s and restored the original WPS-enable state
 - recorded action-specific WPS response envelopes from the 2026-08-31 physical SDK run: PBC returned `wireless.wps_call_pbc_result=OK`, while Cancel returned flat top-level `wps_call_cancel_result=OK`; PIN envelope remains to be observed in the resumed run
 - completed the 2026-08-31 Wi-Fi security matrix: all 13 source-known encryption tokens were live accepted on all four AP sections (52/52 cases), all protected modes round-tripped synthetic keys, open mode exposed section-specific key-field behavior, and password_modified remained 0 throughout the campaign

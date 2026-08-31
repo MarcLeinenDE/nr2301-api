@@ -4633,9 +4633,43 @@
         "pin_puk",
         "response"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "sim.pin_puk.frontend_request_contracts.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/set_pin.html line 281",
+          "http_method": "POST",
+          "request_schema": {
+            "pin_puk": {
+              "pin": "string",
+              "new_pin": "string"
+            }
+          },
+          "frontend_expression": "{pin_puk:{pin:pin,new_pin:new_pin}}",
+          "secret_handling": "PIN/PUK/new_pin are secrets; redact and never publish real values",
+          "validation": {
+            "frontend_html_maxlength": 8,
+            "scope": "maxlength=8 is source-verified; no stricter minimum length or character-set rule is asserted by this contract"
+          },
+          "testing_policy": "Do not consume SIM retries merely for coverage. Read pin_attempts/puk_attempts before any physical mutation and use only known-correct locally supplied credentials."
+        }
+      ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "Exact shipped-frontend POST payload reconstructed from /html/set_pin.html line 281: {pin_puk:{pin:pin,new_pin:new_pin}}.",
+        "PIN/PUK values are secrets and must not be copied into fixtures, logs, public reports or documentation examples.",
+        "The source-verified HTML fields use maxlength=8; do not invent stricter validation without separate evidence."
+      ],
+      "accepted_request": {
+        "http_method": "POST",
+        "request_schema": {
+          "pin_puk": {
+            "pin": "string",
+            "new_pin": "string"
+          }
+        },
+        "basis": "exact shipped-frontend request builder; physical acceptance pending"
+      }
     },
     {
       "method_id": "sim/disable_pin",
@@ -4670,9 +4704,41 @@
         "pin_puk",
         "response"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "sim.pin_puk.frontend_request_contracts.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/set_pin.html line 277",
+          "http_method": "POST",
+          "request_schema": {
+            "pin_puk": {
+              "pin": "string"
+            }
+          },
+          "frontend_expression": "{pin_puk:{pin:pin}}",
+          "secret_handling": "PIN/PUK/new_pin are secrets; redact and never publish real values",
+          "validation": {
+            "frontend_html_maxlength": 8,
+            "scope": "maxlength=8 is source-verified; no stricter minimum length or character-set rule is asserted by this contract"
+          },
+          "testing_policy": "Do not consume SIM retries merely for coverage. Read pin_attempts/puk_attempts before any physical mutation and use only known-correct locally supplied credentials."
+        }
+      ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "Exact shipped-frontend POST payload reconstructed from /html/set_pin.html line 277: {pin_puk:{pin:pin}}.",
+        "PIN/PUK values are secrets and must not be copied into fixtures, logs, public reports or documentation examples.",
+        "The source-verified HTML fields use maxlength=8; do not invent stricter validation without separate evidence."
+      ],
+      "accepted_request": {
+        "http_method": "POST",
+        "request_schema": {
+          "pin_puk": {
+            "pin": "string"
+          }
+        },
+        "basis": "exact shipped-frontend request builder; physical acceptance pending"
+      }
     },
     {
       "method_id": "sim/enable_pin",
@@ -4707,9 +4773,41 @@
         "pin_puk",
         "response"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "sim.pin_puk.frontend_request_contracts.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/set_pin.html line 273",
+          "http_method": "POST",
+          "request_schema": {
+            "pin_puk": {
+              "pin": "string"
+            }
+          },
+          "frontend_expression": "{pin_puk:{pin:pin}}",
+          "secret_handling": "PIN/PUK/new_pin are secrets; redact and never publish real values",
+          "validation": {
+            "frontend_html_maxlength": 8,
+            "scope": "maxlength=8 is source-verified; no stricter minimum length or character-set rule is asserted by this contract"
+          },
+          "testing_policy": "Do not consume SIM retries merely for coverage. Read pin_attempts/puk_attempts before any physical mutation and use only known-correct locally supplied credentials."
+        }
+      ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "Exact shipped-frontend POST payload reconstructed from /html/set_pin.html line 273: {pin_puk:{pin:pin}}.",
+        "PIN/PUK values are secrets and must not be copied into fixtures, logs, public reports or documentation examples.",
+        "The source-verified HTML fields use maxlength=8; do not invent stricter validation without separate evidence."
+      ],
+      "accepted_request": {
+        "http_method": "POST",
+        "request_schema": {
+          "pin_puk": {
+            "pin": "string"
+          }
+        },
+        "basis": "exact shipped-frontend request builder; physical acceptance pending"
+      }
     },
     {
       "method_id": "sim/get_lock_info",
@@ -4832,9 +4930,41 @@
         "pin_puk",
         "response"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "sim.pin_puk.frontend_request_contracts.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/set_pin.html line 269",
+          "http_method": "POST",
+          "request_schema": {
+            "pin_puk": {
+              "pin": "string"
+            }
+          },
+          "frontend_expression": "{pin_puk:{pin:pin}}",
+          "secret_handling": "PIN/PUK/new_pin are secrets; redact and never publish real values",
+          "validation": {
+            "frontend_html_maxlength": 8,
+            "scope": "maxlength=8 is source-verified; no stricter minimum length or character-set rule is asserted by this contract"
+          },
+          "testing_policy": "Do not consume SIM retries merely for coverage. Read pin_attempts/puk_attempts before any physical mutation and use only known-correct locally supplied credentials."
+        }
+      ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "Exact shipped-frontend POST payload reconstructed from /html/set_pin.html line 269: {pin_puk:{pin:pin}}.",
+        "PIN/PUK values are secrets and must not be copied into fixtures, logs, public reports or documentation examples.",
+        "The source-verified HTML fields use maxlength=8; do not invent stricter validation without separate evidence."
+      ],
+      "accepted_request": {
+        "http_method": "POST",
+        "request_schema": {
+          "pin_puk": {
+            "pin": "string"
+          }
+        },
+        "basis": "exact shipped-frontend request builder; physical acceptance pending"
+      }
     },
     {
       "method_id": "sim/reset_pin_using_puk",
@@ -4869,9 +4999,43 @@
         "pin_puk",
         "response"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "sim.pin_puk.frontend_request_contracts.v1",
+          "evidence": "STATIC_FRONTEND_VERIFIED",
+          "source": "/html/set_pin.html line 328",
+          "http_method": "POST",
+          "request_schema": {
+            "pin_puk": {
+              "puk": "string",
+              "new_pin": "string"
+            }
+          },
+          "frontend_expression": "{pin_puk:{puk:puk,new_pin:pin}}",
+          "secret_handling": "PIN/PUK/new_pin are secrets; redact and never publish real values",
+          "validation": {
+            "frontend_html_maxlength": 8,
+            "scope": "maxlength=8 is source-verified; no stricter minimum length or character-set rule is asserted by this contract"
+          },
+          "testing_policy": "Do not consume SIM retries merely for coverage. Read pin_attempts/puk_attempts before any physical mutation and use only known-correct locally supplied credentials."
+        }
+      ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "Exact shipped-frontend POST payload reconstructed from /html/set_pin.html line 328: {pin_puk:{puk:puk,new_pin:pin}}.",
+        "PIN/PUK values are secrets and must not be copied into fixtures, logs, public reports or documentation examples.",
+        "The source-verified HTML fields use maxlength=8; do not invent stricter validation without separate evidence."
+      ],
+      "accepted_request": {
+        "http_method": "POST",
+        "request_schema": {
+          "pin_puk": {
+            "puk": "string",
+            "new_pin": "string"
+          }
+        },
+        "basis": "exact shipped-frontend request builder; physical acceptance pending"
+      }
     },
     {
       "method_id": "sms/sms.delete",
