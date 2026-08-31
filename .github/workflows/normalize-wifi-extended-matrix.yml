@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: Normalize extended Wi-Fi physical matrix
+
+on:
+  push:
+    paths:
+      - '.github/workflows/normalize-wifi-extended-matrix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/normalize_wifi_extended_matrix_once.py
+      - run: python tools/validate_public_repo.py
+      - name: Commit normalized evidence
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add specification/methods.json api/wireless.md CHANGELOG.md
+          git diff --cached --quiet && exit 0
+          git commit -m 'Record extended physical Wi-Fi matrix evidence'
+          git push
