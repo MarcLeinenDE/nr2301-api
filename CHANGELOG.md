@@ -5,9 +5,12 @@
 Development metadata: `0.1.1.dev0`.
 
 - documented the administrator pre-login lockout guard using `account/get_retrytimes_and_time`
-- normalized the known live-working login `user_id` compatibility shape as eight lowercase alphanumeric characters (`[a-z0-9]{8}`), reused across `account/get_rand` and `account/login`
-- recorded the 2026-08-31 physical USB smoke observation that the initial public SDK's 32-character hexadecimal `user_id` reproducibly received `account/get_rand result=4` before password submission; the exact causal relationship remains subject to the corrected physical retest
+- normalized the historically live-working login `user_id` shape as eight lowercase alphanumeric characters (`[a-z0-9]{8}`), reused across `account/get_rand` and `account/login`
+- recorded the 2026-08-31 physical USB observation that `account/get_rand` reproducibly returned `result=4` before password submission with the initial 32-character SDK user-id
+- corrected the interim user-id-length hypothesis after the physical retest with the historical eight-character `[a-z0-9]{8}` format produced the same `account/get_rand result=4`; the current cause remains unresolved and must not be attributed to user-id length alone
 - clarified that the documented 0..6 login result table is scoped to `account/login` and must not be applied automatically to `account/get_rand.result`
+- documented the dedicated non-production physical-router test policy: systematic read/write/disruptive verification is permitted with staged recovery, while USB-management-mode mutation remains excluded for the current campaign
+- established the API/SDK feedback rule that successful SDK live tests must promote stale API verification status and that every newly observed protocol fact must be normalized here
 - normalized the exact live-verified `sms/sms.send` normal-SMS request and response contract, including GSM7 flagging, UTF-16BE hexadecimal body encoding, timestamp format, trailing-comma recipient representation and SMS-specific success fields
 - normalized the exact live-verified `sms/sms.delete` single-ID request and success response; deletion had been verified for Draft, Inbox and Outbox, with Inbox/Outbox read-back
 - promoted the already verified Wi-Fi mode tokens `DUAL`, `DUAL GUEST`, `2.4G 5G` and `2.4G 5G GUEST` into the machine-readable `wireless/wifi_set_ap_config` contract
