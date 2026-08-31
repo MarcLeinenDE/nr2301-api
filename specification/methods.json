@@ -6358,28 +6358,53 @@
       ],
       "semantic_contracts": [
         {
-          "id": "wps.action_response_envelopes.2026_08_31.v1",
+          "id": "wps.action_response_envelopes.complete_2026_08_31.v1",
           "evidence": "LIVE_SDK_WRITE_2026_08_31",
           "firmware": "V1.00(ACIY.3)C0",
           "management_url": "http://zyxel.home",
+          "physical_test_result": "1 passed in 1.44s",
           "observed": {
             "wireless/wifi_call_wps_pbc": {
+              "request": "GET",
               "response_envelope": "wireless",
               "result_field": "wps_call_pbc_result",
               "result_value": "OK"
             },
             "wireless/wifi_call_wps_cancel": {
+              "request": "GET",
               "response_envelope": "top_level",
               "result_field": "wps_call_cancel_result",
+              "result_value": "OK",
+              "observed_after": [
+                "PBC",
+                "PIN"
+              ]
+            },
+            "wireless/wifi_call_wps_pin": {
+              "request": "POST",
+              "request_payload": {
+                "wps_enable": "1",
+                "wps_pin": "12345670"
+              },
+              "response_envelope": "wireless",
+              "result_field": "wps_call_pin_result",
               "result_value": "OK"
             }
           },
-          "scope": "Physical SDK run on 2026-08-31. PIN response envelope was not reached in this run because the pre-fix SDK rejected the successful flat Cancel response before the PIN step."
+          "sequence": [
+            "PBC -> nested wireless OK",
+            "Cancel -> top-level OK",
+            "PIN 12345670 -> nested wireless OK",
+            "Cancel -> top-level OK"
+          ],
+          "restore": "The physical integration test restored the original WPS enable state in finally; the run completed without a restore exception.",
+          "scope": "Action-specific response envelopes are physically qualified for ACIY.3; do not assume a uniform wrapper across WPS actions."
         }
       ],
       "live_note": "GET returned wps_call_cancel_result='OK' after both PBC and PIN tests.",
       "implementation_notes": [
-        "2026-08-31 physical SDK run: Cancel returned top-level wps_call_cancel_result='OK' as {\"wps_call_cancel_result\":\"OK\"}; do not require a wireless wrapper for this action on ACIY.3."
+        "2026-08-31 physical SDK run: Cancel returned top-level wps_call_cancel_result='OK' as {\"wps_call_cancel_result\":\"OK\"}; do not require a wireless wrapper for this action on ACIY.3.",
+        "2026-08-31 completed physical SDK test: Cancel returned top-level wps_call_cancel_result='OK' after both PBC and PIN actions."
       ]
     },
     {
@@ -6414,28 +6439,53 @@
       ],
       "semantic_contracts": [
         {
-          "id": "wps.action_response_envelopes.2026_08_31.v1",
+          "id": "wps.action_response_envelopes.complete_2026_08_31.v1",
           "evidence": "LIVE_SDK_WRITE_2026_08_31",
           "firmware": "V1.00(ACIY.3)C0",
           "management_url": "http://zyxel.home",
+          "physical_test_result": "1 passed in 1.44s",
           "observed": {
             "wireless/wifi_call_wps_pbc": {
+              "request": "GET",
               "response_envelope": "wireless",
               "result_field": "wps_call_pbc_result",
               "result_value": "OK"
             },
             "wireless/wifi_call_wps_cancel": {
+              "request": "GET",
               "response_envelope": "top_level",
               "result_field": "wps_call_cancel_result",
+              "result_value": "OK",
+              "observed_after": [
+                "PBC",
+                "PIN"
+              ]
+            },
+            "wireless/wifi_call_wps_pin": {
+              "request": "POST",
+              "request_payload": {
+                "wps_enable": "1",
+                "wps_pin": "12345670"
+              },
+              "response_envelope": "wireless",
+              "result_field": "wps_call_pin_result",
               "result_value": "OK"
             }
           },
-          "scope": "Physical SDK run on 2026-08-31. PIN response envelope was not reached in this run because the pre-fix SDK rejected the successful flat Cancel response before the PIN step."
+          "sequence": [
+            "PBC -> nested wireless OK",
+            "Cancel -> top-level OK",
+            "PIN 12345670 -> nested wireless OK",
+            "Cancel -> top-level OK"
+          ],
+          "restore": "The physical integration test restored the original WPS enable state in finally; the run completed without a restore exception.",
+          "scope": "Action-specific response envelopes are physically qualified for ACIY.3; do not assume a uniform wrapper across WPS actions."
         }
       ],
       "live_note": "GET returned wireless.wps_call_pbc_result='OK'; immediately cancelled in test.",
       "implementation_notes": [
-        "2026-08-31 physical SDK run: PBC returned wireless.wps_call_pbc_result='OK' in a nested wireless response envelope."
+        "2026-08-31 physical SDK run: PBC returned wireless.wps_call_pbc_result='OK' in a nested wireless response envelope.",
+        "2026-08-31 completed physical SDK test: PBC returned nested wireless.wps_call_pbc_result='OK', followed immediately by successful flat Cancel."
       ]
     },
     {
@@ -6471,9 +6521,55 @@
       "response_fields": [
         "wireless"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "wps.action_response_envelopes.complete_2026_08_31.v1",
+          "evidence": "LIVE_SDK_WRITE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "management_url": "http://zyxel.home",
+          "physical_test_result": "1 passed in 1.44s",
+          "observed": {
+            "wireless/wifi_call_wps_pbc": {
+              "request": "GET",
+              "response_envelope": "wireless",
+              "result_field": "wps_call_pbc_result",
+              "result_value": "OK"
+            },
+            "wireless/wifi_call_wps_cancel": {
+              "request": "GET",
+              "response_envelope": "top_level",
+              "result_field": "wps_call_cancel_result",
+              "result_value": "OK",
+              "observed_after": [
+                "PBC",
+                "PIN"
+              ]
+            },
+            "wireless/wifi_call_wps_pin": {
+              "request": "POST",
+              "request_payload": {
+                "wps_enable": "1",
+                "wps_pin": "12345670"
+              },
+              "response_envelope": "wireless",
+              "result_field": "wps_call_pin_result",
+              "result_value": "OK"
+            }
+          },
+          "sequence": [
+            "PBC -> nested wireless OK",
+            "Cancel -> top-level OK",
+            "PIN 12345670 -> nested wireless OK",
+            "Cancel -> top-level OK"
+          ],
+          "restore": "The physical integration test restored the original WPS enable state in finally; the run completed without a restore exception.",
+          "scope": "Action-specific response envelopes are physically qualified for ACIY.3; do not assume a uniform wrapper across WPS actions."
+        }
+      ],
       "live_note": "POST wps_enable='1', wps_pin='12345670' returned wireless.wps_call_pin_result='OK'; immediately cancelled.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-08-31 completed physical SDK test: POST {wps_enable:'1', wps_pin:'12345670'} returned nested wireless.wps_call_pin_result='OK', followed immediately by successful flat Cancel."
+      ]
     },
     {
       "method_id": "wireless/wifi_get_ap_config",

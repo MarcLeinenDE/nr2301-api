@@ -206,11 +206,32 @@ Known top-level request keys from the shipped frontend: `wps_enable`, `wps_pin`.
 
 ### Response
 
-Known/observed response fields: `wireless`.
+Physical ACIY.3 SDK evidence on 2026-08-31 returned the PIN action result nested under `wireless`:
+
+```json
+{
+  "wireless": {
+    "wps_call_pin_result": "OK"
+  }
+}
+```
 
 ### Notes
 
-- POST wps_enable='1', wps_pin='12345670' returned wireless.wps_call_pin_result='OK'; immediately cancelled.
+- POST `wps_enable='1'`, `wps_pin='12345670'` returned `wireless.wps_call_pin_result='OK'`; the same physical test immediately called Cancel, which returned flat top-level `wps_call_cancel_result='OK'`.
+
+### Complete physical WPS action sequence — 2026-08-31
+
+The public SDK physical integration test completed successfully in **1.44 s** with the original WPS-enable state restored:
+
+```text
+PBC              -> wireless.wps_call_pbc_result = OK
+Cancel after PBC -> top-level wps_call_cancel_result = OK
+PIN 12345670     -> wireless.wps_call_pin_result = OK
+Cancel after PIN -> top-level wps_call_cancel_result = OK
+```
+
+This confirms that ACIY.3 uses **action-specific response envelopes**: PBC and PIN are nested under `wireless`, while Cancel is flat at the top level. Consumers must not impose one uniform WPS response wrapper.
 
 <a id="wifi-get-ap-config"></a>
 
