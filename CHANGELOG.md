@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- recorded the second 2026-08-31 public-SDK Wi-Fi matrix: 18/18 cases passed, adding live power_level 0/1/2 round-trips, Guest 2.4G/5G band mode, synthetic SSID writes, channels 13/52/100/140, every known WebUI net-mode/bandwidth option and normal-admin wifi_scan authentication
 - recorded the 2026-08-31 public-SDK Wi-Fi field matrix: 15/15 physical write/read-back/restore cases passed for representative 2.4/5-GHz channels, Hidden, AP isolation, global maxassoc, timed-off, Wi-Fi master switch, per-band net modes and bandwidths
 - normalized the original WebUI Wi-Fi net-mode and bandwidth option tokens for 2.4/5 GHz and clarified that the API is jurisdiction-neutral: radio capabilities are documented technically rather than filtered through Germany/EU-specific policy
 - recorded the 2026-08-31 sanitized physical Wi-Fi capability snapshot, including runtime channel/range lists and the finding that `wifi_get_timed_off_status.status=on` can coexist with `wifi_timed_off.enable=0`; the status field is therefore not a direct schedule-enable flag

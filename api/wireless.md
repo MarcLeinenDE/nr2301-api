@@ -16,7 +16,7 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 | [`wifi_get_basic_info`](#wifi-get-basic-info) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`wifi_get_timed_off_status`](#wifi-get-timed-off-status) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`wifi_get_wps_disable`](#wifi-get-wps-disable) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
-| [`wifi_scan`](#wifi-scan) | `LIVE_VERIFIED` | `UNTESTED` | `READ_OR_LOW_SIDE_EFFECT` |
+| [`wifi_scan`](#wifi-scan) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`wifi_set_ap_config`](#wifi-set-ap-config) | `LIVE_VERIFIED` | `ADMIN_OK` | `DISRUPTIVE_RECOVERY_REQUIRED` |
 | [`wifi_set_wps_disable`](#wifi-set-wps-disable) | `LIVE_VERIFIED` | `ADMIN_OK` | `DISRUPTIVE_RECOVERY_REQUIRED` |
 | [`wps_status`](#wps-status) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
@@ -380,7 +380,7 @@ No request body has been reconstructed as necessary for this method.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `SCAN_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `READ_OR_LOW_SIDE_EFFECT`
 
 ### Request
@@ -574,3 +574,28 @@ timed-off enable:         0 -> 1 -> 0 (complete block restored)
 ```
 
 These live transitions establish setter/read-back behavior for the listed values. They do not imply that only those channel values are supported; the runtime-advertised channel/range fields remain the capability source for additional channel choices.
+
+## Extended physical SDK Wi-Fi matrix — 2026-08-31
+
+The second dedicated-router matrix completed **18/18 cases in 226.96 s**, again using normal administrator authentication through `http://zyxel.home` and restoring every changed configuration value.
+
+Additional live evidence:
+
+```text
+power_level:              1 -> 0 -> 1, then 1 -> 2 -> 1
+Global maxassoc:          32 -> 1 -> 32
+Guest maxassoc:           10 -> 1 -> 10
+Guest band_mode:          2.4G -> 5G -> 2.4G
+SSID writes:              synthetic values accepted/restored for 24G, 5G, DUAL, Guest
+2.4 GHz channel:          0 -> 13 -> 0
+5 GHz channels:           0 -> 52 -> 0; 0 -> 100 -> 0; 0 -> 140 -> 0
+24G net_mode:             all 11b / 11bg / 11bgn / 11bgnax values accepted
+5G net_mode:              all 11a / 11an / 11anac / 11anacax values accepted
+24G bandwidth:            all HT20/HT40 / HT20 / HT40 values accepted
+5G bandwidth:             all HT20/HT40/HT80 / HT20 / HT40 / HT80 values accepted
+wifi_scan:                normal-admin authenticated call succeeded
+```
+
+`power_level` values `0`, `1` and `2` are therefore proven round-trippable raw values on ACIY.3. Their human meaning and whether additional values exist remain unresolved; do not label them as percentages or regulatory classes without separate evidence.
+
+For DFS-class channel tests the configured `channel` read-back was the contract being verified. DFS/CAC timing and the eventual `cur_channel` were deliberately not treated as the same property.

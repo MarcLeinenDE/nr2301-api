@@ -6707,6 +6707,112 @@
           },
           "timed_off_note": "The enabled test used a short future window and restored the complete original wifi_timed_off block.",
           "channel_scope_note": "Channel 1 and channel 36 are live-accepted examples; broader runtime-advertised channel ranges remain separate capability evidence until individually exercised."
+        },
+        {
+          "id": "wifi.sdk_physical_extended_matrix_2026_08_31.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "management_url": "http://zyxel.home",
+          "admin_session": true,
+          "result": "18/18 extended physical integration cases passed; every changed configuration value was read back and restored",
+          "verified_capabilities": {
+            "power_level": {
+              "live_roundtrip_values": [
+                "0",
+                "1",
+                "2"
+              ],
+              "original_value": "1",
+              "exhaustive": false,
+              "semantic_meaning": "unresolved raw values; do not label as percentages or regional power classes without separate evidence"
+            },
+            "maxassoc": {
+              "verified_transitions": [
+                [
+                  "32",
+                  "1",
+                  "32"
+                ],
+                [
+                  "32",
+                  "31",
+                  "32"
+                ]
+              ]
+            },
+            "wifi_if_GUEST.maxassoc": {
+              "verified_values": [
+                "1",
+                "9",
+                "10"
+              ],
+              "frontend_range": "1..10"
+            },
+            "wifi_if_GUEST.band_mode": {
+              "verified_values": [
+                "2.4G",
+                "5G"
+              ]
+            },
+            "ssid_write": {
+              "verified_sections": [
+                "wifi_if_24G",
+                "wifi_if_5G",
+                "wifi_if_DUAL",
+                "wifi_if_GUEST"
+              ],
+              "test_values": "synthetic only; original/live SSIDs not published"
+            },
+            "wifi_if_24G.channel": {
+              "live_values": [
+                "1",
+                "13"
+              ],
+              "auto_value": "0"
+            },
+            "wifi_if_5G.channel": {
+              "live_values": [
+                "36",
+                "52",
+                "100",
+                "140"
+              ],
+              "auto_value": "0"
+            },
+            "wifi_if_24G.net_mode": {
+              "all_original_webui_values_live": [
+                "11b",
+                "11bg",
+                "11bgn",
+                "11bgnax"
+              ]
+            },
+            "wifi_if_5G.net_mode": {
+              "all_original_webui_values_live": [
+                "11a",
+                "11an",
+                "11anac",
+                "11anacax"
+              ]
+            },
+            "wifi_if_24G.bandwidth": {
+              "all_original_webui_values_live": [
+                "HT20/HT40",
+                "HT20",
+                "HT40"
+              ]
+            },
+            "wifi_if_5G.bandwidth": {
+              "all_original_webui_values_live": [
+                "HT20/HT40/HT80",
+                "HT20",
+                "HT40",
+                "HT80"
+              ]
+            }
+          },
+          "dfs_note": "Configured-channel persistence was verified. DFS/CAC operating-channel timing was intentionally not conflated with setter persistence.",
+          "jurisdiction_note": "These are technical firmware/API capabilities, not a claim of legal use in every jurisdiction."
         }
       ],
       "live_note": null,
@@ -6716,7 +6822,10 @@
         "The original NR2301 WebUI exposes exact per-band net_mode and bandwidth option tokens; these are protocol/UI capability evidence, not jurisdiction-specific legality rules.",
         "Do not impose Germany/EU-specific channel, band or transmit-power policy in the protocol contract. Record what firmware exposes/accepts and keep deployment legality separate.",
         "2026-08-31 public-SDK physical field matrix passed 15/15 cases with exact read-back and original-state restoration for channels, hidden/isolation flags, maxassoc, timed-off, master switch, net modes and bandwidths.",
-        "Do not generalize the representative live channel transitions to every advertised channel without additional physical evidence; use runtime channel lists for capability discovery."
+        "Do not generalize the representative live channel transitions to every advertised channel without additional physical evidence; use runtime channel lists for capability discovery.",
+        "2026-08-31 extended public-SDK Wi-Fi matrix passed 18/18 physical cases with read-back and restore, including power_level 0/1/2, Guest band_mode 2.4G/5G, synthetic SSID writes, additional channel categories and every original-WebUI net-mode/bandwidth token.",
+        "power_level raw values 0, 1 and 2 are live round-trippable on ACIY.3, but their human meaning and whether the enum is exhaustive remain unresolved.",
+        "Synthetic SSID writes were verified for 24G, 5G, DUAL and Guest; no live SSID values are published."
       ]
     },
     {
@@ -6855,7 +6964,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED_ACTION",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "READ_OR_LOW_SIDE_EFFECT",
       "request": {
         "http_method": "GET",
@@ -6876,7 +6985,9 @@
       "response_fields": [],
       "semantic_contracts": [],
       "live_note": "Returned live Wi-Fi scan_list; management session recovered immediately.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-08-31 public-SDK authenticated scan completed successfully with normal administrator authentication; scan-list contents were intentionally not logged because they can contain nearby SSIDs/BSSIDs."
+      ]
     },
     {
       "method_id": "wireless/wifi_set_ap_config",
@@ -7119,6 +7230,112 @@
           },
           "timed_off_note": "The enabled test used a short future window and restored the complete original wifi_timed_off block.",
           "channel_scope_note": "Channel 1 and channel 36 are live-accepted examples; broader runtime-advertised channel ranges remain separate capability evidence until individually exercised."
+        },
+        {
+          "id": "wifi.sdk_physical_extended_matrix_2026_08_31.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "management_url": "http://zyxel.home",
+          "admin_session": true,
+          "result": "18/18 extended physical integration cases passed; every changed configuration value was read back and restored",
+          "verified_capabilities": {
+            "power_level": {
+              "live_roundtrip_values": [
+                "0",
+                "1",
+                "2"
+              ],
+              "original_value": "1",
+              "exhaustive": false,
+              "semantic_meaning": "unresolved raw values; do not label as percentages or regional power classes without separate evidence"
+            },
+            "maxassoc": {
+              "verified_transitions": [
+                [
+                  "32",
+                  "1",
+                  "32"
+                ],
+                [
+                  "32",
+                  "31",
+                  "32"
+                ]
+              ]
+            },
+            "wifi_if_GUEST.maxassoc": {
+              "verified_values": [
+                "1",
+                "9",
+                "10"
+              ],
+              "frontend_range": "1..10"
+            },
+            "wifi_if_GUEST.band_mode": {
+              "verified_values": [
+                "2.4G",
+                "5G"
+              ]
+            },
+            "ssid_write": {
+              "verified_sections": [
+                "wifi_if_24G",
+                "wifi_if_5G",
+                "wifi_if_DUAL",
+                "wifi_if_GUEST"
+              ],
+              "test_values": "synthetic only; original/live SSIDs not published"
+            },
+            "wifi_if_24G.channel": {
+              "live_values": [
+                "1",
+                "13"
+              ],
+              "auto_value": "0"
+            },
+            "wifi_if_5G.channel": {
+              "live_values": [
+                "36",
+                "52",
+                "100",
+                "140"
+              ],
+              "auto_value": "0"
+            },
+            "wifi_if_24G.net_mode": {
+              "all_original_webui_values_live": [
+                "11b",
+                "11bg",
+                "11bgn",
+                "11bgnax"
+              ]
+            },
+            "wifi_if_5G.net_mode": {
+              "all_original_webui_values_live": [
+                "11a",
+                "11an",
+                "11anac",
+                "11anacax"
+              ]
+            },
+            "wifi_if_24G.bandwidth": {
+              "all_original_webui_values_live": [
+                "HT20/HT40",
+                "HT20",
+                "HT40"
+              ]
+            },
+            "wifi_if_5G.bandwidth": {
+              "all_original_webui_values_live": [
+                "HT20/HT40/HT80",
+                "HT20",
+                "HT40",
+                "HT80"
+              ]
+            }
+          },
+          "dfs_note": "Configured-channel persistence was verified. DFS/CAC operating-channel timing was intentionally not conflated with setter persistence.",
+          "jurisdiction_note": "These are technical firmware/API capabilities, not a claim of legal use in every jurisdiction."
         }
       ],
       "live_note": "Timed-off same-state and main DUAL AP same-state both returned result=0. Calls took ~15.8 s / ~13.9 s and required recovery handling.",
@@ -7135,7 +7352,10 @@
         "The original NR2301 WebUI exposes exact per-band net_mode and bandwidth option tokens; these are protocol/UI capability evidence, not jurisdiction-specific legality rules.",
         "Do not impose Germany/EU-specific channel, band or transmit-power policy in the protocol contract. Record what firmware exposes/accepts and keep deployment legality separate.",
         "2026-08-31 public-SDK physical field matrix passed 15/15 cases with exact read-back and original-state restoration for channels, hidden/isolation flags, maxassoc, timed-off, master switch, net modes and bandwidths.",
-        "Do not generalize the representative live channel transitions to every advertised channel without additional physical evidence; use runtime channel lists for capability discovery."
+        "Do not generalize the representative live channel transitions to every advertised channel without additional physical evidence; use runtime channel lists for capability discovery.",
+        "2026-08-31 extended public-SDK Wi-Fi matrix passed 18/18 physical cases with read-back and restore, including power_level 0/1/2, Guest band_mode 2.4G/5G, synthetic SSID writes, additional channel categories and every original-WebUI net-mode/bandwidth token.",
+        "power_level raw values 0, 1 and 2 are live round-trippable on ACIY.3, but their human meaning and whether the enum is exhaustive remain unresolved.",
+        "Synthetic SSID writes were verified for 24G, 5G, DUAL and Guest; no live SSID values are published."
       ]
     },
     {
