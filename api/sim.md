@@ -11,7 +11,7 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 | [`enable_pin`](#enable-pin) | `LIVE_VERIFIED` | `ADMIN_OK` | `DO_NOT_TEST_FOR_COVERAGE` |
 | [`get_lock_info`](#get-lock-info) | `LIVE_VERIFIED_LIMITED` | `ADMIN_OK_EMPTY_RESPONSE` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`get_sim_status`](#get-sim-status) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
-| [`provide_pin`](#provide-pin) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
+| [`provide_pin`](#provide-pin) | `LIVE_VERIFIED` | `ADMIN_OK` | `DO_NOT_TEST_FOR_COVERAGE` |
 | [`reset_pin_using_puk`](#reset-pin-using-puk) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
 
 <a id="change-pin"></a>
@@ -206,12 +206,12 @@ No request body has been reconstructed as necessary for this method.
 **Method ID:** `sim/provide_pin`  
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
-**Verification:** `STATIC_CONFIRMED`  
-**Auth evidence:** `UNTESTED`  
+**Verification:** `LIVE_VERIFIED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `DO_NOT_TEST_FOR_COVERAGE`
 
 > [!CAUTION]
-> This method was deliberately not exercised merely to improve coverage because its potential impact outweighed the documentation value. Treat the contract as static evidence only.
+> This remains a retry-sensitive SIM credential operation. Live verification used one known-correct local PIN only after a real reboot produced stable `pin_status=2`, with retry counters checked before/after and the original PIN-protection state restored. Never probe with guessed credentials.
 
 ### Request
 
@@ -234,6 +234,12 @@ The PIN/PUK/new-PIN values are secrets and must be redacted. The corresponding W
 ### Response
 
 Known/observed response fields: `pin_puk`, `response`.
+
+### Physical evidence — 2026-08-31
+
+On ACIY.3, a guarded SDK lifecycle enabled PIN protection, triggered `router_call_reboot`, confirmed an actual management outage, recovered administrator login, waited for the SIM subsystem to stabilize at `pin_status=2`, then submitted the known-correct local PIN exactly once. `provide_pin` returned `response.setting_response="OK"`, read-back changed to `pin_status=5`, and the test restored `pin_enabled=0`. `pin_attempts` remained 3 and `puk_attempts` remained 10 throughout. The real PIN was never logged or published.
+
+The reboot action can interrupt its HTTP request several seconds before physical shutdown begins, so an immediately successful login is not sufficient reboot-recovery evidence. Consumers performing lifecycle tests should require an actual management outage and stable post-reboot SIM state.
 
 <a id="reset-pin-using-puk"></a>
 
