@@ -5401,6 +5401,29 @@
           "body_representation": "UTF-16BE hexadecimal string",
           "read_side_effect": "not re-read after get_by_id in this campaign; do not claim a read-state transition from this evidence alone",
           "privacy": "sender/body values deliberately not retained"
+        },
+        {
+          "id": "sms.get_by_id.draft.presentation.live_2026_08_31.v1",
+          "evidence": "LIVE_VERIFIED_PUBLIC_SDK_SYNTHETIC_DRAFT",
+          "observed": {
+            "address_form": "BARE (no trailing comma)",
+            "body_representation": "UTF-16BE hexadecimal",
+            "type": 2
+          },
+          "response_fields": [
+            "address",
+            "body",
+            "contact_id",
+            "date",
+            "id",
+            "location",
+            "protocol",
+            "read",
+            "resp",
+            "status",
+            "type"
+          ],
+          "privacy": "synthetic address/body values not retained"
         }
       ],
       "live_note": "Live verified through the public SDK on a newly arrived real inbound reply. The prior Inbox row had read=0; get_by_id returned the complete documented field set and a UTF-16BE-hex body. No post-read state check was performed, so this run does not prove whether read state changed.",
@@ -5408,7 +5431,8 @@
         "Exact shipped frontend request is {sms:{id:<message id>}}.",
         "Opening an unread inbound SMS may mark it read; use a known draft/outbox item for side-effect-free contract testing where possible.",
         "2026-08-31 public-SDK E2E: get_by_id succeeded on a newly arrived real inbound reply; response fields matched the documented schema and body decoded from UTF-16BE hex.",
-        "The reply was observed with read=0 before get_by_id, but no post-read Inbox state was captured; preserve the side-effect warning without asserting a transition occurred."
+        "The reply was observed with read=0 before get_by_id, but no post-read Inbox state was captured; preserve the side-effect warning without asserting a transition occurred.",
+        "2026-08-31 synthetic Draft get_by_id readback on ACIY.3: address was bare (no trailing comma), body decoded from UTF-16BE hex, and type=2."
       ]
     },
     {
@@ -5563,12 +5587,24 @@
           },
           "correlation_note": "A real SDK send was delivered successfully but an initial byte-exact full-body Outbox correlation was too strict. A recovery read decoded the expected synthetic prefix. Prefer new message ID + normalized address for correlation; treat body representation as raw data.",
           "privacy": "body/address values deliberately not retained"
+        },
+        {
+          "id": "sms.list.draft.presentation.live_2026_08_31.v1",
+          "evidence": "LIVE_VERIFIED_PUBLIC_SDK_SYNTHETIC_DRAFT",
+          "list_type": 2,
+          "observed": {
+            "address_form": "BARE (no trailing comma)",
+            "body_representation": "UTF-16BE hexadecimal",
+            "type": 2
+          },
+          "privacy": "synthetic address/body values not retained"
         }
       ],
       "live_note": "Live resp=0,count=1,total=1,page_count=1. Raw SMS values were not stored. Anonymous live response: HTTP 200 {'system_err':'session no exist'}.",
       "implementation_notes": [
         "2026-08-31 real send/reply exchange: both Outbox and Inbox list body values were decodable as UTF-16BE hexadecimal; message values were not retained.",
-        "Do not require byte-exact full-body equality as the sole Outbox correlation key; use message ID/address and content only as secondary evidence."
+        "Do not require byte-exact full-body equality as the sole Outbox correlation key; use message ID/address and content only as secondary evidence.",
+        "2026-08-31 synthetic Draft list readback on ACIY.3: address was returned without the save-wire trailing comma, body was UTF-16BE hex, and type=2."
       ]
     },
     {
@@ -5689,6 +5725,25 @@
             "smsSaveFail": 0
           },
           "wire_note": "id/type/protocol stringified; gsm7 retained boolean in captured stock-compatible write"
+        },
+        {
+          "id": "sms.save.existing_id.copy_on_save.live_2026_08_31.v1",
+          "evidence": "LIVE_VERIFIED_PUBLIC_SDK_ACIY3",
+          "request_intent": "shipped frontend sends id=<existing smsId> when saving an edited draft",
+          "observed_firmware_behavior": "COPY_ON_SAVE",
+          "observed_transition": {
+            "original_id": "remained present with original body A",
+            "new_id_count": 1,
+            "new_id": "contained replacement body B"
+          },
+          "verified_success": {
+            "resp": 0,
+            "smsSaveSucc": 1,
+            "smsSaveFail": 0
+          },
+          "scope": "observed on tested NR2301 ACIY.3 firmware; do not generalize to all firmware without evidence",
+          "cleanup": "both synthetic Draft IDs deleted successfully; final synthetic absence verified",
+          "privacy": "recipient/body/real identifiers not retained"
         }
       ],
       "live_note": null,
@@ -5696,7 +5751,9 @@
         "New-draft frontend request uses id=-1 and type=2; existing-draft update uses the current smsId and type=2.",
         "Historical live write returned sms.resp=0, smsSaveSucc=1, smsSaveFail=0.",
         "Historical stock-wire evidence stringified id/type/protocol while gsm7 remained a JSON boolean.",
-        "Recipient and body are message content/private data and should not be logged by clients."
+        "Recipient and body are message content/private data and should not be logged by clients.",
+        "2026-08-31 ACIY.3 physical SDK test: saving with an existing Draft ID returned resp=0/smsSaveSucc=1/smsSaveFail=0 but did not modify that ID in place; the original remained unchanged and exactly one new Draft ID contained the replacement body (COPY_ON_SAVE).",
+        "Keep the shipped-frontend existing-ID request variant documented as frontend intent, but do not describe its ACIY.3 effect as an in-place update."
       ]
     },
     {

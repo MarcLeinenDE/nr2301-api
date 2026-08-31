@@ -138,6 +138,10 @@ The exact shipped-frontend request is `{sms:{id:<message id>}}`. With the stock 
 ```
 
 
+### 2026-08-31 Draft `get_by_id` presentation evidence
+
+Synthetic Draft reads through `sms.get_by_id` returned the documented field set with a bare address, UTF-16BE-hex body and `type=2`. The same representation was observed for both the original Draft and the new Draft produced by ACIY.3 `COPY_ON_SAVE` behavior.
+
 ### 2026-08-31 SDK inbound-reply evidence
 
 A real reply to an SDK-originated SMS was detected as a new Inbox item and then read with `sms.get_by_id`. Before the call, the Inbox row reported `read=0`. The returned `sms` object contained exactly these observed fields: `address`, `body`, `contact_id`, `date`, `id`, `location`, `protocol`, `read`, `resp`, `status`, `type`. The body was decodable as UTF-16BE hexadecimal. Sender and body values were deliberately not retained. No post-read Inbox check was performed, so this run does **not** prove that `get_by_id` changed the read flag.
@@ -262,6 +266,10 @@ HTTP method: `POST`
 - Live resp=0,count=1,total=1,page_count=1. Raw SMS values were not stored. Anonymous live response: HTTP 200 {'system_err':'session no exist'}.
 
 
+### 2026-08-31 Draft list presentation evidence
+
+A synthetic Draft (`list_type=2`) created through the public SDK read back with a **bare** address (the trailing comma used on the save wire was removed), a UTF-16BE-hex body and `type=2`. During the existing-ID save profiler, the original and copy Drafts remained distinguishable by decoded content classes without logging the actual address or body.
+
 ### 2026-08-31 SDK list representation evidence
 
 During a real SDK-send / handset-reply exchange, both the matching Outbox body and the new Inbox body were observed as UTF-16BE hexadecimal strings. The values themselves were not retained. An initial E2E test that required byte-for-byte equality against the entire sent body was unnecessarily brittle even though delivery succeeded; correlation should primarily use a newly appearing message ID plus normalized address, with body content as secondary evidence.
@@ -341,7 +349,9 @@ New draft:
 }
 ```
 
-Updating an existing draft uses the same object with `id=<existing smsId>`. `type=2` is the exact draft token. Historical live wire evidence using the stock frontend-compatible serializer showed `id`, `type` and `protocol` as JSON strings on the wire while `gsm7` remained a JSON boolean. `address` keeps the trailing comma and `body` uses the same frontend `UniEncode` representation as SMS send.
+The shipped frontend uses the same object with `id=<existing smsId>` when saving an edited draft. `type=2` is the exact draft token. Historical live wire evidence using the stock frontend-compatible serializer showed `id`, `type` and `protocol` as JSON strings on the wire while `gsm7` remained a JSON boolean. `address` keeps the trailing comma on the write wire and `body` uses the same frontend `UniEncode` representation as SMS send.
+
+**ACIY.3 physical behavior (2026-08-31):** an existing-ID save returned `resp=0`, `smsSaveSucc=1`, `smsSaveFail=0`, but did **not** modify the original Draft ID in place. The original ID remained with its old body and exactly one new Draft ID appeared with the replacement body. This is `COPY_ON_SAVE` behavior on the tested firmware. Treat the existing-ID value as shipped-frontend intent, not as proof of in-place update semantics on all firmware.
 
 ### Response
 
@@ -355,7 +365,7 @@ Updating an existing draft uses the same object with `id=<existing smsId>`. `typ
 }
 ```
 
-This success triple was live verified for a new draft. Recipient and message content are private data and should not be logged.
+This success triple was live verified for both a new Draft and the tested existing-ID save path. On ACIY.3, the existing-ID path exhibited `COPY_ON_SAVE` rather than in-place mutation. Recipient and message content are private data and should not be logged.
 
 <a id="smssend"></a>
 

@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- live-profiled `sms.save` existing-ID behavior on ACIY.3: despite the shipped frontend sending the current Draft ID and the router returning `resp=0/smsSaveSucc=1/smsSaveFail=0`, the original Draft remained unchanged and exactly one new Draft ID carried the replacement body (`COPY_ON_SAVE`); Draft list/get-by-ID also returned bare addresses and UTF-16BE-hex bodies
 - completed a public-SDK real SMS exchange: send returned `resp=0/smsSendSucc=1/smsSendFail=0` and was physically received; the handset reply appeared as a new Inbox item and `sms.get_by_id` returned the complete documented field set; Inbox/Outbox bodies were observed as UTF-16BE hex, with all phone numbers and message contents excluded from repository evidence
 - normalized the exact `sms/sms.save` new/update-draft request and live success triple, including draft `type=2`, GSM7 boolean wire behavior and stock stringification of id/type/protocol; normalized `sms/sms.get_by_id` as exact `{sms:{id}}` POST and retained its unread-read side-effect warning
 - live-verified SDK `set_allow` + `clear_offline_user` with a synthetic locally-administered MAC in Black mode: allow returned result=0 with expected inactive-view semantics, then synthetic history was cleared with result=0 and verified absent from all explicit views
