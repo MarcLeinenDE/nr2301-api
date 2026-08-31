@@ -553,3 +553,24 @@ No request body has been reconstructed as necessary for this method.
   - `field`: pbc_status
   - `values`: `["Disabled", "Active", "Timed-out", "Overlap", "Unknown"]`
 
+## Physical SDK field matrix — 2026-08-31
+
+A USB-connected dedicated test router on firmware `V1.00(ACIY.3)C0` completed the public SDK Wi-Fi field suite with **15/15 passing cases in 178.96 s**. Every write used normal administrator authentication through `http://zyxel.home`, required read-back of the changed value, and restored the original state.
+
+Live write/read-back/restore transitions included:
+
+```text
+2.4 GHz channel:          0 (auto) -> 1 -> 0
+5 GHz channel:            0 (auto) -> 36 -> 0
+24G/5G/DUAL/Guest hidden: 0 -> 1 -> 0
+24G/5G isolate:           0 -> 1 -> 0
+global maxassoc:          32 -> 31 -> 32
+master switch:            on -> off -> on
+24G net_mode:             11bgnax -> 11bgn -> 11bgnax
+5G net_mode:              11anacax -> 11anac -> 11anacax
+24G bandwidth:            HT20/HT40 -> HT20 -> HT20/HT40
+5G bandwidth:             HT20/HT40/HT80 -> HT20 -> HT20/HT40/HT80
+timed-off enable:         0 -> 1 -> 0 (complete block restored)
+```
+
+These live transitions establish setter/read-back behavior for the listed values. They do not imply that only those channel values are supported; the runtime-advertised channel/range fields remain the capability source for additional channel choices.
