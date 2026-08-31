@@ -6838,6 +6838,56 @@
           "setter_evidence": {
             "sae-mixed": "shipped frontend explicitly constructs wifi_if_5G, wifi_if_24G and wifi_if_DUAL writes with encryption='sae-mixed' when updating the key"
           }
+        },
+        {
+          "id": "wifi.security_matrix.partial_2026_08_31.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "management_url": "http://zyxel.home",
+          "status": "PARTIAL_MATRIX_INTERRUPTED_BY_RESTORE_COMPARATOR_FALSE_POSITIVE",
+          "wifi_if_24G": {
+            "accepted_tokens": [
+              "psk-mixed+ccmp",
+              "sae-mixed",
+              "sae",
+              "psk2+ccmp",
+              "psk+ccmp",
+              "psk2+tkip+ccmp",
+              "psk+tkip+ccmp",
+              "psk-mixed+tkip+ccmp",
+              "psk2+tkip",
+              "psk+tkip",
+              "psk-mixed+tkip",
+              "wep-mixed",
+              "none"
+            ],
+            "key_behavior": {
+              "none": "encryption token persisted as none; synthetic key was not retained",
+              "all_other_tokens": "synthetic test key persisted exactly"
+            }
+          },
+          "wifi_if_5G": {
+            "accepted_tokens_before_resume_point": [
+              "psk-mixed+ccmp",
+              "sae-mixed",
+              "sae",
+              "psk2+ccmp",
+              "psk+ccmp",
+              "psk2+tkip+ccmp"
+            ],
+            "next_unclassified_token": "psk+tkip+ccmp"
+          },
+          "password_modified": {
+            "observed_completed_cases": "0 -> 0 -> 0 for every completed write/restore case",
+            "scope": "partial matrix only; do not infer universal semantics yet"
+          },
+          "restore_finding": {
+            "section": "wifi_if_5G",
+            "configured_channel": "restored independently from runtime operating channel",
+            "only_mismatching_field": "cur_channel",
+            "conclusion": "cur_channel is runtime state and must not be required to equal its pre-write value after configured auto-channel restore",
+            "sdk_bug": "the first explorer version passed/restored the complete getter block and therefore falsely required cur_channel equality"
+          }
         }
       ],
       "live_note": null,
@@ -6852,7 +6902,9 @@
         "power_level raw values 0, 1 and 2 are live round-trippable on ACIY.3, but their human meaning and whether the enum is exhaustive remain unresolved.",
         "Synthetic SSID writes were verified for 24G, 5G, DUAL and Guest; no live SSID values are published.",
         "The shipped WebUI defines 13 exact encryption display/raw tokens. Treat these as frontend-proven tokens until physical write acceptance is established per token/section.",
-        "The shipped frontend separately provides exact setter evidence for encryption='sae-mixed' on wifi_if_24G, wifi_if_5G and wifi_if_DUAL when changing the Wi-Fi key."
+        "The shipped frontend separately provides exact setter evidence for encryption='sae-mixed' on wifi_if_24G, wifi_if_5G and wifi_if_DUAL when changing the Wi-Fi key.",
+        "2026-08-31 partial physical security matrix: all 13 source-known encryption tokens round-tripped on wifi_if_24G; none persisted as open mode while ignoring the synthetic key. The first six tokens also round-tripped on wifi_if_5G before the initial explorer aborted on a restore-comparison bug.",
+        "A physical restore after 5-GHz security reconfiguration matched every configurable field while cur_channel alone differed. Treat cur_channel as runtime operating-channel state, not restorable configured state; configured channel remains the setter/read-back contract."
       ]
     },
     {
@@ -7388,6 +7440,56 @@
           "setter_evidence": {
             "sae-mixed": "shipped frontend explicitly constructs wifi_if_5G, wifi_if_24G and wifi_if_DUAL writes with encryption='sae-mixed' when updating the key"
           }
+        },
+        {
+          "id": "wifi.security_matrix.partial_2026_08_31.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_2026_08_31",
+          "firmware": "V1.00(ACIY.3)C0",
+          "management_url": "http://zyxel.home",
+          "status": "PARTIAL_MATRIX_INTERRUPTED_BY_RESTORE_COMPARATOR_FALSE_POSITIVE",
+          "wifi_if_24G": {
+            "accepted_tokens": [
+              "psk-mixed+ccmp",
+              "sae-mixed",
+              "sae",
+              "psk2+ccmp",
+              "psk+ccmp",
+              "psk2+tkip+ccmp",
+              "psk+tkip+ccmp",
+              "psk-mixed+tkip+ccmp",
+              "psk2+tkip",
+              "psk+tkip",
+              "psk-mixed+tkip",
+              "wep-mixed",
+              "none"
+            ],
+            "key_behavior": {
+              "none": "encryption token persisted as none; synthetic key was not retained",
+              "all_other_tokens": "synthetic test key persisted exactly"
+            }
+          },
+          "wifi_if_5G": {
+            "accepted_tokens_before_resume_point": [
+              "psk-mixed+ccmp",
+              "sae-mixed",
+              "sae",
+              "psk2+ccmp",
+              "psk+ccmp",
+              "psk2+tkip+ccmp"
+            ],
+            "next_unclassified_token": "psk+tkip+ccmp"
+          },
+          "password_modified": {
+            "observed_completed_cases": "0 -> 0 -> 0 for every completed write/restore case",
+            "scope": "partial matrix only; do not infer universal semantics yet"
+          },
+          "restore_finding": {
+            "section": "wifi_if_5G",
+            "configured_channel": "restored independently from runtime operating channel",
+            "only_mismatching_field": "cur_channel",
+            "conclusion": "cur_channel is runtime state and must not be required to equal its pre-write value after configured auto-channel restore",
+            "sdk_bug": "the first explorer version passed/restored the complete getter block and therefore falsely required cur_channel equality"
+          }
         }
       ],
       "live_note": "Timed-off same-state and main DUAL AP same-state both returned result=0. Calls took ~15.8 s / ~13.9 s and required recovery handling.",
@@ -7409,7 +7511,9 @@
         "power_level raw values 0, 1 and 2 are live round-trippable on ACIY.3, but their human meaning and whether the enum is exhaustive remain unresolved.",
         "Synthetic SSID writes were verified for 24G, 5G, DUAL and Guest; no live SSID values are published.",
         "The shipped WebUI defines 13 exact encryption display/raw tokens. Treat these as frontend-proven tokens until physical write acceptance is established per token/section.",
-        "The shipped frontend separately provides exact setter evidence for encryption='sae-mixed' on wifi_if_24G, wifi_if_5G and wifi_if_DUAL when changing the Wi-Fi key."
+        "The shipped frontend separately provides exact setter evidence for encryption='sae-mixed' on wifi_if_24G, wifi_if_5G and wifi_if_DUAL when changing the Wi-Fi key.",
+        "2026-08-31 partial physical security matrix: all 13 source-known encryption tokens round-tripped on wifi_if_24G; none persisted as open mode while ignoring the synthetic key. The first six tokens also round-tripped on wifi_if_5G before the initial explorer aborted on a restore-comparison bug.",
+        "A physical restore after 5-GHz security reconfiguration matched every configurable field while cur_channel alone differed. Treat cur_channel as runtime operating-channel state, not restorable configured state; configured channel remains the setter/read-back contract."
       ]
     },
     {

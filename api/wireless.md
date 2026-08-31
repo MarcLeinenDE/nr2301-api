@@ -621,3 +621,19 @@ wifi_scan:                normal-admin authenticated call succeeded
 `power_level` values `0`, `1` and `2` are therefore proven round-trippable raw values on ACIY.3. Their human meaning and whether additional values exist remain unresolved; do not label them as percentages or regulatory classes without separate evidence.
 
 For DFS-class channel tests the configured `channel` read-back was the contract being verified. DFS/CAC timing and the eventual `cur_channel` were deliberately not treated as the same property.
+
+## Partial physical encryption/key matrix — 2026-08-31
+
+The first sanitized security-matrix run completed all 13 source-known encryption tokens on `wifi_if_24G` and the first six tokens on `wifi_if_5G` before the research runner stopped on a **restore-comparator false positive**.
+
+Completed live results:
+
+- `wifi_if_24G`: all 13 tokens were accepted and read back exactly;
+- for `none`, the open-mode token persisted while the synthetic key was not retained;
+- for the other 12 2.4-GHz tokens, the synthetic test key round-tripped exactly;
+- `wifi_if_5G`: `psk-mixed+ccmp`, `sae-mixed`, `sae`, `psk2+ccmp`, `psk+ccmp` and `psk2+tkip+ccmp` were accepted with the synthetic key;
+- `password_modified` remained `0 -> 0 -> 0` for every completed case in this partial run.
+
+The interruption itself produced a separate contract finding. After restoring the 5-GHz configuration, every configurable field matched the original block and only `cur_channel` differed. `cur_channel` is therefore treated as **runtime operating-channel state**, not as a restorable configuration value. The configured `channel` field is the write/read-back contract; with `channel=0` (auto), a later `cur_channel` may legitimately differ after radio reconfiguration.
+
+The remaining security matrix resumes at `wifi_if_5G / psk+tkip+ccmp`; the interrupted case is not classified from the failed runner because its result row had not yet been committed to the sanitized report.

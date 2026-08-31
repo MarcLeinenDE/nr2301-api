@@ -994,6 +994,19 @@
       },
       "setter_scope_note": "Do not infer universal write acceptance from the display mapping. Physical testing must establish accepted/coerced/rejected behavior by section.",
       "explicit_setter_evidence": "sae-mixed appears in exact shipped-frontend wifi_set_ap_config writes for 24G, 5G and DUAL key updates."
+    },
+    "wireless/wifi_get_ap_config.wifi_if_5G.cur_channel": {
+      "meaning": "current runtime operating channel",
+      "evidence": "LIVE_SDK_RECONFIGURATION_2026_08_31",
+      "configuration_field": "wifi_if_5G.channel",
+      "restore_semantics": "Do not require cur_channel to return to its pre-write value after restoring configured channel, especially when configured channel is 0/auto.",
+      "note": "The security-matrix restore returned all configurable fields to their original values while cur_channel alone differed."
+    },
+    "wireless/wifi_get_ap_config.wifi_if_24G.cur_channel": {
+      "meaning": "current runtime operating channel",
+      "evidence": "FIELD_ROLE_CONFIRMED_BY_5G_LIVE_BEHAVIOR_AND_SHARED_GETTER_SCHEMA",
+      "configuration_field": "wifi_if_24G.channel",
+      "restore_semantics": "Treat as runtime observation rather than setter target."
     }
   }
 }
