@@ -54,6 +54,9 @@ Write `router/router_set_timed_reboot` with:
 
 The numeric example above is illustrative; compute the bitmask for the intended schedule and read the setting back after writing.
 
+> [!NOTE]
+> A targeted public-SDK lifecycle on tested firmware `V1.00(ACIY.3)C0` on 2026-09-08 first observed the raw getter value `time="0:0"`, proving that `router_get_timed_reboot.time` is not guaranteed to be zero-padded `HH:MM`. After the client was corrected to compare parsed hour/minute semantics, a disabled probe schedule (`enable=0`) was written, read back successfully, and the original `enable`/`time`/`repeat` state was restored and verified. The SDK used canonical zero-padded times for setter writes. Clients should preserve the raw getter value but compare parsed hour/minute semantics when deciding whether a schedule matches or has been restored.
+
 ## Configuration backup
 
 `router/router_backup_config` is a legacy action returning an internal backup path. The current stock UI downloads configuration through the separate `/file.cgi` family.
