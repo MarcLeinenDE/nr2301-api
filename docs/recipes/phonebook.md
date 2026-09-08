@@ -48,7 +48,19 @@ The response returns `contactcount` and `contactlist`. Known item fields include
 
 ## List contacts by group
 
-Use `phonebook/getcontactbygroup` with the frontend-shaped `getcontactbygroup` request object.
+POST `phonebook/getcontactbygroup` with the physically confirmed ACIY.3 normal-admin payload:
+
+```json
+{
+  "getcontactbygroup": {
+    "group": "0",
+    "pagecap": "50",
+    "pageindex": "0"
+  }
+}
+```
+
+`group`, `pagecap` and `pageindex` are strings on the confirmed wire shape. The response returns integer `result`, integer `contactcount` and list `contactlist`. The 2026-09-08 probe selected a group that returned zero contacts, so the request/outer-response contract is live-confirmed without publishing contact names or phone numbers.
 
 ## Add/update/delete a contact
 
@@ -56,7 +68,7 @@ Use `phonebook/getcontactbygroup` with the frontend-shaped `getcontactbygroup` r
 - update: `phonebook/update_pb` with an `update_pb` object
 - delete: `phonebook/delete_pb` with a `delete_pb` object
 
-These methods are live verified, but the nested contact request structures are not yet fully normalized in the public method pages. Preserve the actual frontend/current object shape rather than inventing field names.
+These methods are live verified, but the nested contact write structures are not yet fully normalized in the public method pages. Preserve the actual frontend/current object shape rather than inventing field names.
 
 After every change, query the relevant storage/group view and verify the record.
 
