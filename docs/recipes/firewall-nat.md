@@ -77,6 +77,28 @@ The `ww_*` methods expose the lower-level filter list controls:
 
 Temporary IP/port rules were live-added, read back and removed. Use documentation/test addresses for development and require exact list read-back before claiming success.
 
+A 2026-09-08 ACIY.3 normal-admin read probe also confirmed the minimal empty-list request bodies for the two list getters. Direct POST dispatch was accepted with:
+
+```json
+{
+  "ww_ip_filter": {
+    "list": []
+  }
+}
+```
+
+and:
+
+```json
+{
+  "ww_port_filter": {
+    "list": []
+  }
+}
+```
+
+Both responses returned a `firewall` object whose `list` field was a JSON list and whose `setting_response` field was a string. The tested router had no configured entries at that moment, so both returned list counts were zero. This proves that an empty list is a valid read request body; it does not define the schema of non-empty rule entries.
+
 ## UPnP
 
 - read: `firewall/ww_upnp_open_close_state`
