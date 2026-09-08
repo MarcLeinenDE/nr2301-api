@@ -75,6 +75,10 @@ Read `router/get_ui_language`, then POST `router/set_ui_language` with:
 
 Use lowercase router transport codes from the documented semantics. Uppercase abbreviations used for display are not necessarily API values.
 
+On tested firmware `V1.00(ACIY.3)C0` on 2026-09-08, `router/get_device_info.lang_list` advertised the runtime list `en,dk,fr,fi,pt,it,se,de` while the current language was `en`. A targeted public-SDK reversible test changed `en → de`, required exact `router/get_ui_language` read-back, then restored `de → en` in `finally` and passed `1/1` in 1.33 s.
+
+Clients should treat `lang_list` as the target router's runtime capability list rather than assuming the observed ACIY.3 list is universal. Validate a requested lowercase transport code against the current `lang_list`, avoid same-state writes, and verify the getter after changing it.
+
 ## Auto-sleep / power timeout
 
 - read: `aoc/sleep_wait_time`
