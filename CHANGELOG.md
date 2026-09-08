@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- recorded the 2026-09-08 timed-reboot public-SDK lifecycle on ACIY.3: `router_get_timed_reboot` first returned raw `time="0:0"` (so getter padding is not fixed `HH:MM`), then a disabled probe schedule was written/read back and the original `enable`/`time`/`repeat` state was restored successfully; clients should compare parsed hour/minute semantics while preserving the raw getter representation
 - live-profiled `sms.save` existing-ID behavior on ACIY.3: despite the shipped frontend sending the current Draft ID and the router returning `resp=0/smsSaveSucc=1/smsSaveFail=0`, the original Draft remained unchanged and exactly one new Draft ID carried the replacement body (`COPY_ON_SAVE`); Draft list/get-by-ID also returned bare addresses and UTF-16BE-hex bodies
 - completed a public-SDK real SMS exchange: send returned `resp=0/smsSendSucc=1/smsSendFail=0` and was physically received; the handset reply appeared as a new Inbox item and `sms.get_by_id` returned the complete documented field set; Inbox/Outbox bodies were observed as UTF-16BE hex, with all phone numbers and message contents excluded from repository evidence
 - normalized the exact `sms/sms.save` new/update-draft request and live success triple, including draft `type=2`, GSM7 boolean wire behavior and stock stringification of id/type/protocol; normalized `sms/sms.get_by_id` as exact `{sms:{id}}` POST and retained its unread-read side-effect warning
