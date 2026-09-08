@@ -142,7 +142,19 @@ Known/observed response fields: `result`.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `getcontactbygroup`.
+The 2026-09-08 ACIY.3 normal-admin probe confirmed the exact minimal request object used for paged group reads:
+
+```json
+{
+  "getcontactbygroup": {
+    "group": "0",
+    "pagecap": "1",
+    "pageindex": "0"
+  }
+}
+```
+
+`group`, `pagecap` and `pageindex` are serialized as strings on the wire in the confirmed request shape.
 
 ### Response
 
@@ -155,6 +167,12 @@ Known top-level request keys from the shipped frontend: `getcontactbygroup`.
   "result": "integer"
 }
 ```
+
+### Notes
+
+- 2026-09-08 ACIY.3 normal-admin probe: the exact nested `group`/`pagecap`/`pageindex` string payload was accepted; response was a JSON object with integer `result`, integer `contactcount` and list `contactlist`.
+- The tested selected group returned zero contacts. This confirms transport/request/outer-response structure but does not add new evidence about non-empty contact item fields.
+- Contact names/numbers were not printed or committed during the probe.
 
 <a id="getcontactbylocation"></a>
 
@@ -293,4 +311,3 @@ Known top-level request keys from the shipped frontend: `update_pb`.
 ### Response
 
 No stable response schema is currently documented.
-
