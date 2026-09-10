@@ -105,3 +105,14 @@ A dedicated cleanup verified that the complete local index set was exactly those
 The final field-specific profiler then created indexes `14` through `19` one at a time, deleted each after its probe, ended with an index set exactly equal to the initial empty set, and removed both synthetic groups. Final output included `FINAL_INDEX_SET_MATCH = True` and `FINAL_SYNTHETIC_GROUP_PRESENT = False`.
 
 The corrected research rule is therefore: track synthetic contacts by index delta from the pre-run set and require exact final index-set/cardinality restoration before reporting PASS.
+
+## Public SDK lifecycle validation
+
+The normalized contracts were then exercised through the public `nr2301-python` high-level Phonebook helpers on 2026-09-10 using Python 3.13.5.
+
+The hard-gated integration suite `tests/integration/test_phonebook_writes.py` passed **2/2 tests in 4.32 s**:
+
+- the high-level group/contact lifecycle created and renamed synthetic groups, created one synthetic local contact, physically confirmed the SDK `update_contact()` path for the proven mutable `mobile` and `group` fields, moved the contact through `move_contact_to_group()`, deleted all test-owned rows/groups, and restored the exact initial local-contact index set;
+- the SIM-to-local action exercised `copy_all_from_sim_to_local()`, modified no SIM storage, treated only newly created local indexes as test-owned, removed those local rows and restored the exact initial local-contact index set.
+
+No real contact names, phone numbers or SIM-contact contents were printed or committed. This closes the normal-admin public-SDK lifecycle evidence for the currently normalized single-contact/group contracts.
