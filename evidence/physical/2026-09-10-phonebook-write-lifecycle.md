@@ -32,53 +32,54 @@ Two synthetic groups were created, one was renamed, and both were later deleted.
 
 A dedicated cleanup run subsequently started from exactly five local contacts with indexes `3,4,5,6,7`, deleted each index individually with `result = 0`, verified each index absent after deletion, and ended with zero local contacts. This restored the known pre-profiler baseline exactly.
 
-## `update_pb` field-specific behavior
+## `addnew_pb` create-time read-back behavior
 
-A hardened lifecycle run tested four candidate request shapes with isolated synthetic contacts.
+The final field-specific profiler started from zero local contacts and created one isolated synthetic contact per field probe. All requested values were synthetic.
 
-### Nested full strings
+On ACIY.3, the immediate local-contact read-back behaved as follows:
 
-- response: `result = 0`
-- same contact index remained present
-- target `name`: not observed
-- target `mobile`: observed
-- target `email`: not observed
-- group matched, but group was intentionally unchanged in this probe
-- no copy-on-update row observed
+- `mobile`: exact requested string round-tripped.
+- `group`: exact requested group round-tripped as an integer.
+- `home`: requested non-empty value did not round-trip; read-back was `None`.
+- `office`: requested non-empty value did not round-trip; read-back was `None`.
+- `name`: returned a non-empty string, but it was not byte-for-byte/equality-identical to the plain synthetic input used by the profiler.
+- `email`: returned a non-empty string, but it was not byte-for-byte/equality-identical to the plain synthetic input used by the profiler.
 
-### Nested full with integer location/index/group
+The exact create-time transformation/representation of `name` and `email` is not established by this run and must not be guessed. The result is sufficient to distinguish create/read representation effects from later `update_pb` effects.
 
-Same observed behavior as nested full strings: `result = 0`, target mobile observed, target name/email not observed, no copy row.
+## `update_pb` request shape and field-specific behavior
 
-### Nested minimal strings
+A hardened lifecycle run first tested several candidate request shapes. The nested `update_pb` object was accepted; a flat payload returned `result = -5`.
 
-Same observed behavior: `result = 0`, target mobile observed, target name/email not observed, no copy row.
+Confirmed nested shape:
 
-### Flat request fields
+```json
+{
+  "update_pb": {
+    "location": "0",
+    "index": "<contact-index>",
+    "name": "<name>",
+    "mobile": "<mobile>",
+    "home": "<home>",
+    "office": "<office>",
+    "email": "<email>",
+    "group": "<group-index>"
+  }
+}
+```
 
-- response: `result = -5`
-- target name/mobile/email not observed
+The final observed-baseline profiler changed one field at a time. Every probe returned `result = 0`, retained the same contact index, created no copy row, and kept every non-target field stable relative to the actual create-time read-back.
 
-The nested `update_pb` object is therefore required; a flat payload is rejected on the tested firmware.
+Final per-field result on ACIY.3:
 
-Important: `result = 0` must not be treated as proof that all supplied `update_pb` fields were applied. Field-level read-back is required.
+- `name`: target not reached; observed value stayed equal to its create-time baseline. **No visible update effect.**
+- `mobile`: target reached and differed from baseline. **Update physically effective.**
+- `home`: target not reached; observed value stayed at its create-time `None` baseline. **No visible update effect.**
+- `office`: target not reached; observed value stayed at its create-time `None` baseline. **No visible update effect.**
+- `email`: target not reached; observed value stayed equal to its create-time baseline. **No visible update effect.**
+- `group`: target reached and differed from baseline. **Update physically effective.**
 
-## Dedicated field-specific `update_pb` run
-
-A later field-specific profiler started from zero local contacts and created one isolated synthetic contact per field probe. Each probe used a nested `update_pb` object and cleaned its newly-created index afterwards. The final local index set matched the initial empty baseline, and both synthetic groups were removed.
-
-Observed per-field results:
-
-- `name`: `result = 0`, same index remained, requested target name was not observed.
-- `mobile`: `result = 0`, same index remained, requested target mobile was observed.
-- `home`: `result = 0`, same index remained, requested target home was not observed; observed home was empty after the update.
-- `office`: `result = 0`, same index remained, requested target office was not observed; observed office was empty after the update.
-- `email`: `result = 0`, same index remained, requested target email was not observed.
-- `group`: `result = 0`, same index remained, requested target group was observed.
-
-The first version of this field profiler reported `BASELINE_EXACT = False` for every probe. That means at least one field already differed from the requested create payload before each update. Therefore the first field-specific run is sufficient to confirm that target `mobile` and target `group` were reached, and that target name/home/office/email were not reached, but it is not sufficient to prove whether the latter fields were unchanged, cleared, or normalized relative to their actual create-time values.
-
-A follow-up profiler revision now records per-field create-baseline match/empty/type flags and evaluates each update relative to the observed create baseline rather than the requested create payload.
+Therefore `result = 0` must not be treated as proof that all supplied contact fields were applied. On tested firmware, only `mobile` and `group` are physically confirmed mutable through this endpoint. The other accepted fields remain part of the wire contract but have no visible update effect in this firmware state.
 
 ## Confirmed `move_contacts_to_group`
 
@@ -95,10 +96,12 @@ Observed response: `result = 0`.
 
 This confirms, for a single local contact on ACIY.3, that both `newgroup` and `contacts` may be scalar strings. The multi-contact representation is not yet established by this run.
 
-## Profiler cleanup finding
+## Profiler cleanup finding and recovery
 
-The second lifecycle profiler run exposed a profiler defect: final local contact count was five while the initial count was zero, but the profiler still printed `PASS` because the old cleanup relied on synthetic name prefixes and only treated prefix presence as fatal. The five new indexes reported during the run were `3,4,5,6,7`.
+An intermediate lifecycle profiler exposed a harness defect: final local contact count was five while the initial count was zero, but the old profiler still printed `PASS` because cleanup relied on synthetic name prefixes. The five new indexes were `3,4,5,6,7`.
 
-A dedicated cleanup immediately afterwards verified that the complete current local index set was exactly those five indexes, then deleted them one-by-one with read-back. Final local contact count was zero and the final index set was empty.
+A dedicated cleanup verified that the complete local index set was exactly those five indexes, deleted every index individually with `result = 0`, verified each absent, and restored the known baseline of zero local contacts.
 
-This is test-harness evidence, not an API semantic conclusion. Follow-up tooling must track new indexes relative to the pre-run index set and must require final cardinality/index-set restoration before reporting PASS.
+The final field-specific profiler then created indexes `14` through `19` one at a time, deleted each after its probe, ended with an index set exactly equal to the initial empty set, and removed both synthetic groups. Final output included `FINAL_INDEX_SET_MATCH = True` and `FINAL_SYNTHETIC_GROUP_PRESENT = False`.
+
+The corrected research rule is therefore: track synthetic contacts by index delta from the pre-run set and require exact final index-set/cardinality restoration before reporting PASS.
