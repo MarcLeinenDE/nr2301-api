@@ -60,21 +60,23 @@ Observed `result = 0`; read-back through `query_group` confirmed creation.
 
 HTTP method: `POST`
 
-Physically confirmed nested local-contact shape; numeric values are strings on this write path:
+Physically confirmed nested local-contact shape; numeric values are strings on this write path. The shipped WebUI encodes `name` and `email` with `UniEncode()` before transport. `UniEncode()` writes each JavaScript UTF-16 code unit as four lowercase hexadecimal characters.
 
 ```json
 {
   "addnew_pb": {
     "location": "0",
-    "name": "Example",
+    "name": "004500780061006d0070006c0065",
     "mobile": "0123456789",
     "home": "",
     "office": "",
-    "email": "example@example.invalid",
+    "email": "006500780061006d0070006c00650040006500780061006d0070006c0065002e0069006e00760061006c00690064",
     "group": "0"
   }
 }
 ```
+
+The example `name` decodes to `Example`; the example `email` decodes to `example@example.invalid`.
 
 ### Response
 
@@ -82,9 +84,11 @@ Observed `result = 0`; the new local contact index was visible through `getconta
 
 ### Notes
 
-- ACIY.3 create-time read-back physically round-tripped `mobile` and `group` exactly.
-- Non-empty `home` and `office` test values read back as `None`.
-- Synthetic `name` and `email` read back as non-empty strings but not equality-identical to the plain synthetic inputs used by the profiler. Their exact transformation is not yet normalized; preserve raw read-back values.
+- ACIY.3 physically round-tripped correctly `UniEncode()`-encoded `name`; decoding the raw read-back reproduced the original human-readable value exactly.
+- `mobile` round-tripped exactly and `group` round-tripped as an integer.
+- Correctly encoded synthetic `email` still read back as the literal string `"-"` on the observed local-contact read path.
+- Non-empty `home` and `office` values read back as `None`.
+- The earlier plaintext `name`/`email` probes are superseded: plaintext does not represent the shipped WebUI application-level contract for those fields.
 
 <a id="copyallfromsimtolocal"></a>
 
@@ -171,7 +175,7 @@ Known/observed response field: `result`. Multiple synthetic single-contact delet
 
 ### Notes
 
-The multi-index `indexarray` representation is not established by the current physical run; the exact evidence above is for one contact per request.
+Related backend source parses `indexarray` as a comma-separated string and parses `count` separately. This strongly supports the multi-contact shape but the NR2301 multi-index physical confirmation is tracked separately before a plural SDK helper is frozen.
 
 <a id="getcontactbygroup"></a>
 
@@ -248,7 +252,9 @@ Known top-level fields: `contactcount`, `contactlist`, `result`.
 ### Notes
 
 - Initial live result=0, contactcount=0, contactlist empty.
-- Later synthetic local-contact runs confirmed item fields including `index`, `location`, `group`, `name`, `mobile`; `home`, `office` and `email` may also be present/represented by firmware and must be preserved raw.
+- Synthetic local-contact runs confirmed item fields including `index`, `location`, `group`, `name`, `mobile`, `home`, `office` and `email` behavior.
+- Raw local `name` is the WebUI `UniEncode()` representation and is decoded by the WebUI with `UniDecode()`.
+- In the tested ACIY.3 state, local `email` read back as `"-"`, while `home` and `office` read back as `None` even when non-empty values were submitted.
 - Anonymous live response: HTTP 200 `{'system_err':'session no exist'}`.
 
 <a id="move-contacts-to-group"></a>
@@ -362,34 +368,36 @@ Observed `result = 0`; renamed synthetic group was confirmed through `query_grou
 
 HTTP method: `POST`
 
-Physically confirmed accepted nested shape:
+Physically confirmed accepted nested shape. As with create, `name` and `email` must use the shipped WebUI `UniEncode()` representation:
 
 ```json
 {
   "update_pb": {
     "location": "0",
-    "index": "14",
-    "name": "Example",
+    "index": "41",
+    "name": "00c400d600dc00df00e920ac0032",
     "mobile": "0123456789",
     "home": "",
     "office": "",
-    "email": "example@example.invalid",
+    "email": "006500780061006d0070006c00650040006500780061006d0070006c0065002e0069006e00760061006c00690064",
     "group": "0"
   }
 }
 ```
 
-A flat object without the `update_pb` wrapper returned `result = -5` on ACIY.3.
+The example `name` decodes to `ÄÖÜßé€2`. A flat object without the `update_pb` wrapper returned `result = -5` on ACIY.3.
 
 ### Response and firmware semantics
 
-Nested probes returned `result = 0`, retained the same contact index and created no copy row. Field-specific read-back relative to each contact's actual create-time baseline established:
+The corrected codec test returned `result = 0`, retained the same contact index, and created no copy row.
 
-- `mobile`: target applied — physically effective.
-- `group`: target applied — physically effective.
-- `name`: no visible change.
-- `home`: no visible change; baseline/read-back was `None` in the tested create path.
-- `office`: no visible change; baseline/read-back was `None` in the tested create path.
-- `email`: no visible change.
+Physically confirmed on ACIY.3:
 
-Every non-target field remained stable in the isolated field probes. Therefore `result = 0` does not mean that every supplied field was applied. SDKs should preserve the complete evidenced wire object but document these tested-firmware semantics and use read-back when an exact mutation matters.
+- `name`: **physically effective when `UniEncode()`-encoded**, including Unicode; raw read-back exactly matched `00c400d600dc00df00e920ac0032`, and `UniDecode()` reproduced `ÄÖÜßé€2`.
+- `mobile`: **physically effective** as plain string.
+- `group`: **physically effective** from the earlier isolated group-field test.
+- `email`: correctly encoded input was accepted, but observed local read-back stayed `"-"`, unchanged from create baseline.
+- `home`: non-empty input was accepted, but observed local read-back stayed `None`, unchanged from create baseline.
+- `office`: non-empty input was accepted, but observed local read-back stayed `None`, unchanged from create baseline.
+
+Therefore the earlier conclusion that `name` had no visible update effect is superseded; that result came from testing the field with the wrong plaintext wire representation. `result = 0` still must not be treated as proof of visible persistence for `email`, `home` or `office` on the tested firmware/read path.
