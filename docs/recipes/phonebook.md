@@ -59,7 +59,9 @@ POST `phonebook/getcontactbylocation`:
 }
 ```
 
-The response returns `contactcount` and `contactlist`. Preserve contact item fields raw because firmware representation can differ by field.
+The response returns `contactcount` and `contactlist`.
+
+For local contacts, raw `name` is the WebUI `UniEncode()` representation. The shipped WebUI applies `UniDecode()` before display. On the tested ACIY.3 read path, `email` was observed as `"-"` and `home`/`office` as `None` even when values had been submitted.
 
 ## List contacts by group
 
@@ -77,6 +79,19 @@ POST `phonebook/getcontactbygroup`:
 
 `group`, `pagecap` and `pageindex` are strings on the physically confirmed wire shape.
 
+## Contact text codec
+
+Before add/update, the shipped WebUI runs `UniEncode()` on contact `name` and `email`. Each JavaScript UTF-16 code unit becomes four lowercase hexadecimal characters. `mobile`, `home` and `office` remain plain strings.
+
+Examples:
+
+```text
+Example   -> 004500780061006d0070006c0065
+ÄÖÜßé€2   -> 00c400d600dc00df00e920ac0032
+```
+
+On read, use the inverse four-hex-character `UniDecode()` operation for encoded contact names. Do not apply this codec to phone-number fields.
+
 ## Add a local contact
 
 POST `phonebook/addnew_pb` with a nested object:
@@ -85,17 +100,17 @@ POST `phonebook/addnew_pb` with a nested object:
 {
   "addnew_pb": {
     "location": "0",
-    "name": "Example",
+    "name": "004500780061006d0070006c0065",
     "mobile": "0123456789",
     "home": "",
     "office": "",
-    "email": "example@example.invalid",
+    "email": "006500780061006d0070006c00650040006500780061006d0070006c0065002e0069006e00760061006c00690064",
     "group": "0"
   }
 }
 ```
 
-On ACIY.3 this returned `result = 0` and produced a new local-contact index. Create-time read-back exactly preserved `mobile` and `group`; non-empty synthetic `home`/`office` inputs read back as `None`, while synthetic `name`/`email` returned non-empty strings that were not equality-identical to the plain inputs used by the profiler. Do not guess a normalization for those fields; preserve raw values.
+On ACIY.3 this returned `result = 0` and produced a new local-contact index. A correctly encoded synthetic name round-tripped exactly and decoded to the submitted human-readable name. `mobile` also round-tripped exactly. Correctly encoded email still read back as `"-"`; non-empty `home`/`office` inputs read back as `None`.
 
 ## Update a local contact
 
@@ -105,12 +120,12 @@ POST `phonebook/update_pb` with the same nested contact fields plus `index`:
 {
   "update_pb": {
     "location": "0",
-    "index": "14",
-    "name": "Example",
+    "index": "41",
+    "name": "00c400d600dc00df00e920ac0032",
     "mobile": "0123456789",
     "home": "",
     "office": "",
-    "email": "example@example.invalid",
+    "email": "006500780061006d0070006c00650040006500780061006d0070006c0065002e0069006e00760061006c00690064",
     "group": "0"
   }
 }
@@ -118,11 +133,19 @@ POST `phonebook/update_pb` with the same nested contact fields plus `index`:
 
 The nested wrapper is required on tested firmware; the flat candidate returned `result = -5`.
 
-ACIY.3 field-isolated read-back established that `mobile` and `group` are physically mutable. `name`, `home`, `office` and `email` remained at their actual create-time baselines even though the endpoint returned `result = 0`. Treat `result = 0` as endpoint acceptance, not proof that every supplied field changed.
+Corrected physical testing established:
+
+- `name` is physically mutable when `UniEncode()`-encoded, including Unicode;
+- `mobile` is physically mutable;
+- `group` is physically mutable;
+- `email` remained `"-"` on the observed read path;
+- `home` and `office` remained `None` on the observed read path.
+
+The earlier plaintext-name update result is superseded because plaintext does not match the WebUI wire contract. Treat `result = 0` as endpoint acceptance, not proof that every supplied field became visible in read-back.
 
 ## Delete one local contact
 
-The currently physical-confirmed delete contract is one contact per request:
+The physically confirmed single-contact delete is:
 
 ```json
 {
@@ -134,7 +157,7 @@ The currently physical-confirmed delete contract is one contact per request:
 }
 ```
 
-POST to `phonebook/delete_pb`, then verify the index is absent. Multi-index serialization remains a separate evidence task.
+Related backend code parses `indexarray` by splitting on commas, so a comma-separated multi-index form is strongly supported statically. Physical NR2301 multi-delete confirmation remains a separate evidence step before a plural SDK helper is frozen.
 
 ## Move one contact to a group
 
@@ -147,7 +170,7 @@ The physically confirmed single-contact request is:
 }
 ```
 
-POST to `phonebook/move_contacts_to_group`. Both values are scalar strings. Verify with both the target-group view and the contact's local `group` field. Multi-contact representation remains to be established.
+POST to `phonebook/move_contacts_to_group`. Both values are scalar strings. Verify with both the target-group view and the contact's local `group` field. Multi-contact representation remains to be established physically.
 
 ## Copy SIM contacts to local storage
 
@@ -157,7 +180,7 @@ The response can report `sim_count`, `count`, `duplicate`, `failed` and `invalid
 
 ## Test/restore discipline
 
-For synthetic write testing, snapshot the initial local-contact index set. Treat every new index as test-owned and delete it during cleanup. A run is restored only when the final index set and cardinality exactly match the initial baseline; name-prefix matching alone is not sufficient because write behavior can alter contact text representation.
+For synthetic write testing, snapshot the initial local-contact index set. Treat every new index as test-owned and delete it during cleanup. A run is restored only when the final index set and cardinality exactly match the initial baseline.
 
 ## Privacy
 
