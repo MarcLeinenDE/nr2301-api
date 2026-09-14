@@ -2,83 +2,152 @@
 
 Detailed reference: [`firewall`](../../api/firewall.md).
 
-Firewall changes can expose management services or internal clients to the WAN. Read the current state first and restore it if testing fails.
+Firewall changes can expose management services or internal clients to the WAN. Read current state first, make the smallest evidenced change, read back, and restore.
 
-Physical campaign evidence: [`2026-09-14-firewall-nat-campaign.md`](../../evidence/physical/2026-09-14-firewall-nat-campaign.md).
+Physical evidence:
+
+- [`2026-09-14-firewall-nat-campaign.md`](../../evidence/physical/2026-09-14-firewall-nat-campaign.md)
+- [`2026-09-14-webui-source-crawl.md`](../../evidence/physical/2026-09-14-webui-source-crawl.md)
+- [`2026-09-14-firewall-webui-live-verification.md`](../../evidence/physical/2026-09-14-firewall-webui-live-verification.md)
+
+Machine-readable live-contract overlay:
+
+- [`specification/firewall-live-contracts-2026-09-14.json`](../../specification/firewall-live-contracts-2026-09-14.json)
+
+## WebUI transport rule
+
+The shipped common `ajaxHandler` defaults to `toStringData=true` and stringifies numeric values during JSON serialization. Only calls that explicitly pass `toStringData:false` retain native JSON numbers.
+
+This distinction is part of the wire contract. In particular, IP-/port-filter indices and the port-filter disable value are strings on the wire even where the page source initially constructs numeric literals.
 
 ## Remote administration from WAN
 
 Read `firewall/get_admin_from_wan`.
 
-The shipped frontend identifies `firewall/set_admin_from_wan` and the `admin_from_wan` field, but the exact write value/schema is currently unresolved on ACIY.3. Physical same-state candidates using both string `"0"`/`"1"` and native integer `0`/`1` returned `setting_response='ERROR'`.
+Live-verified write shape:
 
-Do not invent additional value encodings. Resolve this contract from retained evidence or a targeted capture of the real NR2301 WebUI action.
+```json
+{"admin_from_wan":{"admin_from_wan_enable":"1"}}
+```
+
+Use string `"1"` for enabled and `"0"` for disabled. A 2026-09-14 physical verifier confirmed same-state write, mutation, getter read-back, restore write and final getter restore. The earlier flat candidates were rejected because they omitted the `admin_from_wan` wrapper.
+
+The setter returns `firewall.setting_response="OK"` on the verified path.
+
+The stock WebUI additionally schedules `router/restart_web_server` after 600 ms when this value changes. That extra action was not required to verify the setter contract itself and was deliberately not invoked by the focused verifier.
 
 > [!WARNING]
-> Enabling WAN administration increases attack surface. Do not enable it merely for API testing.
+> Enabling WAN administration increases attack surface. Test only on the dedicated lab router and restore the original state.
 
 ## Respond to WAN ping
 
 Read `firewall/get_ping_from_wan`.
 
-The shipped frontend identifies `firewall/set_ping_from_wan` and the `ping_from_wan` field, but the exact write value/schema is currently unresolved on ACIY.3. Physical same-state candidates using both string `"0"`/`"1"` and native integer `0`/`1` returned `setting_response='ERROR'`.
+Live-verified write shape:
 
-Resolve the write contract by targeted NR2301 WebUI capture rather than further guessed payloads.
+```json
+{"ping_from_wan":{"ping_from_wan_enable":"1"}}
+```
+
+Use string `"1"` for enabled and `"0"` for disabled. The focused physical verifier confirmed same-state write, mutation, getter read-back and restore, with `firewall.setting_response="OK"` for each successful write.
 
 ## VPN passthrough
 
-Read `firewall/fw_get_vpn_passthrough`, which reports PPTP, L2TP and IPsec state.
+Read `firewall/fw_get_vpn_passthrough`.
 
-Write `firewall/fw_set_vpn_passthrough` with native JSON integer values:
+Write with native JSON integers:
 
 ```json
-{
-  "pptp": 1,
-  "l2tp": 1,
-  "ipsec": 1
-}
+{"pptp":1,"l2tp":1,"ipsec":1}
 ```
 
-Each field is `0` or `1` as a JSON integer. A 2026-09-14 physical campaign confirmed same-state write, mutation, exact getter read-back and restore with native integers. The otherwise identical string-valued candidate returned `result=-3` and did not mutate the state.
-
-Preserve protocols you are not changing and verify with the getter.
+The WebUI explicitly uses `toStringData:false`. A physical campaign confirmed same-state write, mutation, exact read-back, and restore with native integers; string-valued candidates returned `result=-3`.
 
 ## DMZ
 
-- `firewall/fw_get_dmz_info` reads the stored DMZ destination.
-- `firewall/fw_set_disable_info` controls the DMZ disable state through `dmz_disable` and was physically mutated/read back/restored successfully.
-- `firewall/fw_edit_dmz_entry` accepts a destination write on the tested router.
+- `firewall/fw_get_dmz_info` reads the stored destination.
+- `firewall/fw_set_disable_info` uses `{ "dmz_disable": "0" }` for enabled and `"1"` for disabled; this lifecycle is live verified.
+- `firewall/fw_edit_dmz_entry` writes `{ "dmz_dest_ip": "<IPv4>" }`.
 
-The no-destination clear/delete contract remains unresolved. A test destination was left stored while DMZ itself was restored to `dmz_disable='1'` (disabled). Several guessed delete transports had no read-back effect. Do not continue guessing; capture the real NR2301 WebUI clear/delete action and use the physical reset button as final recovery if required.
+The physical NR2301 WebUI comments that `fw_add_dmz_entry` is not implemented on the cpe.5g path and always uses `fw_edit_dmz_entry` for destination changes.
+
+The current UI exposes no destination-clear/delete action: with DMZ off the field is disabled/restored to the stored value; with DMZ on an empty value fails validation. Keep clear/delete unresolved and do not promote related-device delete behavior.
 
 ## Port forwarding
 
-1. GET `firewall/get_port_forward`.
-2. Preserve the current settings/list.
-3. Use `firewall/set_port_forward` with the exact frontend/current data structure.
-4. GET `get_port_forward` again and verify the rule/list state.
+Read `firewall/get_port_forward`, preserve current settings, write, read back, then restore.
 
-A 2026-09-14 physical campaign successfully added a synthetic forwarding rule, read it back, cleared it and restored the initial state.
+Disabled:
 
-A notable response quirk from earlier live testing: `result=0` was observed while forwarding was enabled and `result=1` while disabled. Do not treat this field as a generic success/failure code without context.
+```json
+{"enable":0}
+```
+
+Enabled uses `toStringData:false`, so `enable` and `index` remain native integers:
+
+```json
+{
+  "enable":1,
+  "items":[
+    {"index":0,"name":"example","mac":"02-00-00-00-00-01","local_port":"65500","wan_port":"65500"}
+  ]
+}
+```
+
+The WebUI iterates up to 10 slots. A 2026-09-14 physical campaign confirmed a synthetic forwarding-rule lifecycle. Response `result` is endpoint-state-dependent; do not interpret it globally.
 
 ## Port triggering
 
-`get_port_trigger` returns a `settings` object containing at least `enable` and `items`. A same-state `set_port_trigger` call using that getter-shaped object returned `result=0` and round-tripped successfully on 2026-09-14.
+Read `firewall/get_port_trigger`.
 
-The tested router had zero trigger items, so this does **not** define the rule-item schema. Rule create/edit/delete remains quarantined for targeted NR2301 WebUI capture.
+Disabled form:
+
+```json
+{"enable":0}
+```
+
+Enabled uses `toStringData:false`; `enable` and `index` are native integers while port fields are strings:
+
+```json
+{
+  "enable":1,
+  "items":[
+    {"index":0,"name":"SDK-PT-WEBUI","trigger_port":"65500","start_port":"65501","end_port":"65501"}
+  ]
+}
+```
+
+The page supports up to 10 slots, requires all textual fields for a populated row, and evaluates `result===0` as success.
+
+A 2026-09-14 physical run live-verified non-empty rule creation and getter read-back. It also established an important persistence rule:
+
+> `{"enable":0}` disables Port Trigger but does **not** delete stored `items`.
+
+To delete a stored rule in the verified WebUI workflow:
+
+1. preserve the complete current item set and enable state;
+2. send `enable=1` with the complete 10-slot list and the target slot emptied;
+3. read back and verify the target item is gone;
+4. restore the original enable state, for example with `{"enable":0}` if it was originally disabled;
+5. read back again and verify both enable state and item semantics.
+
+The dedicated recovery run verified this sequence: the synthetic item was removed, the original `enable=0` state restored, and the final non-empty item count was zero.
 
 ## URL filter
 
-Use `get_url_filter` / `set_url_filter`. The getter exposes mode plus black/white item collections.
+Use `get_url_filter` / `set_url_filter`. Setter uses `toStringData:false`:
 
-A 2026-09-14 physical campaign confirmed a synthetic blacklist item could be written and read back. Cleanup required a two-step sequence: clear the item slots while `mode="blacklist"`, then restore `mode="disable"`. Sending the old empty list together with disabled mode did not remove the stored item.
+```json
+{"mode":"blacklist","black_items":[{"value":"example.invalid","index":0}]}
+```
 
-Always verify semantic item contents after cleanup rather than comparing only raw list shape.
+Whitelist uses `white_items`; disabled mode is `"disable"`.
+
+A physical campaign confirmed a synthetic blacklist item and semantic cleanup. Verify item contents after restore instead of relying on raw list shape alone.
 
 ## IP and port filters
 
-The `ww_*` methods expose the lower-level filter list controls:
+Available methods:
 
 - `ww_read_ip_filter`
 - `ww_edit_ip_filter`
@@ -89,78 +158,92 @@ The `ww_*` methods expose the lower-level filter list controls:
 - `ww_read_switch_mode_state`
 - `ww_read_switch_port_mode_state`
 
-The enable/disable switches were physically mutated, read back and restored successfully on 2026-09-14.
+Enable/disable switches and non-empty rule lifecycles are live verified on ACIY.3.
 
-### Read the complete rule lists
+### Complete-list reads
 
-Use the full-list selector:
+IP:
+
+```json
+{"ww_ip_filter":{"list":["all"]}}
+```
+
+Port:
+
+```json
+{"ww_port_filter":{"list":["all"]}}
+```
+
+These are directly confirmed by the physical NR2301 WebUI source and were used for physical rule read-back. Minimal `list: []` bodies are accepted too, but they are not the complete-list selector.
+
+### IP-filter write shape
+
+Switch:
+
+```json
+{"ww_ip_filter":{"ip_filter_disable":"0"}}
+```
+
+String `"0"` means enabled; `"1"` means disabled.
+
+`ww_edit_ip_filter` receives 10 indexed slots. Because the page uses default `toStringData=true`, **index is a string on the wire**:
 
 ```json
 {
   "ww_ip_filter": {
-    "list": ["all"]
+    "list": [
+      {"ip":"203.0.113.77","index":"0"},
+      {"ip":"0","index":"1"}
+    ]
   }
 }
 ```
 
-and:
+Empty slots are string `"0"`.
+
+The focused physical verifier confirmed: enable → non-empty 10-slot write → full-list `list:["all"]` read-back → original list restore → original switch restore. The synthetic rule was absent at the final residue check.
+
+### Port-filter write shape
+
+The page source constructs `port_filter_disable` numerically, but default `toStringData=true` stringifies it. Actual wire form:
+
+```json
+{"ww_port_filter":{"port_filter_disable":"0"}}
+```
+
+String `"0"` means enabled; `"1"` means disabled.
+
+`ww_edit_port_filter` receives 10 indexed slots. `index` is also a wire string:
 
 ```json
 {
   "ww_port_filter": {
-    "list": ["all"]
+    "list": [
+      {"port":"65500:65500","index":"0"},
+      {"port":"0","index":"1"}
+    ]
   }
 }
 ```
 
-This request form is retained in historical NR2301 project artifacts from 2026-08-24 and was used again in the 2026-09-14 physical residue check. The router returned zero current entries for both lists.
+Populated values use `"start:end"`; empty/incomplete slots use `"0"`.
 
-A separate 2026-09-08 probe showed that the following minimal requests are also accepted:
-
-```json
-{
-  "ww_ip_filter": {
-    "list": []
-  }
-}
-```
-
-and:
-
-```json
-{
-  "ww_port_filter": {
-    "list": []
-  }
-}
-```
-
-Do **not** interpret `list: []` as the complete-list selector. It proves only that an empty-list request body is accepted.
-
-### Non-empty list writes remain unresolved
-
-Current source-backed simple-list candidates for `ww_edit_ip_filter` and `ww_edit_port_filter` returned `setting_response='OK'`, but a subsequent `list: ["all"]` read did not contain the synthetic rules. A later residue check also found zero entries.
-
-Therefore `setting_response='OK'` alone is not success evidence for these rule-list writes. Earlier prose claiming temporary IP/port rules had been added/read back cannot currently be tied to a retained exact request body and must not be used as a normalized contract.
-
-Capture create/edit/delete through the real NR2301 WebUI before documenting a non-empty write schema.
+The focused physical verifier confirmed: enable → non-empty 10-slot write → full-list `list:["all"]` read-back → original list restore → original switch restore. The synthetic port was absent at the final residue check.
 
 ## UPnP
 
-- read: `firewall/ww_upnp_open_close_state`
-- write: `firewall/ww_upnp_open_close`
+Read: `firewall/ww_upnp_open_close_state`.
 
-A 2026-09-14 physical campaign mutated UPnP, verified read-back and restored the original state. WPS and UPnP are separate controls on the tested firmware.
+Write:
 
-## Quarantined WebUI contracts
+```json
+{"ww_upnp":{"upnp_enable":"1"}}
+```
 
-The following functions are intentionally queued for a targeted NR2301 WebUI network capture rather than further guessed API payloads:
+or string `"0"`. A physical campaign confirmed mutation, read-back, and restore. WPS and UPnP are independent controls on the tested firmware.
 
-1. DMZ destination clear/delete
-2. remote administration from WAN write
-3. WAN ping write
-4. IP-filter non-empty rule create/edit/delete
-5. port-filter non-empty rule create/edit/delete
-6. port-trigger rule create/edit/delete
+## Remaining unresolved Firewall/NAT item
 
-For each capture, record the real HTTP verb, endpoint/query, JSON or form body, relevant non-secret headers/session behavior and exact API read-back. Cross-device Zyxel/OEM implementations may guide hypotheses but are not canonical until physically confirmed on the NR2301.
+The focused WebUI-contract campaign is closed for WAN admin/ping, IP-filter rules, port-filter rules and Port Trigger items.
+
+The remaining unresolved behavior is **DMZ destination clear/delete**. The current NR2301 WebUI itself exposes no clear/delete action, so related-device delete behavior must not be guessed or promoted as canonical NR2301 behavior without new direct evidence.
