@@ -157,25 +157,29 @@ Known/observed response field: `result`. Synthetic groups returned `result = 0` 
 
 HTTP method: `POST`
 
-Physically confirmed single-local-contact shape:
+Physically confirmed one-or-more local-contact shape:
 
 ```json
 {
   "delete_pb": {
     "location": "0",
-    "count": "1",
-    "indexarray": "3"
+    "count": "2",
+    "indexarray": "14,15"
   }
 }
 ```
 
+`count` is the decimal contact count as a string. `indexarray` is a comma-separated scalar string of contact indexes. The single-contact case is the same contract with `count = "1"` and one index.
+
 ### Response
 
-Known/observed response field: `result`. Multiple synthetic single-contact deletes returned `result = 0` and absence was verified after each call.
+Known/observed response field: `result`.
 
 ### Notes
 
-Related backend source parses `indexarray` as a comma-separated string and parses `count` separately. This strongly supports the multi-contact shape but the NR2301 multi-index physical confirmation is tracked separately before a plural SDK helper is frozen.
+- Multiple single-contact deletes returned `result = 0` and absence was verified after each call.
+- On 2026-09-14, two synthetic local contacts were deleted together with `count = "2"` and comma-separated `indexarray`; the method returned `result = 0` and both indexes were absent on read-back.
+- This physical result matches related backend source that tokenizes `indexarray` on commas.
 
 <a id="getcontactbygroup"></a>
 
@@ -272,16 +276,16 @@ Known top-level fields: `contactcount`, `contactlist`, `result`.
 
 HTTP method: `POST`
 
-Physically confirmed single-contact shape:
+Physically confirmed one-or-more-contact shape:
 
 ```json
 {
   "newgroup": "4",
-  "contacts": "7"
+  "contacts": "14,15"
 }
 ```
 
-Both values are scalar strings in the confirmed ACIY.3 representation.
+`newgroup` is a scalar string group index. `contacts` is a comma-separated scalar string of one or more contact indexes. For one contact, `contacts` is simply that one decimal index string.
 
 ### Response
 
@@ -289,7 +293,8 @@ Observed `result = 0`.
 
 ### Notes
 
-The move was confirmed both through `getcontactbygroup` and through the local contact's `group` field. Multi-contact representation remains to be established separately.
+- The single-contact representation was confirmed through both group-specific read-back and the local contact `group` field.
+- On 2026-09-14, two synthetic contacts were submitted together as a comma-separated `contacts` string; `result = 0` and both contacts read back in the target group. No alternate list/JSON representation was required.
 
 <a id="query-group"></a>
 
