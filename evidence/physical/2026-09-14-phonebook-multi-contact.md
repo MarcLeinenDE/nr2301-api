@@ -70,4 +70,24 @@ Final checks:
 - exact initial group count restored: `True`
 - profiler result: `PHONEBOOK_MULTI_CONTRACT_PROFILER = PASS`
 
+## Public SDK high-level validation
+
+After the raw contract was normalized, the permanent `nr2301-python` plural helpers were exercised through the public SDK surface on the same ACIY.3 device using Python 3.13.5.
+
+`tests/integration/test_phonebook_multi_contact.py::test_phonebook_plural_helpers_move_delete_and_restore` passed **1/1 in 1.93 s**.
+
+The high-level lifecycle:
+
+- created two synthetic local contacts;
+- called `client.phonebook.move_contacts_to_group([id1, id2], target_group)`;
+- received `result = 0` and verified both contacts in the target group;
+- called `client.phonebook.delete_contacts([id1, id2])`;
+- received `result = 0` and verified both contacts absent;
+- removed both temporary groups;
+- finished with local contact count `0`;
+- restored the exact initial local index set;
+- restored the exact initial group count.
+
+This confirms that the permanent plural SDK abstraction serializes the already-normalized comma-separated contracts correctly and preserves the required cleanup/recovery behavior.
+
 No real names, phone numbers, e-mail addresses or SIM-contact contents were used or committed.
