@@ -1,120 +1,104 @@
 <!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->
 # Physical NR2301 WebUI source crawl — 2026-09-14
 
-Firmware under test: `V1.00(ACIY.3)C0` on the dedicated non-production NR2301.
+Firmware: `V1.00(ACIY.3)C0` on the dedicated non-production NR2301.
 
-This evidence was produced by an authenticated read-only source-driven WebUI crawl. Raw screenshots, rendered HTML and network logs remain private because they contain local device state. The sanitized raw-evidence bundle has SHA-256 `09a7f72d942f6e0af2f49c9291072baa3b93fae65e30ac0f01e15ed59f60d942`.
+Authenticated read-only source-driven crawl. Raw screenshots, rendered HTML and network logs remain private because they contain local device state. Raw evidence SHA-256: `09a7f72d942f6e0af2f49c9291072baa3b93fae65e30ac0f01e15ed59f60d942`.
 
 Crawl summary:
 
 - 39 routes discovered
-- 36 routes rendered in the browser
+- 36 routes browser-rendered
 - 364 route/source links
-- queue exhausted / complete crawl
-- three engineering/missing routes retained as source-only/404 evidence
-- no configuration mutation was permitted by the crawler
+- queue exhausted / complete
+- no configuration mutation permitted by crawler
 
-The shipped frontend source closes several previously quarantined Firewall/NAT request-shape gaps. These are **frontend/source-confirmed shapes** unless a separate physical write campaign already established live mutation/read-back/restore.
+## Common WebUI transport rule
+
+The shipped `ajaxHandler` defaults to `toStringData=true`. Its JSON serialization converts numeric values to strings unless a page explicitly passes `toStringData:false`.
+
+This matters for exact wire modeling:
+
+- IP-filter and port-filter pages use the default transport, so source numeric `index` values and the port-filter disable flag become strings on the wire.
+- Port Forward, Port Trigger, URL Filter, and VPN Passthrough explicitly set `toStringData:false`; numeric fields on those pages remain native JSON integers.
+
+The contracts below describe the **wire shape**, not merely the JavaScript source literal type.
 
 ## Remote administration and WAN ping
 
-`html/firewall_remote.html` uses:
+`html/firewall_remote.html` writes:
 
 ```json
-{
-  "ping_from_wan": {
-    "ping_from_wan_enable": "0"
-  }
-}
+{"ping_from_wan":{"ping_from_wan_enable":"0"}}
 ```
 
 or `"1"` for `firewall/set_ping_from_wan`, and:
 
 ```json
-{
-  "admin_from_wan": {
-    "admin_from_wan_enable": "0"
-  }
-}
+{"admin_from_wan":{"admin_from_wan_enable":"0"}}
 ```
 
 or `"1"` for `firewall/set_admin_from_wan`.
 
-This explains the earlier physical rejection of guessed flat string/integer payloads: the actual shipped frontend wraps each value in its feature object. The frontend treats `firewall.setting_response == "OK"` as success. If admin-from-WAN changes, it schedules `router/restart_web_server` after 600 ms.
+The earlier physical flat string/integer candidates were not the real WebUI body because they omitted the feature wrapper object. The frontend treats `firewall.setting_response == "OK"` as success. If admin-from-WAN changes, it schedules `router/restart_web_server` after 600 ms.
 
-The exact nested shapes above have not yet been physically mutated after discovery; retain the distinction between source confirmation and live write verification.
+These exact nested shapes are source-confirmed but not yet physically mutated after discovery.
 
 ## IP filter
 
-`html/firewall_ip.html` reads the complete list using a multicall member:
+Complete read:
 
 ```json
-{
-  "ww_ip_filter": {
-    "list": ["all"]
-  }
-}
+{"ww_ip_filter":{"list":["all"]}}
 ```
 
-The enable/disable write is:
+Enable/disable:
 
 ```json
-{
-  "ww_ip_filter": {
-    "ip_filter_disable": "0"
-  }
-}
+{"ww_ip_filter":{"ip_filter_disable":"0"}}
 ```
 
-where `"0"` means enabled and `"1"` means disabled.
+`"0"` = enabled, `"1"` = disabled.
 
-When enabled, the frontend writes 10 indexed slots through `firewall/ww_edit_ip_filter`:
+`firewall/ww_edit_ip_filter` receives 10 indexed slots. Empty UI slots are `"0"`. Because the page uses default `toStringData=true`, `index` is a wire string:
 
 ```json
 {
   "ww_ip_filter": {
     "list": [
-      {"ip": "203.0.113.77", "index": 0},
-      {"ip": "0", "index": 1}
+      {"ip":"203.0.113.77","index":"0"},
+      {"ip":"0","index":"1"}
     ]
   }
 }
 ```
 
-Empty UI slots are serialized as string `"0"`. This is materially different from the earlier sparse/synthetic list guesses and explains why `setting_response="OK"` alone did not establish a non-empty rule contract.
+This differs materially from the earlier sparse/simple-list guesses.
 
 ## Port filter
 
-`html/firewall_port.html` reads the complete list with:
+Complete read:
 
 ```json
-{
-  "ww_port_filter": {
-    "list": ["all"]
-  }
-}
+{"ww_port_filter":{"list":["all"]}}
 ```
 
-Enable/disable uses a native JSON integer:
+The source page constructs numeric `port_filter_disable`, but default `toStringData=true` makes the actual wire body:
 
 ```json
-{
-  "ww_port_filter": {
-    "port_filter_disable": 0
-  }
-}
+{"ww_port_filter":{"port_filter_disable":"0"}}
 ```
 
-where `0` means enabled and `1` means disabled.
+`"0"` = enabled, `"1"` = disabled.
 
-When enabled, `firewall/ww_edit_port_filter` receives 10 indexed slots. A populated slot is `"start:end"`; an empty/incomplete slot is `"0"`:
+`firewall/ww_edit_port_filter` receives 10 indexed slots. Populated values use `"start:end"`; empty/incomplete slots use `"0"`. `index` is also stringified on the wire:
 
 ```json
 {
   "ww_port_filter": {
     "list": [
-      {"port": "65500:65500", "index": 0},
-      {"port": "0", "index": 1}
+      {"port":"65500:65500","index":"0"},
+      {"port":"0","index":"1"}
     ]
   }
 }
@@ -122,111 +106,96 @@ When enabled, `firewall/ww_edit_port_filter` receives 10 indexed slots. A popula
 
 ## Port trigger
 
-`html/firewall_pt.html` confirms the item schema for `firewall/set_port_trigger`.
+Getter: `firewall/get_port_trigger`.
 
 Disabled:
 
 ```json
-{"enable": 0}
+{"enable":0}
 ```
 
-Enabled uses native JSON values (`toStringData:false`) and up to 10 indexed slots:
+Enabled uses `toStringData:false`, so `enable` and `index` are native integers:
 
 ```json
 {
-  "enable": 1,
-  "items": [
-    {
-      "index": 0,
-      "name": "SDK-PT-WEBUI",
-      "trigger_port": "65500",
-      "start_port": "65501",
-      "end_port": "65501"
-    }
+  "enable":1,
+  "items":[
+    {"index":0,"name":"SDK-PT-WEBUI","trigger_port":"65500","start_port":"65501","end_port":"65501"}
   ]
 }
 ```
 
-The frontend requires all four fields for a populated row and evaluates `result === 0` as success. The rule-item shape is source-confirmed; the earlier live same-state test only proved the getter-shaped empty-list form.
+The frontend iterates up to 10 slots, requires all textual fields for a populated row, and evaluates `result === 0` as success. Non-empty item shape is source-confirmed; earlier live same-state testing only proved the empty/getter-shaped form.
 
 ## Port forwarding
 
-`html/firewall_pf.html` confirms the enabled object shape used by `firewall/set_port_forward` (`toStringData:false`):
+`firewall/set_port_forward` uses `toStringData:false`.
+
+Disabled:
+
+```json
+{"enable":0}
+```
+
+Enabled:
 
 ```json
 {
-  "enable": 1,
-  "items": [
-    {
-      "index": 0,
-      "name": "example",
-      "mac": "02-00-00-00-00-01",
-      "local_port": "65500",
-      "wan_port": "65500"
-    }
+  "enable":1,
+  "items":[
+    {"index":0,"name":"example","mac":"02-00-00-00-00-01","local_port":"65500","wan_port":"65500"}
   ]
 }
 ```
 
-Disabled form is `{ "enable": 0 }`. The frontend iterates 10 slots while enabled. Port forwarding itself was already live-verified by the physical campaign.
+Port forwarding was already live-verified by the physical campaign.
 
 ## URL filter
 
-`html/firewall_url.html` confirms `firewall/set_url_filter` uses `toStringData:false` with mode plus the corresponding indexed item collection, for example:
+`firewall/set_url_filter` uses `toStringData:false`, for example:
 
 ```json
-{
-  "mode": "blacklist",
-  "black_items": [
-    {"value": "example.invalid", "index": 0}
-  ]
-}
+{"mode":"blacklist","black_items":[{"value":"example.invalid","index":0}]}
 ```
 
 Whitelist uses `white_items`; disabled mode is `"disable"`.
 
 ## UPnP
 
-`html/firewall_upnp.html` writes:
-
 ```json
-{
-  "ww_upnp": {
-    "upnp_enable": "1"
-  }
-}
+{"ww_upnp":{"upnp_enable":"1"}}
 ```
 
-or `"0"`. These are string values. This matches the separately live-verified UPnP lifecycle.
+or `"0"`. This matches the separately live-verified lifecycle.
 
 ## DMZ
 
-`html/firewall_dmz.html` reads `fw_get_disable_info`, `fw_get_dmz_info` and `router_get_lan_ip`.
+Reads: `fw_get_disable_info`, `fw_get_dmz_info`, `router_get_lan_ip`.
 
-Enable state write:
-
-```json
-{"dmz_disable": "0"}
-```
-
-where `"0"` means enabled and `"1"` means disabled.
-
-A changed destination is written with `firewall/fw_edit_dmz_entry`:
+Enable state:
 
 ```json
-{"dmz_dest_ip": "192.0.2.10"}
+{"dmz_disable":"0"}
 ```
 
-The current NR2301 frontend contains a source comment that `fw_add_dmz_entry` is not implemented on the cpe.5g path and therefore always uses `fw_edit_dmz_entry`. The UI exposes no empty-destination clear/delete action. Consequently, the no-destination clear/delete contract remains unresolved and related-device delete behavior must not be promoted as canonical NR2301 behavior.
+`"0"` = enabled, `"1"` = disabled.
+
+Destination edit:
+
+```json
+{"dmz_dest_ip":"192.0.2.10"}
+```
+
+The current NR2301 frontend comments that `fw_add_dmz_entry` is not implemented on the cpe.5g path and always uses `fw_edit_dmz_entry`. The UI exposes no empty-destination clear/delete action, so DMZ clear/delete remains unresolved.
 
 ## VPN passthrough
 
-`html/set_vpn_passthrough.html` confirms the already live-verified native-integer request and `toStringData:false`:
+The page uses `toStringData:false`, matching the already live-verified native-integer contract:
 
 ```json
-{"pptp": 1, "l2tp": 1, "ipsec": 1}
+{"pptp":1,"l2tp":1,"ipsec":1}
 ```
 
 ## Publication hygiene
 
-No real password/session cookie, Wi-Fi key, subscriber identifier, local MAC/IP inventory, SMS content or other private runtime value from the raw crawl is included in this evidence file.
+No real password/session cookie, Wi-Fi key, subscriber identifier, local MAC/IP inventory, SMS content or other private runtime value from the raw crawl is included here.
