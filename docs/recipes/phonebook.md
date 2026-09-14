@@ -143,9 +143,9 @@ Corrected physical testing established:
 
 The earlier plaintext-name update result is superseded because plaintext does not match the WebUI wire contract. Treat `result = 0` as endpoint acceptance, not proof that every supplied field became visible in read-back.
 
-## Delete one local contact
+## Delete one or more local contacts
 
-The physically confirmed single-contact delete is:
+Single-contact delete:
 
 ```json
 {
@@ -157,11 +157,23 @@ The physically confirmed single-contact delete is:
 }
 ```
 
-Related backend code parses `indexarray` by splitting on commas, so a comma-separated multi-index form is strongly supported statically. Physical NR2301 multi-delete confirmation remains a separate evidence step before a plural SDK helper is frozen.
+Multi-contact delete uses the same object with a comma-separated scalar string and matching decimal count:
 
-## Move one contact to a group
+```json
+{
+  "delete_pb": {
+    "location": "0",
+    "count": "2",
+    "indexarray": "14,15"
+  }
+}
+```
 
-The physically confirmed single-contact request is:
+The two-contact form was physically confirmed on ACIY.3 on 2026-09-14: `result = 0` and both synthetic indexes were absent on read-back. This also matches related backend code that splits `indexarray` on commas.
+
+## Move one or more contacts to a group
+
+Single-contact move:
 
 ```json
 {
@@ -170,7 +182,16 @@ The physically confirmed single-contact request is:
 }
 ```
 
-POST to `phonebook/move_contacts_to_group`. Both values are scalar strings. Verify with both the target-group view and the contact's local `group` field. Multi-contact representation remains to be established physically.
+Multi-contact move is the same scalar-string contract with comma-separated indexes:
+
+```json
+{
+  "newgroup": "4",
+  "contacts": "14,15"
+}
+```
+
+The two-contact form was physically confirmed on ACIY.3 on 2026-09-14: `result = 0` and both synthetic contacts read back in the target group. No JSON/list representation is required for the confirmed contract.
 
 ## Copy SIM contacts to local storage
 
@@ -180,7 +201,7 @@ The response can report `sim_count`, `count`, `duplicate`, `failed` and `invalid
 
 ## Test/restore discipline
 
-For synthetic write testing, snapshot the initial local-contact index set. Treat every new index as test-owned and delete it during cleanup. A run is restored only when the final index set and cardinality exactly match the initial baseline.
+For synthetic write testing, snapshot the initial local-contact index set. Treat every new index as test-owned and delete it during cleanup. A run is restored only when the final index set and cardinality exactly match the initial baseline. Group-writing tests should likewise restore the original group count/state.
 
 ## Privacy
 
