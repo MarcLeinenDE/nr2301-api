@@ -8,6 +8,11 @@ Physical evidence:
 
 - [`2026-09-14-firewall-nat-campaign.md`](../../evidence/physical/2026-09-14-firewall-nat-campaign.md)
 - [`2026-09-14-webui-source-crawl.md`](../../evidence/physical/2026-09-14-webui-source-crawl.md)
+- [`2026-09-14-firewall-webui-live-verification.md`](../../evidence/physical/2026-09-14-firewall-webui-live-verification.md)
+
+Machine-readable live-contract overlay:
+
+- [`specification/firewall-live-contracts-2026-09-14.json`](../../specification/firewall-live-contracts-2026-09-14.json)
 
 ## WebUI transport rule
 
@@ -19,17 +24,17 @@ This distinction is part of the wire contract. In particular, IP-/port-filter in
 
 Read `firewall/get_admin_from_wan`.
 
-Shipped NR2301 WebUI write shape:
+Live-verified write shape:
 
 ```json
 {"admin_from_wan":{"admin_from_wan_enable":"1"}}
 ```
 
-Use string `"1"` for enabled and `"0"` for disabled. The earlier physical flat candidates were rejected because they omitted the `admin_from_wan` wrapper.
+Use string `"1"` for enabled and `"0"` for disabled. A 2026-09-14 physical verifier confirmed same-state write, mutation, getter read-back, restore write and final getter restore. The earlier flat candidates were rejected because they omitted the `admin_from_wan` wrapper.
 
-The frontend treats `firewall.setting_response="OK"` as success. When this setting changes, the WebUI schedules `router/restart_web_server` after 600 ms, so management interruption is expected.
+The setter returns `firewall.setting_response="OK"` on the verified path.
 
-The nested shape is source-confirmed; complete a focused write/read-back/restore before treating that exact lifecycle as live verified.
+The stock WebUI additionally schedules `router/restart_web_server` after 600 ms when this value changes. That extra action was not required to verify the setter contract itself and was deliberately not invoked by the focused verifier.
 
 > [!WARNING]
 > Enabling WAN administration increases attack surface. Test only on the dedicated lab router and restore the original state.
@@ -38,13 +43,13 @@ The nested shape is source-confirmed; complete a focused write/read-back/restore
 
 Read `firewall/get_ping_from_wan`.
 
-WebUI write:
+Live-verified write shape:
 
 ```json
 {"ping_from_wan":{"ping_from_wan_enable":"1"}}
 ```
 
-Use string `"1"` for enabled and `"0"` for disabled. Success is `firewall.setting_response="OK"`. The nested shape is source-confirmed and explains why earlier flat candidates failed.
+Use string `"1"` for enabled and `"0"` for disabled. The focused physical verifier confirmed same-state write, mutation, getter read-back and restore, with `firewall.setting_response="OK"` for each successful write.
 
 ## VPN passthrough
 
@@ -56,7 +61,7 @@ Write with native JSON integers:
 {"pptp":1,"l2tp":1,"ipsec":1}
 ```
 
-The WebUI explicitly uses `toStringData:false`. A physical campaign already confirmed same-state write, mutation, exact read-back, and restore with native integers; string-valued candidates returned `result=-3`.
+The WebUI explicitly uses `toStringData:false`. A physical campaign confirmed same-state write, mutation, exact read-back, and restore with native integers; string-valued candidates returned `result=-3`.
 
 ## DMZ
 
@@ -89,13 +94,13 @@ Enabled uses `toStringData:false`, so `enable` and `index` remain native integer
 }
 ```
 
-The WebUI iterates up to 10 slots. A 2026-09-14 physical campaign already confirmed a synthetic forwarding-rule lifecycle. Response `result` is endpoint-state-dependent; do not interpret it globally.
+The WebUI iterates up to 10 slots. A 2026-09-14 physical campaign confirmed a synthetic forwarding-rule lifecycle. Response `result` is endpoint-state-dependent; do not interpret it globally.
 
 ## Port triggering
 
 Read `firewall/get_port_trigger`.
 
-Disabled:
+Disabled form:
 
 ```json
 {"enable":0}
@@ -112,7 +117,21 @@ Enabled uses `toStringData:false`; `enable` and `index` are native integers whil
 }
 ```
 
-The page supports up to 10 slots, requires all textual fields for a populated row, and evaluates `result===0` as success. A prior same-state empty/getter-shaped write was live accepted; the non-empty item shape is source-confirmed and awaits focused physical lifecycle verification.
+The page supports up to 10 slots, requires all textual fields for a populated row, and evaluates `result===0` as success.
+
+A 2026-09-14 physical run live-verified non-empty rule creation and getter read-back. It also established an important persistence rule:
+
+> `{"enable":0}` disables Port Trigger but does **not** delete stored `items`.
+
+To delete a stored rule in the verified WebUI workflow:
+
+1. preserve the complete current item set and enable state;
+2. send `enable=1` with the complete 10-slot list and the target slot emptied;
+3. read back and verify the target item is gone;
+4. restore the original enable state, for example with `{"enable":0}` if it was originally disabled;
+5. read back again and verify both enable state and item semantics.
+
+The dedicated recovery run verified this sequence: the synthetic item was removed, the original `enable=0` state restored, and the final non-empty item count was zero.
 
 ## URL filter
 
@@ -139,7 +158,7 @@ Available methods:
 - `ww_read_switch_mode_state`
 - `ww_read_switch_port_mode_state`
 
-Enable/disable switches have already been physically mutated/read back/restored.
+Enable/disable switches and non-empty rule lifecycles are live verified on ACIY.3.
 
 ### Complete-list reads
 
@@ -155,7 +174,7 @@ Port:
 {"ww_port_filter":{"list":["all"]}}
 ```
 
-These are directly confirmed by the physical NR2301 WebUI source and were used by the residue check. Minimal `list: []` bodies are accepted too, but they are not the complete-list selector.
+These are directly confirmed by the physical NR2301 WebUI source and were used for physical rule read-back. Minimal `list: []` bodies are accepted too, but they are not the complete-list selector.
 
 ### IP-filter write shape
 
@@ -180,7 +199,9 @@ String `"0"` means enabled; `"1"` means disabled.
 }
 ```
 
-Empty slots are string `"0"`. This closes the source-level schema gap; physically verify one non-empty lifecycle before promotion to live rule-write support.
+Empty slots are string `"0"`.
+
+The focused physical verifier confirmed: enable → non-empty 10-slot write → full-list `list:["all"]` read-back → original list restore → original switch restore. The synthetic rule was absent at the final residue check.
 
 ### Port-filter write shape
 
@@ -205,7 +226,9 @@ String `"0"` means enabled; `"1"` means disabled.
 }
 ```
 
-Populated values use `"start:end"`; empty/incomplete slots use `"0"`. Again, physically verify one non-empty lifecycle before relying on `setting_response="OK"` alone.
+Populated values use `"start:end"`; empty/incomplete slots use `"0"`.
+
+The focused physical verifier confirmed: enable → non-empty 10-slot write → full-list `list:["all"]` read-back → original list restore → original switch restore. The synthetic port was absent at the final residue check.
 
 ## UPnP
 
@@ -217,17 +240,10 @@ Write:
 {"ww_upnp":{"upnp_enable":"1"}}
 ```
 
-or string `"0"`. A physical campaign already confirmed mutation, read-back, and restore. WPS and UPnP are independent controls on the tested firmware.
+or string `"0"`. A physical campaign confirmed mutation, read-back, and restore. WPS and UPnP are independent controls on the tested firmware.
 
-## Remaining focused live verification
+## Remaining unresolved Firewall/NAT item
 
-The WebUI source crawl closed the shape gaps. The remaining useful physical checks are:
+The focused WebUI-contract campaign is closed for WAN admin/ping, IP-filter rules, port-filter rules and Port Trigger items.
 
-1. nested `set_admin_from_wan` same-state/mutation/read-back/restore, including expected web-server restart behavior
-2. nested `set_ping_from_wan` same-state/mutation/read-back/restore
-3. one non-empty 10-slot `ww_edit_ip_filter` lifecycle
-4. one non-empty 10-slot `ww_edit_port_filter` lifecycle
-5. one non-empty `set_port_trigger` lifecycle
-6. DMZ destination clear/delete stays unresolved because the current NR2301 WebUI itself exposes no such action
-
-Use these exact shipped wire shapes; do not resume speculative payload guessing.
+The remaining unresolved behavior is **DMZ destination clear/delete**. The current NR2301 WebUI itself exposes no clear/delete action, so related-device delete behavior must not be guessed or promoted as canonical NR2301 behavior without new direct evidence.
