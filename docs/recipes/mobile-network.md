@@ -61,6 +61,8 @@ The observed sequence is:
 
 Both actions are classified `DISRUPTIVE_RECOVERY_REQUIRED`. A timeout or dropped management request is not by itself proof of failure.
 
+During physical reconnect testing on 2026-09-18, `get_current_wan_info.contextlist[].connection_status` temporarily returned `2` (with `internet_status=0`) after `cm/connect`. Treat that as a non-final transition and keep polling until a documented final state (`0` or `1`) or timeout.
+
 ## Read current WAN addressing
 
 Use `cm/get_current_wan_info` for IPv4/IPv6 address, gateway and DNS values. Parse `connection_status` and `internet_status` numerically and keep them as separate concepts.
