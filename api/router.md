@@ -100,7 +100,7 @@ No request body has been reconstructed as necessary for this method.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `STATIC_CONFIRMED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `DO_NOT_TEST_FOR_COVERAGE`
 
 > [!CAUTION]
@@ -381,6 +381,7 @@ No stable response schema is currently documented.
 ### Notes
 
 - HTTP 200 empty response; web server recovered and admin re-login succeeded.
+- 2026-09-18 production-SDK GET/no-body verification observed `boot_time` 13910→13911, confirming management recovery without a full-device reboot. The strict JSON transport surfaced the empty response as `ProtocolError`; recovery/read-back decides success.
 
 <a id="router-backup-config"></a>
 
@@ -406,6 +407,7 @@ Known/observed response fields: `rc`.
 ### Notes
 
 - GET returned rc=0 and internal file path /var/volatile/config_bak/config_bak.bin. Current frontend backup UI bypasses this legacy action and downloads via /file.cgi.
+- 2026-09-18 production-SDK body-less GET reconfirmed `rc=0`; this legacy action remains distinct from the actual `/file.cgi` backup download.
 
 <a id="router-call-reboot"></a>
 
@@ -423,14 +425,14 @@ Known/observed response fields: `rc`.
 
 ### Request
 
-HTTP method: `not fully reconstructed`
+HTTP method: `GET`
 
-No request body has been reconstructed as necessary for this method.
+No request body is required for the production-SDK transport reconfirmed on 2026-09-18.
 
 Observed frontend transport variants:
 
-- `direct_ajaxHandler` via `GET`; body present: `False`
-- `direct_ajaxHandler` via `POST`; body present: `True`
+- `direct_ajaxHandler` via `GET`; body present: `False` — physically reconfirmed by the production SDK
+- `direct_ajaxHandler` via `POST`; body present: `True` — source-known alternate/historical variant
 
 ### Response
 
@@ -439,6 +441,7 @@ No stable response schema is currently documented.
 ### Notes
 
 - Request timed out after 40 s because device rebooted during call. Router later recovered and normal admin re-login succeeded on recovery attempt 18.
+- 2026-09-18 production-SDK GET/no-body reconfirmation observed management outage and `boot_time` 13911→51; this is the canonical production transport on tested ACIY.3. Treat response loss as expected/inconclusive until recovery plus uptime reset proves success.
 
 <a id="router-call-rst-factory"></a>
 

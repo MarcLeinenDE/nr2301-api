@@ -3948,12 +3948,12 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED_ACTION",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "DISRUPTIVE_RECOVERY_REQUIRED",
       "request": {
         "http_method": "GET",
         "schema": null,
-        "basis": "not fully reconstructed",
+        "basis": "shipped frontend source + 2026-09-18 production-SDK physical verification",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -3968,8 +3968,11 @@
       "response_schema": null,
       "response_fields": [],
       "semantic_contracts": [],
-      "live_note": "HTTP 200 empty response; web server recovered and admin re-login succeeded.",
-      "implementation_notes": []
+      "live_note": "2026-09-18 production-SDK GET/no-body action returned HTTP 200 empty/non-JSON content (strict transport ProtocolError); management recovered and boot_time advanced 13910→13911, proving no full-device reboot.",
+      "implementation_notes": [
+        "Treat the empty/non-JSON action response as inconclusive; management recovery and monotonic boot_time decide success.",
+        "Do not infer a full router reboot from temporary management disruption."
+      ]
     },
     {
       "method_id": "router/router_backup_config",
@@ -3985,7 +3988,7 @@
       "request": {
         "http_method": "GET",
         "schema": null,
-        "basis": "not fully reconstructed",
+        "basis": "live observation + 2026-09-18 production-SDK physical verification",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -4002,8 +4005,11 @@
         "rc"
       ],
       "semantic_contracts": [],
-      "live_note": "GET returned rc=0 and internal file path /var/volatile/config_bak/config_bak.bin. Current frontend backup UI bypasses this legacy action and downloads via /file.cgi.",
-      "implementation_notes": []
+      "live_note": "2026-09-18 production-SDK body-less GET reconfirmed rc=0. This legacy action is distinct from the stock UI /file.cgi backup download path.",
+      "implementation_notes": [
+        "Validate only the documented rc success field unless additional response keys are separately normalized.",
+        "The current stock UI downloads the actual configuration backup through /file.cgi, not through this legacy action alone."
+      ]
     },
     {
       "method_id": "router/router_call_reboot",
@@ -4017,9 +4023,9 @@
       "auth_evidence": "ADMIN_OK",
       "safety_class": "DISRUPTIVE_RECOVERY_REQUIRED",
       "request": {
-        "http_method": null,
+        "http_method": "GET",
         "schema": null,
-        "basis": "not fully reconstructed",
+        "basis": "frontend source + 2026-09-18 production-SDK physical verification",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -4042,8 +4048,12 @@
       "response_schema": null,
       "response_fields": [],
       "semantic_contracts": [],
-      "live_note": "Request timed out after 40 s because device rebooted during call. Router later recovered and normal admin re-login succeeded on recovery attempt 18.",
-      "implementation_notes": []
+      "live_note": "2026-09-18 production-SDK body-less GET caused a real management outage and full reboot; boot_time reset 13911→51 and administrator recovery succeeded.",
+      "implementation_notes": [
+        "The body-less GET frontend variant is physically reconfirmed as the production SDK transport on ACIY.3.",
+        "A lost response/timeout is expected but inconclusive; require management recovery plus boot_time reset.",
+        "A POST frontend variant remains source-known historical evidence but was not needed for the production SDK lifecycle."
+      ]
     },
     {
       "method_id": "router/router_call_rst_factory",

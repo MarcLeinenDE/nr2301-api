@@ -8,7 +8,7 @@ Use `version/get_ww_version`, `router/get_device_info`, `router/get_runtime_info
 
 ## Reboot the router
 
-`router/router_call_reboot` is live verified and classified `DISRUPTIVE_RECOVERY_REQUIRED`.
+`router/router_call_reboot` is live verified and classified `DISRUPTIVE_RECOVERY_REQUIRED`. A 2026-09-18 production-SDK lifecycle physically reconfirmed the body-less GET frontend variant: management dropped, the device later recovered, and `boot_time` reset from 13911 to 51.
 
 The stock frontend has both GET/POST observations for this action. The live request timed out because the router rebooted, then the device recovered and normal admin login succeeded later.
 
@@ -59,7 +59,7 @@ The numeric example above is illustrative; compute the bitmask for the intended 
 
 ## Configuration backup
 
-`router/router_backup_config` is a legacy action returning an internal backup path. The current stock UI downloads configuration through the separate `/file.cgi` family.
+`router/router_backup_config` is a legacy action returning an internal backup path. A 2026-09-18 production-SDK run reconfirmed the body-less GET action with `rc=0`. The current stock UI downloads configuration through the separate `/file.cgi` family.
 
 Configuration backups can contain secrets. Treat the returned binary/backup as sensitive, never commit it to this repository and never include it in diagnostics without explicit sanitization.
 
@@ -98,7 +98,7 @@ Read the value back afterward.
 
 ## Restart web server
 
-`router/restart_web_server` is live verified but disruptive to management. Treat it with the same reconnect/re-login/read-back discipline used for other management-path disruptions.
+`router/restart_web_server` is live verified but disruptive to management. Treat it with the same reconnect/re-login/read-back discipline used for other management-path disruptions. In the 2026-09-18 production-SDK lifecycle it returned an empty/non-JSON body (`ProtocolError` at the strict JSON layer), but management remained available/recovered and `boot_time` advanced from 13910 to 13911, proving no full-device reboot occurred.
 
 ## Engineering/debug operations — reference only
 
