@@ -105,6 +105,6 @@ Read `get_vpn_clients` back and verify that the profile is gone.
 
 ## Connection behavior
 
-The profile CRUD/global-enable paths were live verified with temporary profiles and exact cleanup. Those tests intentionally did **not** establish a real external VPN tunnel. Treat actual tunnel connectivity as dependent on the configured protocol/server and verify it using `get_vpn_client_connect_status` plus an external connectivity test.
+The profile CRUD/global-enable paths were live verified with temporary profiles and exact cleanup. A 2026-09-18 production-SDK lifecycle additionally verified add -> edit -> global enable -> active -> inactive -> delete -> global disable/enable -> exact restore on the dedicated NR2301. Those tests intentionally did **not** establish a real external VPN tunnel. Treat actual tunnel connectivity as dependent on the configured protocol/server and verify it using `get_vpn_client_connect_status` plus an external connectivity test.
 
 Do not confuse `cm/connect` / `cm/disconnect` with the VPN profile API; those methods belong to mobile WAN connection control.
