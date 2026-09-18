@@ -1039,9 +1039,10 @@
           "note": "Keep upstream/link connectivity separate from Internet availability."
         }
       ],
-      "live_note": null,
+      "live_note": "2026-09-18 disruptive WAN-control testing observed contextlist[].connection_status=2 with internet_status=0 immediately after cm/connect. Treat 2 as a transient/non-final reconnect state; exact frontend label remains unresolved.",
       "implementation_notes": [
-        "Clients should parse connection_status/internet_status numerically; string '0' represents the false state and must not be treated as truthy-connected. Keep Internet availability separate from WAN-link state."
+        "Clients should parse connection_status/internet_status numerically; string '0' represents the false state and must not be treated as truthy-connected. Keep Internet availability separate from WAN-link state.",
+        "connection_status=2 is physically observed during reconnect. Polling clients must not reject it as an invalid enum and should continue until a final 0/1 state or timeout."
       ]
     },
     {
