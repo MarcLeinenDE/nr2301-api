@@ -1178,10 +1178,11 @@
         "vpn_clients"
       ],
       "semantic_contracts": [],
-      "live_note": null,
+      "live_note": "2026-09-18 physical SDK write campaign observed vpn_client_active_index='disable' while the VPN client subsystem was disabled; treat this as a no-active-profile sentinel, not a numeric profile index.",
       "implementation_notes": [
         "Response may contain VPN profile passwords/PSKs; redact before logging.",
-        "2026-08-25: temporary inactive L2TP and L2TP/IPsec profiles were added, read back and deleted with exact final profile-count restore. No VPN connection was attempted."
+        "2026-08-25: temporary inactive L2TP and L2TP/IPsec profiles were added, read back and deleted with exact final profile-count restore. No VPN connection was attempted.",
+        "vpn_client_active_index may be the string 'disable' when no profile is active / the VPN client subsystem is disabled. Consumers must not parse it unconditionally as a numeric index."
       ]
     },
     {
