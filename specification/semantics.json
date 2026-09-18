@@ -95,14 +95,14 @@
     },
     "router/get_diag_info.cpu_temp_normal": {
       "values": {
-        "1": {
-          "meaning": "Normal",
-          "severity": "ok",
-          "evidence": "STATIC_FRONTEND_VERIFIED"
-        },
         "0": {
           "meaning": "Abnormal",
           "severity": "error",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "1": {
+          "meaning": "Normal",
+          "severity": "ok",
           "evidence": "STATIC_FRONTEND_VERIFIED"
         },
         "-1": {
@@ -115,14 +115,14 @@
     },
     "router/get_diag_info.wan_st": {
       "values": {
-        "1": {
-          "meaning": "WAN OK",
-          "severity": "ok",
-          "evidence": "STATIC_FRONTEND_VERIFIED"
-        },
         "0": {
           "meaning": "WAN not OK",
           "severity": "error",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "1": {
+          "meaning": "WAN OK",
+          "severity": "ok",
           "evidence": "STATIC_FRONTEND_VERIFIED"
         }
       },
@@ -130,14 +130,14 @@
     },
     "router/get_diag_internet_info.access": {
       "values": {
-        "1": {
-          "meaning": "Internet available",
-          "severity": "ok",
-          "evidence": "STATIC_FRONTEND_VERIFIED"
-        },
         "0": {
           "meaning": "Internet unavailable",
           "severity": "error",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "1": {
+          "meaning": "Internet available",
+          "severity": "ok",
           "evidence": "STATIC_FRONTEND_VERIFIED"
         }
       },
@@ -145,14 +145,14 @@
     },
     "wireless/get_diag_wifi_info.wifi_st": {
       "values": {
-        "1": {
-          "meaning": "Wi-Fi enabled",
-          "severity": "ok",
-          "evidence": "STATIC_FRONTEND_VERIFIED"
-        },
         "0": {
           "meaning": "Wi-Fi disabled",
           "severity": "error",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "1": {
+          "meaning": "Wi-Fi enabled",
+          "severity": "ok",
           "evidence": "STATIC_FRONTEND_VERIFIED"
         }
       }
@@ -595,14 +595,14 @@
     },
     "ota/get_updated_status.fota_auto_upgrade_status": {
       "values": {
-        "1": {
-          "meaning": "Trigger notification that firmware was updated automatically",
-          "severity": "info",
-          "evidence": "STATIC_FRONTEND_VERIFIED"
-        },
         "0": {
           "meaning": "No automatic-update-completed notification",
           "severity": "neutral",
+          "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        "1": {
+          "meaning": "Trigger notification that firmware was updated automatically",
+          "severity": "info",
           "evidence": "STATIC_FRONTEND_VERIFIED"
         }
       },
@@ -739,12 +739,13 @@
       ]
     },
     "cm/get_current_wan_info.contextlist[].connection_status": {
-      "evidence": "FRONTEND_SOURCE_VERIFIED",
+      "evidence": "FRONTEND_SOURCE_VERIFIED_PLUS_LIVE_TRANSITION",
       "values": {
         "0": "Upstream/link disconnected",
-        "1": "Upstream/link connected"
+        "1": "Upstream/link connected",
+        "2": "Transition state observed immediately after cm/connect; exact frontend label unresolved"
       },
-      "note": "Keep separate from internet_status."
+      "note": "0=disconnected and 1=connected are frontend-source-verified. Value 2 was physically observed during reconnect and must be treated as non-final/transitional. Keep separate from internet_status."
     },
     "cm/get_current_wan_info.contextlist[].internet_status": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
