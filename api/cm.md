@@ -462,6 +462,7 @@ Observed frontend transport variants:
 ### Notes
 
 - Clients should parse connection_status/internet_status numerically; string '0' represents the false state and must not be treated as truthy-connected. Keep Internet availability separate from WAN-link state.
+- 2026-09-18 physical reconnect testing observed `connection_status=2` with `internet_status=0` immediately after `cm/connect`. Treat `2` as a transient/non-final state and continue polling; its exact frontend label is not yet reconstructed.
 
 <a id="get-network-settings"></a>
 
