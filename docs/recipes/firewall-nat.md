@@ -89,12 +89,12 @@ Enabled uses `toStringData:false`, so `enable` and `index` remain native integer
 {
   "enable":1,
   "items":[
-    {"index":0,"name":"example","mac":"02-00-00-00-00-01","local_port":"65500","wan_port":"65500"}
+    {"index":0,"name":"example","mac":"02:00:00:00:00:01","local_port":"65500","wan_port":"65500"}
   ]
 }
 ```
 
-The WebUI iterates up to 10 slots. A 2026-09-14 physical campaign confirmed a synthetic forwarding-rule lifecycle. Response `result` is endpoint-state-dependent; do not interpret it globally.
+The NR2301 WebUI exposes **5 Port Forward slots** (indices 0..4). A 2026-09-14 physical campaign confirmed a synthetic forwarding-rule lifecycle, and the 2026-09-18 production-helper smoke reconfirmed the five-slot form with write/read-back/restore and no residue. Response `result` is endpoint-state-dependent; do not interpret it globally.
 
 ## Port triggering
 
