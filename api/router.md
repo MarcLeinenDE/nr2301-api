@@ -487,22 +487,30 @@ Observed frontend transport variants:
 
 ### Response
 
+Within the one-member multicall, the endpoint response is wrapped in the member's `data` object:
+
 ```json
 {
-  "dhcp": {
-    "disabled": "string",
-    "dns1": "string",
-    "dns2": "string",
-    "dnsmode": "string",
-    "ipv6dns1": "string",
-    "ipv6dns2": "string",
-    "leasetime": "string",
-    "limit": "string",
-    "mtu": "string",
-    "start": "string"
+  "data": {
+    "dhcp": {
+      "disabled": "string",
+      "dns1": "string",
+      "dns2": "string",
+      "dnsmode": "string",
+      "ipv6dns1": "string",
+      "ipv6dns2": "string",
+      "leasetime": "string",
+      "limit": "string",
+      "mtu": "string",
+      "start": "string"
+    }
   }
 }
 ```
+
+### Notes
+
+- 2026-09-18 physical SDK read confirmed `responses[0].data.dhcp`; `dhcp` is not at the multicall-member root.
 
 <a id="router-get-dhcp-settings-comb"></a>
 
