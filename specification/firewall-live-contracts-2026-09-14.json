@@ -4,7 +4,10 @@
   "date": "2026-09-14",
   "firmware": "V1.00(ACIY.3)C0",
   "status": "LIVE_VERIFIED",
-  "evidence": "evidence/physical/2026-09-14-firewall-webui-live-verification.md",
+  "evidence": [
+    "evidence/physical/2026-09-14-firewall-webui-live-verification.md",
+    "evidence/physical/2026-09-18-firewall-production-helper-smoke.md"
+  ],
   "contracts": {
     "firewall/set_ping_from_wan": {
       "request": {
@@ -13,7 +16,12 @@
         }
       },
       "success": "firewall.setting_response == 'OK'",
-      "verified": ["same_state", "mutation", "readback", "restore"]
+      "verified": [
+        "same_state",
+        "mutation",
+        "readback",
+        "restore"
+      ]
     },
     "firewall/set_admin_from_wan": {
       "request": {
@@ -22,7 +30,12 @@
         }
       },
       "success": "firewall.setting_response == 'OK'",
-      "verified": ["same_state", "mutation", "readback", "restore"],
+      "verified": [
+        "same_state",
+        "mutation",
+        "readback",
+        "restore"
+      ],
       "frontend_followup": "router/restart_web_server is scheduled separately by the stock UI after a changed value; not required for setter contract verification"
     },
     "firewall/ww_edit_ip_filter": {
@@ -33,11 +46,18 @@
       },
       "full_read": {
         "ww_ip_filter": {
-          "list": ["all"]
+          "list": [
+            "all"
+          ]
         }
       },
       "success": "firewall.setting_response == 'OK'",
-      "verified": ["non_empty_write", "full_list_readback", "list_restore", "switch_restore"]
+      "verified": [
+        "non_empty_write",
+        "full_list_readback",
+        "list_restore",
+        "switch_restore"
+      ]
     },
     "firewall/ww_edit_port_filter": {
       "request": {
@@ -47,11 +67,18 @@
       },
       "full_read": {
         "ww_port_filter": {
-          "list": ["all"]
+          "list": [
+            "all"
+          ]
         }
       },
       "success": "firewall.setting_response == 'OK'",
-      "verified": ["non_empty_write", "full_list_readback", "list_restore", "switch_restore"]
+      "verified": [
+        "non_empty_write",
+        "full_list_readback",
+        "list_restore",
+        "switch_restore"
+      ]
     },
     "firewall/set_port_trigger": {
       "enabled_request": {
@@ -70,10 +97,44 @@
         "enable": 0
       },
       "success": "result == 0",
-      "verified": ["non_empty_create", "readback", "delete_via_enabled_empty_slots", "disable_restore"],
+      "verified": [
+        "non_empty_create",
+        "readback",
+        "delete_via_enabled_empty_slots",
+        "disable_restore"
+      ],
       "semantics": {
         "enable_zero_deletes_items": false,
         "delete_rule": "while enable=1 send the complete 10-slot list with target slot emptied, verify removal, then restore original enable state"
+      }
+    },
+    "firewall/set_port_forward": {
+      "enabled_request": {
+        "enable": 1,
+        "items": [
+          {
+            "index": "native integer 0..4",
+            "name": "string",
+            "mac": "colon-separated MAC string",
+            "local_port": "string port",
+            "wan_port": "string port"
+          }
+        ]
+      },
+      "disabled_request": {
+        "enable": 0
+      },
+      "slot_count": 5,
+      "transport": "toStringData:false; native JSON integers for enable/index",
+      "verified": [
+        "non_empty_create",
+        "readback",
+        "list_restore",
+        "disable_restore",
+        "production_helper_smoke"
+      ],
+      "semantics": {
+        "result": "endpoint-state-dependent; observed 0 for enabled write and 1 for disabled restore; verify state by getter"
       }
     }
   }
