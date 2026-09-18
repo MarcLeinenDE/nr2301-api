@@ -9,6 +9,8 @@ Detailed reference: [`cm`](../../api/cm.md).
 - `cm/get_vpn_clients` — global enable state, active profile index and configured profiles.
 - `cm/get_vpn_client_connect_status` — current VPN connection status.
 
+`vpn_client_active_index` is not always numeric. On ACIY.3 it was physically observed as the string `"disable"` while the VPN client subsystem was disabled; treat that as no active profile.
+
 > [!WARNING]
 > `get_vpn_clients` may return profile passwords and L2TP/IPsec PSKs. Redact them from logs, traces and issue reports.
 
