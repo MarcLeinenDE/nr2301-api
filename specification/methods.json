@@ -4102,23 +4102,28 @@
         ]
       },
       "response_schema": {
-        "dhcp": {
-          "disabled": "string",
-          "dns1": "string",
-          "dns2": "string",
-          "dnsmode": "string",
-          "ipv6dns1": "string",
-          "ipv6dns2": "string",
-          "leasetime": "string",
-          "limit": "string",
-          "mtu": "string",
-          "start": "string"
+        "data": {
+          "dhcp": {
+            "disabled": "string",
+            "dns1": "string",
+            "dns2": "string",
+            "dnsmode": "string",
+            "ipv6dns1": "string",
+            "ipv6dns2": "string",
+            "leasetime": "string",
+            "limit": "string",
+            "mtu": "string",
+            "start": "string"
+          }
         }
       },
       "response_fields": [],
       "semantic_contracts": [],
-      "live_note": null,
-      "implementation_notes": []
+      "live_note": "2026-09-18 physical SDK read confirmed one-member multicall response member shape {data:{dhcp:{...}}}; DHCP payload is nested under member.data.",
+      "implementation_notes": [
+        "Normal admin read is dispatched as a one-member multicall.",
+        "The multicall response member wraps the endpoint payload in a 'data' object; consumers must not expect 'dhcp' at the member root."
+      ]
     },
     {
       "method_id": "router/router_get_dhcp_settings_comb",
