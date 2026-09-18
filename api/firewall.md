@@ -6,7 +6,7 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 
 | Method | Verification | Auth evidence | Safety |
 |---|---|---|---|
-| [`fw_edit_dmz_entry`](#fw-edit-dmz-entry) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
+| [`fw_edit_dmz_entry`](#fw-edit-dmz-entry) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`fw_get_disable_info`](#fw-get-disable-info) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`fw_get_dmz_info`](#fw-get-dmz-info) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`fw_get_vpn_passthrough`](#fw-get-vpn-passthrough) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
@@ -22,8 +22,8 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 | [`set_port_forward`](#set-port-forward) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`set_port_trigger`](#set-port-trigger) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`set_url_filter`](#set-url-filter) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
-| [`ww_edit_ip_filter`](#ww-edit-ip-filter) | `LIVE_VERIFIED` | `UNTESTED` | `WRITE_OR_SIDE_EFFECT` |
-| [`ww_edit_port_filter`](#ww-edit-port-filter) | `LIVE_VERIFIED` | `UNTESTED` | `WRITE_OR_SIDE_EFFECT` |
+| [`ww_edit_ip_filter`](#ww-edit-ip-filter) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
+| [`ww_edit_port_filter`](#ww-edit-port-filter) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`ww_fw_set_disable_info`](#ww-fw-set-disable-info) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`ww_fw_set_port_disable_info`](#ww-fw-set-port-disable-info) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`ww_read_ip_filter`](#ww-read-ip-filter) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
@@ -40,22 +40,30 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 **Method ID:** `firewall/fw_edit_dmz_entry`  
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
-**Verification:** `STATIC_CONFIRMED`  
-**Auth evidence:** `UNTESTED`  
-**Safety:** `DO_NOT_TEST_FOR_COVERAGE`
-
-> [!CAUTION]
-> This method was deliberately not exercised merely to improve coverage because its potential impact outweighed the documentation value. Treat the contract as static evidence only.
+**Verification:** `LIVE_VERIFIED`  
+**Auth evidence:** `ADMIN_OK`  
+**Safety:** `WRITE_OR_SIDE_EFFECT`
 
 ### Request
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `dmz_dest_ip`.
+```json
+{
+  "dmz_dest_ip": "<non-empty IPv4 string>"
+}
+```
+
+Basis: shipped NR2301 WebUI source plus physical write/read-back evidence.
 
 ### Response
 
 No stable response schema is currently documented.
+
+### Notes
+
+- Non-empty destination writes are live verified.
+- The stock NR2301 WebUI exposes no destination clear/delete operation; do not infer an empty-string clear contract.
 
 <a id="fw-get-disable-info"></a>
 
@@ -154,11 +162,22 @@ No request body has been reconstructed as necessary for this method.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `dmz_disable`.
+```json
+{
+  "dmz_disable": "0"
+}
+```
+
+`"0"` = enabled, `"1"` = disabled.
 
 ### Response
 
 Known/observed response fields: `firewall`.
+
+### Notes
+
+- DMZ enable/disable was physically written, read back and restored.
+- Changing the enable state does not clear the stored destination.
 
 <a id="fw-set-vpn-passthrough"></a>
 
@@ -175,11 +194,23 @@ Known/observed response fields: `firewall`.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `pptp`, `l2tp`, `ipsec`.
+```json
+{
+  "pptp": 1,
+  "l2tp": 1,
+  "ipsec": 1
+}
+```
+
+The stock page uses `toStringData:false`; all three flags are native JSON integers.
 
 ### Response
 
 Known/observed response fields: `result`.
+
+### Notes
+
+- Native-integer same-state, mutation, read-back and restore were physically verified.
 
 <a id="get-admin-from-wan"></a>
 
@@ -348,11 +379,24 @@ No request body has been reconstructed as necessary for this method.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `admin_from_wan`.
+```json
+{
+  "admin_from_wan": {
+    "admin_from_wan_enable": "1"
+  }
+}
+```
+
+Use string `"0"` or `"1"`.
 
 ### Response
 
 Known/observed response fields: `firewall`.
+
+### Notes
+
+- The nested WebUI body was physically verified with same-state, mutation, read-back and restore.
+- The stock WebUI separately schedules `router/restart_web_server` after a changed value; that disruptive follow-up is not part of this setter body.
 
 <a id="set-ping-from-wan"></a>
 
@@ -369,11 +413,23 @@ Known/observed response fields: `firewall`.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `ping_from_wan`.
+```json
+{
+  "ping_from_wan": {
+    "ping_from_wan_enable": "1"
+  }
+}
+```
+
+Use string `"0"` or `"1"`.
 
 ### Response
 
 Known/observed response fields: `firewall`.
+
+### Notes
+
+- The nested WebUI body was physically verified with same-state, mutation, read-back and restore.
 
 <a id="set-port-forward"></a>
 
@@ -390,7 +446,30 @@ Known/observed response fields: `firewall`.
 
 HTTP method: `POST`
 
-No request body has been reconstructed as necessary for this method.
+Disabled:
+
+```json
+{"enable":0}
+```
+
+Enabled uses exactly five indexed slots (0..4):
+
+```json
+{
+  "enable": 1,
+  "items": [
+    {
+      "index": 0,
+      "name": "example",
+      "mac": "02:00:00:00:00:01",
+      "local_port": "65500",
+      "wan_port": "65500"
+    }
+  ]
+}
+```
+
+The stock page uses `toStringData:false`, so `enable` and `index` are native JSON integers.
 
 ### Response
 
@@ -398,7 +477,9 @@ Known/observed response fields: `resJson`.
 
 ### Notes
 
-- Transactional add/read-back/clear/disable succeeded. Empirical result=0 when enabled, result=1 when disabled; result is not a generic failure code.
+- The NR2301 WebUI exposes five Port Forward slots, not ten.
+- A 2026-09-18 production-helper smoke physically reconfirmed create/read-back/list restore/disable restore with no synthetic residue.
+- Observed `result=0` for the enabled write and `result=1` for the disabled restore; treat `result` as endpoint-state-dependent and verify with `get_port_forward`.
 
 <a id="set-port-trigger"></a>
 
@@ -415,11 +496,39 @@ Known/observed response fields: `resJson`.
 
 HTTP method: `POST`
 
-No request body has been reconstructed as necessary for this method.
+Disabled:
+
+```json
+{"enable":0}
+```
+
+Enabled uses a complete ten-slot list:
+
+```json
+{
+  "enable": 1,
+  "items": [
+    {
+      "index": 0,
+      "name": "example",
+      "trigger_port": "65500",
+      "start_port": "65501",
+      "end_port": "65501"
+    }
+  ]
+}
+```
+
+The stock page uses `toStringData:false`, so `enable` and `index` are native JSON integers.
 
 ### Response
 
 Known/observed response fields: `result`.
+
+### Notes
+
+- `{"enable":0}` disables triggering but does not delete stored rules.
+- Deletion was physically verified by sending `enable=1` with the complete ten-slot list and the target slot emptied, verifying removal, then restoring the original enable state.
 
 <a id="set-url-filter"></a>
 
@@ -436,11 +545,27 @@ Known/observed response fields: `result`.
 
 HTTP method: `POST`
 
-No request body has been reconstructed as necessary for this method.
+Blacklist example:
+
+```json
+{
+  "mode": "blacklist",
+  "black_items": [
+    {"value":"example.invalid","index":0}
+  ]
+}
+```
+
+Whitelist uses `white_items`; disabled mode is `{"mode":"disable"}`. The stock page uses `toStringData:false`, so item indices are native integers.
 
 ### Response
 
 Known/observed response fields: `resJson`.
+
+### Notes
+
+- A synthetic blacklist lifecycle and semantic restore were physically verified.
+- Disabling the filter does not by itself establish deletion of stored blacklist/whitelist entries.
 
 <a id="ww-edit-ip-filter"></a>
 
@@ -457,7 +582,18 @@ Known/observed response fields: `resJson`.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `ww_ip_filter`.
+```json
+{
+  "ww_ip_filter": {
+    "list": [
+      {"ip":"203.0.113.77","index":"0"},
+      {"ip":"0","index":"1"}
+    ]
+  }
+}
+```
+
+The complete request contains exactly ten entries. Indices are strings and empty slots use string `"0"`.
 
 ### Response
 
@@ -465,7 +601,8 @@ Known/observed response fields: `firewall`.
 
 ### Notes
 
-- Temporary documentation-IP rule added, read back, then list restored empty.
+- The exact ten-slot non-empty write/full-list read-back/list restore/switch restore lifecycle was physically verified.
+- Full-list read uses `ww_read_ip_filter` with `{ww_ip_filter:{list:["all"]}}`.
 
 <a id="ww-edit-port-filter"></a>
 
@@ -482,7 +619,18 @@ Known/observed response fields: `firewall`.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `ww_port_filter`.
+```json
+{
+  "ww_port_filter": {
+    "list": [
+      {"port":"65500:65500","index":"0"},
+      {"port":"0","index":"1"}
+    ]
+  }
+}
+```
+
+The complete request contains exactly ten entries. Indices are strings; populated entries use `"start:end"` and empty slots use string `"0"`.
 
 ### Response
 
@@ -490,7 +638,8 @@ Known/observed response fields: `firewall`.
 
 ### Notes
 
-- Temporary port rule added, read back, then list restored empty.
+- The exact ten-slot non-empty write/full-list read-back/list restore/switch restore lifecycle was physically verified.
+- Full-list read uses `ww_read_port_filter` with `{ww_port_filter:{list:["all"]}}`.
 
 <a id="ww-fw-set-disable-info"></a>
 
@@ -507,11 +656,23 @@ Known/observed response fields: `firewall`.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `ww_ip_filter`.
+```json
+{
+  "ww_ip_filter": {
+    "ip_filter_disable": "0"
+  }
+}
+```
+
+`"0"` = enabled, `"1"` = disabled.
 
 ### Response
 
 Known/observed response fields: `firewall`.
+
+### Notes
+
+- Enable/disable plus restore was physically verified.
 
 <a id="ww-fw-set-port-disable-info"></a>
 
@@ -528,11 +689,23 @@ Known/observed response fields: `firewall`.
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `ww_port_filter`.
+```json
+{
+  "ww_port_filter": {
+    "port_filter_disable": "0"
+  }
+}
+```
+
+`"0"` = enabled, `"1"` = disabled. Although the page source uses numeric literals, the default WebUI serializer stringifies them on the wire.
 
 ### Response
 
 Known/observed response fields: `firewall`.
+
+### Notes
+
+- Enable/disable plus restore was physically verified.
 
 <a id="ww-read-ip-filter"></a>
 
@@ -699,7 +872,15 @@ Observed frontend transport variants:
 
 HTTP method: `POST`
 
-Known top-level request keys from the shipped frontend: `ww_upnp`.
+```json
+{
+  "ww_upnp": {
+    "upnp_enable": "1"
+  }
+}
+```
+
+Use string `"0"` or `"1"`.
 
 ### Response
 
@@ -707,7 +888,8 @@ Known/observed response fields: `firewall`.
 
 ### Notes
 
-- WPS and UPnP should be modeled as independent controls on ACIY.3; WPS enable left UPnP=0 in live test.
+- UPnP same-state/mutation/read-back/restore was physically verified.
+- WPS and UPnP are independent controls on ACIY.3.
 
 <a id="ww-upnp-open-close-state"></a>
 
