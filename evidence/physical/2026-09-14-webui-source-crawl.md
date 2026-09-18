@@ -143,12 +143,12 @@ Enabled:
 {
   "enable":1,
   "items":[
-    {"index":0,"name":"example","mac":"02-00-00-00-00-01","local_port":"65500","wan_port":"65500"}
+    {"index":0,"name":"example","mac":"02:00:00:00:00:01","local_port":"65500","wan_port":"65500"}
   ]
 }
 ```
 
-Port forwarding was already live-verified by the physical campaign.
+The Port Forward page exposes five indexed slots (0..4). Port forwarding was already live-verified by the physical campaign; the five-slot production helper was reconfirmed physically on 2026-09-18.
 
 ## URL filter
 
