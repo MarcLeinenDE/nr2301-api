@@ -566,6 +566,7 @@ No request body has been reconstructed as necessary for this method.
 ### Notes
 
 - Response may contain VPN profile passwords/PSKs; redact before logging.
+- 2026-09-18 physical SDK write testing observed `vpn_client_active_index="disable"` while the VPN subsystem was disabled. Treat `"disable"` as a no-active-profile sentinel, not as a numeric index.
 - 2026-08-25: temporary inactive L2TP and L2TP/IPsec profiles were added, read back and deleted with exact final profile-count restore. No VPN connection was attempted.
 
 <a id="get-wan-settings"></a>
