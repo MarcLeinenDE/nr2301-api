@@ -63,6 +63,8 @@ Both actions are classified `DISRUPTIVE_RECOVERY_REQUIRED`. A timeout or dropped
 
 During physical reconnect testing on 2026-09-18, `get_current_wan_info.contextlist[].connection_status` temporarily returned `2` (with `internet_status=0`) after `cm/connect`. Treat that as a non-final transition and keep polling until a documented final state (`0` or `1`) or timeout.
 
+A follow-up production-SDK lifecycle showed simultaneous `4g` + `nr` radio presence while `connection_status` was both `0` and `1`; therefore LTE+NR/NSA coexistence is not encoded by `connection_status=2`. Keep WAN link state and radio-access technology separate.
+
 ## Read current WAN addressing
 
 Use `cm/get_current_wan_info` for IPv4/IPv6 address, gateway and DNS values. Parse `connection_status` and `internet_status` numerically and keep them as separate concepts.
