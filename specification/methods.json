@@ -57,16 +57,16 @@
       "LIVE_DENIED": 3,
       "LIVE_NOT_APPLICABLE": 2,
       "LIVE_REJECTED": 1,
-      "LIVE_VERIFIED": 133,
+      "LIVE_VERIFIED": 134,
       "LIVE_VERIFIED_LIMITED": 4,
       "NOT_IMPLEMENTED": 2,
-      "STATIC_CONFIRMED": 12
+      "STATIC_CONFIRMED": 11
     },
     "safety_counts": {
       "DISRUPTIVE_RECOVERY_REQUIRED": 11,
-      "DO_NOT_TEST_FOR_COVERAGE": 12,
+      "DO_NOT_TEST_FOR_COVERAGE": 11,
       "READ_OR_LOW_SIDE_EFFECT": 81,
-      "WRITE_OR_SIDE_EFFECT": 53
+      "WRITE_OR_SIDE_EFFECT": 54
     }
   },
   "methods": [
@@ -1577,15 +1577,17 @@
       "method": "fw_edit_dmz_entry",
       "endpoint": "/api.cgi",
       "operation_type": "WRITE_OR_ACTION",
-      "verification": "STATIC_CONFIRMED",
-      "observed_status": "UNTESTED",
+      "verification": "LIVE_VERIFIED",
+      "observed_status": "VERIFIED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
-      "safety_class": "DO_NOT_TEST_FOR_COVERAGE",
+      "auth_evidence": "ADMIN_OK",
+      "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "dmz_dest_ip": "non-empty IPv4 string"
+        },
+        "basis": "shipped NR2301 WebUI source + physical write/read-back evidence",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -1602,8 +1604,11 @@
       "response_schema": null,
       "response_fields": [],
       "semantic_contracts": [],
-      "live_note": null,
-      "implementation_notes": []
+      "live_note": "Non-empty destination writes are live verified. The stock NR2301 WebUI exposes no destination clear/delete operation.",
+      "implementation_notes": [
+        "Use fw_edit_dmz_entry only for a non-empty destination.",
+        "Do not infer an empty-string clear/delete contract; DMZ destination clear/delete remains unresolved."
+      ]
     },
     {
       "method_id": "firewall/fw_get_disable_info",
@@ -1735,8 +1740,10 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "dmz_disable": "'0' enabled | '1' disabled (string)"
+        },
+        "basis": "shipped NR2301 WebUI source + physical write/read-back/restore",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -1755,8 +1762,10 @@
         "firewall"
       ],
       "semantic_contracts": [],
-      "live_note": null,
-      "implementation_notes": []
+      "live_note": "DMZ enable/disable physically verified and restored.",
+      "implementation_notes": [
+        "Changing enable state does not imply clearing the stored DMZ destination."
+      ]
     },
     {
       "method_id": "firewall/fw_set_vpn_passthrough",
@@ -1771,8 +1780,12 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "pptp": "0|1 native integer",
+          "l2tp": "0|1 native integer",
+          "ipsec": "0|1 native integer"
+        },
+        "basis": "shipped NR2301 WebUI source + physical mutation/read-back/restore",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -1793,8 +1806,10 @@
         "result"
       ],
       "semantic_contracts": [],
-      "live_note": null,
-      "implementation_notes": []
+      "live_note": "Native integer VPN-passthrough payload physically verified.",
+      "implementation_notes": [
+        "The WebUI uses toStringData:false; do not stringify these three flags."
+      ]
     },
     {
       "method_id": "firewall/get_admin_from_wan",
@@ -2016,8 +2031,12 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "admin_from_wan": {
+            "admin_from_wan_enable": "'0'|'1' string"
+          }
+        },
+        "basis": "shipped NR2301 WebUI source + focused physical same-state/mutation/read-back/restore",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -2036,8 +2055,10 @@
         "firewall"
       ],
       "semantic_contracts": [],
-      "live_note": null,
-      "implementation_notes": []
+      "live_note": "Nested WebUI setter body physically verified.",
+      "implementation_notes": [
+        "The stock UI separately schedules router/restart_web_server after a changed value; the firewall setter itself does not require callers to hide that disruptive action."
+      ]
     },
     {
       "method_id": "firewall/set_ping_from_wan",
@@ -2052,8 +2073,12 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "ping_from_wan": {
+            "ping_from_wan_enable": "'0'|'1' string"
+          }
+        },
+        "basis": "shipped NR2301 WebUI source + focused physical same-state/mutation/read-back/restore",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -2072,7 +2097,7 @@
         "firewall"
       ],
       "semantic_contracts": [],
-      "live_note": null,
+      "live_note": "Nested WebUI setter body physically verified.",
       "implementation_notes": []
     },
     {
@@ -2088,8 +2113,11 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "enable": "0|1 native integer",
+          "items": "when enable=1: exactly 5 indexed {index,name,mac,local_port,wan_port} entries; index is native integer 0..4"
+        },
+        "basis": "shipped NR2301 WebUI source + 2026-09-14 physical lifecycle + 2026-09-18 production-helper smoke",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -2106,8 +2134,12 @@
         "resJson"
       ],
       "semantic_contracts": [],
-      "live_note": "Transactional add/read-back/clear/disable succeeded. Empirical result=0 when enabled, result=1 when disabled; result is not a generic failure code.",
-      "implementation_notes": []
+      "live_note": "Five-slot Port Forward create/read-back/restore physically verified. Result is endpoint-state-dependent.",
+      "implementation_notes": [
+        "The NR2301 WebUI exposes five Port Forward slots, not ten.",
+        "A colon-separated locally administered test MAC was used in the successful physical lifecycle.",
+        "Observed result=0 for enabled write and result=1 for disabled restore; verify state with get_port_forward instead of treating result as a generic success flag."
+      ]
     },
     {
       "method_id": "firewall/set_port_trigger",
@@ -2122,8 +2154,11 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "enable": "0|1 native integer",
+          "items": "when enable=1: exactly 10 indexed {index,name,trigger_port,start_port,end_port} entries; index is native integer 0..9"
+        },
+        "basis": "shipped NR2301 WebUI source + focused physical create/read-back/delete/restore",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -2140,8 +2175,11 @@
         "result"
       ],
       "semantic_contracts": [],
-      "live_note": null,
-      "implementation_notes": []
+      "live_note": "Non-empty Port Trigger creation and two-step deletion semantics physically verified.",
+      "implementation_notes": [
+        "When enable=0, the WebUI sends only {enable:0}; this disables triggering but does not delete stored items.",
+        "To delete a stored rule, send enable=1 with the complete 10-slot list and the target slot emptied, verify removal, then restore the desired enable state."
+      ]
     },
     {
       "method_id": "firewall/set_url_filter",
@@ -2156,8 +2194,12 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "mode": "'disable'|'blacklist'|'whitelist'",
+          "black_items": "for blacklist: 10 indexed {value,index} entries",
+          "white_items": "for whitelist: 10 indexed {value,index} entries"
+        },
+        "basis": "shipped NR2301 WebUI source + physical synthetic lifecycle/read-back/restore",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -2174,8 +2216,11 @@
         "resJson"
       ],
       "semantic_contracts": [],
-      "live_note": null,
-      "implementation_notes": []
+      "live_note": "URL-filter blacklist lifecycle and semantic restore physically verified.",
+      "implementation_notes": [
+        "The WebUI uses toStringData:false; item indices are native integers.",
+        "Disabled mode sends only mode='disable' and does not by itself prove stored-item deletion."
+      ]
     },
     {
       "method_id": "firewall/ww_edit_ip_filter",
@@ -2186,12 +2231,16 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "ww_ip_filter": {
+            "list": "exactly 10 entries: {ip: IPv4 or '0', index: '0'..'9'}; index is a string"
+          }
+        },
+        "basis": "shipped NR2301 WebUI source + focused physical non-empty lifecycle",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -2210,8 +2259,11 @@
         "firewall"
       ],
       "semantic_contracts": [],
-      "live_note": "Temporary documentation-IP rule added, read back, then list restored empty.",
-      "implementation_notes": []
+      "live_note": "Exact 10-slot non-empty IP-filter write/read-back/restore physically verified.",
+      "implementation_notes": [
+        "Full-list read uses ww_read_ip_filter with {ww_ip_filter:{list:['all']}}.",
+        "Empty slots use string '0'."
+      ]
     },
     {
       "method_id": "firewall/ww_edit_port_filter",
@@ -2222,12 +2274,16 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "ww_port_filter": {
+            "list": "exactly 10 entries: {port: 'start:end' or '0', index: '0'..'9'}; index is a string"
+          }
+        },
+        "basis": "shipped NR2301 WebUI source + focused physical non-empty lifecycle",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -2246,8 +2302,11 @@
         "firewall"
       ],
       "semantic_contracts": [],
-      "live_note": "Temporary port rule added, read back, then list restored empty.",
-      "implementation_notes": []
+      "live_note": "Exact 10-slot non-empty port-filter write/read-back/restore physically verified.",
+      "implementation_notes": [
+        "Full-list read uses ww_read_port_filter with {ww_port_filter:{list:['all']}}.",
+        "Empty slots use string '0'."
+      ]
     },
     {
       "method_id": "firewall/ww_fw_set_disable_info",
@@ -2262,8 +2321,12 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "ww_ip_filter": {
+            "ip_filter_disable": "'0' enabled | '1' disabled (string)"
+          }
+        },
+        "basis": "shipped NR2301 WebUI source + focused physical read-back/restore",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -2282,7 +2345,7 @@
         "firewall"
       ],
       "semantic_contracts": [],
-      "live_note": null,
+      "live_note": "IP-filter enable/disable wire form physically verified.",
       "implementation_notes": []
     },
     {
@@ -2298,8 +2361,12 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "ww_port_filter": {
+            "port_filter_disable": "'0' enabled | '1' disabled (string)"
+          }
+        },
+        "basis": "shipped NR2301 WebUI source + focused physical read-back/restore",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -2318,7 +2385,7 @@
         "firewall"
       ],
       "semantic_contracts": [],
-      "live_note": null,
+      "live_note": "Port-filter enable/disable wire form physically verified.",
       "implementation_notes": []
     },
     {
@@ -2504,8 +2571,12 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "ww_upnp": {
+            "upnp_enable": "'0'|'1' string"
+          }
+        },
+        "basis": "shipped NR2301 WebUI source + physical same-state/mutation/read-back/restore",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
@@ -2524,9 +2595,9 @@
         "firewall"
       ],
       "semantic_contracts": [],
-      "live_note": null,
+      "live_note": "UPnP enable/disable physically verified.",
       "implementation_notes": [
-        "WPS and UPnP should be modeled as independent controls on ACIY.3; WPS enable left UPnP=0 in live test."
+        "WPS and UPnP are independent controls on ACIY.3."
       ]
     },
     {
@@ -2738,8 +2809,8 @@
           "evidence": "STATIC_FRONTEND_VERIFIED",
           "field": "fota_auto_upgrade_status",
           "values": {
-            "1": "show firmware-updated notification",
-            "0": "no such notification"
+            "0": "no such notification",
+            "1": "show firmware-updated notification"
           },
           "important": "Notification/status flag, not an Automatic Updates setting."
         }
@@ -3681,8 +3752,8 @@
           "evidence": "STATIC_FRONTEND_VERIFIED",
           "field": "access",
           "values": {
-            "1": "available",
-            "0": "unavailable"
+            "0": "unavailable",
+            "1": "available"
           }
         }
       ],
