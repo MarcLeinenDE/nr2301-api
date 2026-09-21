@@ -5,7 +5,7 @@
 Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/method-status.md).
 
 > [!IMPORTANT]
-> On tested firmware `V1.00(ACIY.3)C0`, administrator pre-auth is host/authority sensitive. `zyxel.home` and `192.168.1.1` resolve to the same router address, but the direct-IP path returned `result=4` for both pre-auth methods while `http://zyxel.home` returned normal `result=0` responses. Use `http://zyxel.home` for the administrator challenge/login flow on this firmware. See [`../docs/authentication.md`](../docs/authentication.md).
+> Administrator pre-auth showed authority-dependent behavior in one 2026-08-31 A/B test, but a 2026-09-21 recheck successfully completed the full SDK challenge/login flow through `http://192.168.1.1` after `zyxel.home` failed to resolve locally. Treat authority behavior as runtime/environment/state dependent; do not reject direct-IP login pre-emptively. See [`../docs/authentication.md`](../docs/authentication.md).
 
 | Method | Verification | Auth evidence | Safety |
 |---|---|---|---|
@@ -86,58 +86,11 @@ HTTP method: `POST`
 ### Semantics
 
 - **`account.preauth_host_authority.v1`**
-  - `evidence`: LIVE_AB_VERIFIED_2026_08_31
+  - `evidence`: LIVE_STATE_DEPENDENT_2026_08_31_AND_2026_09_21
   - tested firmware: `V1.00(ACIY.3)C0`
-  - canonical management URL: `http://zyxel.home`
-  - direct-IP observation: `http://192.168.1.1` → `result=4`
-  - canonical-host observation: `http://zyxel.home` → `result=0`
-  - scope: host/authority-dependent behavior; this does **not** define `4` as a universal `get_rand` error enum
-
-### Notes
-
-- Live pre-auth helper used successfully by normal admin login.
-- Historical live-working clients used an eight-character lowercase-alphanumeric `user_id` and reused it for `account/login`.
-- During the physical USB A/B test, user-id length, requests-vs-urllib transport, compact JSON/header reproduction, WebUI bootstrap and prior explicit WebUI logout did not explain the direct-IP failure; switching only to the canonical host made pre-auth succeed.
-
-<a id="get-retrytimes-and-time"></a>
-
-## `get_retrytimes_and_time`
-
-**Method ID:** `account/get_retrytimes_and_time`  
-**Endpoint:** `/api.cgi`  
-**Operation type:** `READ`  
-**Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `PREAUTH_ALLOWED`  
-**Safety:** `READ_OR_LOW_SIDE_EFFECT`
-
-### Request
-
-HTTP method: `POST`
-
-```json
-{
-  "type": "admin"
-}
-```
-
-### Response
-
-```json
-{
-  "remain_time": "integer",
-  "result": "integer",
-  "retry_times": "integer"
-}
-```
-
-### Semantics
-
-- **`account.preauth_host_authority.v1`**
-  - `evidence`: LIVE_AB_VERIFIED_2026_08_31
-  - tested firmware: `V1.00(ACIY.3)C0`
-  - canonical management URL: `http://zyxel.home`
-  - direct-IP observation: `http://192.168.1.1` → `result=4`
-  - canonical-host observation: `http://zyxel.home` → `result=0`, `retry_times=5`, `remain_time=0`
+  - 2026-08-31: direct IP returned `result=4`; `zyxel.home` returned `result=0`
+  - 2026-09-21: direct IP successfully completed the same SDK pre-auth/login flow
+  - conclusion: do not encode either authority as universally required
 
 ### Notes
 
@@ -186,7 +139,7 @@ HTTP method: `POST`
 ### Notes
 
 - Normal admin login returned result=3 and established CGISID.
-- On tested firmware, perform the challenge/login flow through `http://zyxel.home`; direct-IP pre-auth can fail before the password is submitted.
+- `http://zyxel.home` remains the SDK default, but direct-IP login is also physically proven to work in a later ACIY.3 runtime state. If one authority fails pre-auth, the alternative known authority is a recovery option.
 
 <a id="logout"></a>
 
