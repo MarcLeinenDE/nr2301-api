@@ -79,6 +79,8 @@ The frontend uploads sequential 1 MiB chunks, without multipart/form-data, filen
 
 A safe restore client should snapshot externally observable state, upload only a trusted backup, tolerate management loss on the last chunk, wait for device recovery, log in again and verify both a fresh boot and restored state.
 
+Physical restore testing on 2026-09-21 showed that `router/get_runtime_info` can become readable before every subsystem is fully API-ready: a later firewall/UPnP read briefly returned HTTP 200 with an empty body. Verification clients should therefore retry the **entire required configuration snapshot** until all relevant reads succeed in one pass before comparing restored state.
+
 Configuration backups can contain secrets. Treat backup bytes as sensitive, never commit them to this repository and never include them in diagnostics without explicit sanitization.
 
 ## Change UI language
