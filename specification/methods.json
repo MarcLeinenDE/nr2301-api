@@ -4528,9 +4528,15 @@
       "request": {
         "http_method": "POST",
         "schema": {
-          "data": "unknown/static"
+          "data": [
+            {
+              "index": "integer 0..9",
+              "mac": "string",
+              "ip": "IPv4 string in current LAN subnet"
+            }
+          ]
         },
-        "basis": "static frontend evidence; not live executed",
+        "basis": "shipped ACIY.3 set_dhcp.html source + prior live state-transition evidence",
         "known_frontend_variants": [
           {
             "transport": "multicall member",
@@ -4540,6 +4546,13 @@
             "request_keys": [
               "data"
             ],
+            "member_shape": {
+              "path": "router",
+              "method": "router_set_dhcp_static_ip",
+              "data": {
+                "data": "array of occupied reservation slots only"
+              }
+            },
             "confidence": "HIGH"
           }
         ]
@@ -4554,10 +4567,15 @@
           "evidence": "2026-08-25: empty table -> add index0 locally-administered MAC at 192.0.2.254 -> HTTP200 setting_response=OK -> read-back present -> exact empty-table restore -> read-back empty"
         }
       ],
-      "live_note": "Frontend-form multicall reset TCP connection; recovery succeeded and read-back unchanged.",
+      "live_note": "2026-09-21 shipped set_dhcp.html confirms occupied slots only, numeric index values, same-LAN-subnet validation, and multicall submission with outer toStringData=false. A failed SDK probe using string index plus 192.0.2.254 outside the current LAN subnet did not verify by read-back; this was test-input/serialization drift from the stock frontend contract, not evidence against the endpoint.",
       "implementation_notes": [
-        "Original UI supports exactly 10 visible mapping slots (indices 0..9); setter is normally a multicall member with outer toStringData=false.",
-        "State transition now live verified using a temporary free-slot reservation outside the dynamic DHCP pool."
+        "Stock frontend supports 10 visible slots, indices 0..9.",
+        "Only occupied slots are included in data; empty slots are omitted.",
+        "The wire index is numeric (JavaScript loop variable i), not a string.",
+        "Static reservation IPv4 addresses are validated to be inside the current LAN/subnet via checkIPGetewayMask().",
+        "The frontend rejects duplicate MAC addresses and duplicate IPv4 addresses, invalid/multicast MAC addresses, and half-filled MAC/IP rows.",
+        "Submission is a multicall member; the stock page uses async=true, timeout=20000 and toStringData=false at the ajaxHandler layer.",
+        "Read back router_get_dhcp_static_ip after writing and restore the complete original table for tests."
       ]
     },
     {
