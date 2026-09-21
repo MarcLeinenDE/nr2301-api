@@ -1991,14 +1991,14 @@
           "evidence": "LIVE_SDK_WRITE_READBACK_2026_09_21",
           "firmware": "V1.00(ACIY.3)C0",
           "field": "settings.items[].mac",
-          "observation": "Setter accepted uppercase hexadecimal letters; immediate getter read-back returned the same MAC bytes with lowercase hexadecimal letters.",
+          "observation": "Setter accepted a synthetic MAC containing uppercase hexadecimal letters; immediate getter read-back returned the same MAC address bytes with hexadecimal letters rendered lowercase.",
           "verification_rule": "Validate MAC shape and compare address bytes/case-insensitively for semantic write/read-back verification. Preserve raw getter value in raw responses.",
           "evidence_file": "evidence/physical/2026-09-21-port-forward-mac-readback-case.md"
         }
       ],
       "live_note": null,
       "implementation_notes": [
-        "2026-09-21 physical SDK lifecycle: Port Forward MAC read-back lowercased hexadecimal letters (synthetic write 02:00:00:00:00:FA -> getter 02:00:00:00:00:fa). Treat case as representational, not semantic."
+        "2026-09-21 physical SDK lifecycle: Port Forward MAC read-back lowercased hexadecimal letters from a synthetic uppercase-containing MAC. Treat case as representational, not semantic."
       ]
     },
     {
@@ -2209,7 +2209,7 @@
           "evidence": "LIVE_SDK_WRITE_READBACK_2026_09_21",
           "firmware": "V1.00(ACIY.3)C0",
           "field": "settings.items[].mac",
-          "observation": "Setter accepted uppercase hexadecimal letters; immediate getter read-back returned the same MAC bytes with lowercase hexadecimal letters.",
+          "observation": "Setter accepted a synthetic MAC containing uppercase hexadecimal letters; immediate getter read-back returned the same MAC address bytes with hexadecimal letters rendered lowercase.",
           "verification_rule": "Validate MAC shape and compare address bytes/case-insensitively for semantic write/read-back verification. Preserve raw getter value in raw responses.",
           "evidence_file": "evidence/physical/2026-09-21-port-forward-mac-readback-case.md"
         }
@@ -2219,7 +2219,7 @@
         "The NR2301 WebUI exposes five Port Forward slots, not ten.",
         "A colon-separated locally administered test MAC was used in the successful physical lifecycle.",
         "Observed result=0 for enabled write and result=1 for disabled restore; verify state with get_port_forward instead of treating result as a generic success flag.",
-        "2026-09-21 physical SDK lifecycle: Port Forward MAC read-back lowercased hexadecimal letters (synthetic write 02:00:00:00:00:FA -> getter 02:00:00:00:00:fa). Treat case as representational, not semantic."
+        "2026-09-21 physical SDK lifecycle: Port Forward MAC read-back lowercased hexadecimal letters from a synthetic uppercase-containing MAC. Treat case as representational, not semantic."
       ]
     },
     {
