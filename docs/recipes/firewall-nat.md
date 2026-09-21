@@ -14,6 +14,28 @@ Machine-readable live-contract overlay:
 
 - [`specification/firewall-live-contracts-2026-09-14.json`](../../specification/firewall-live-contracts-2026-09-14.json)
 
+## Management recovery after write/restore sequences
+
+A single immediate Firewall/NAT getter timeout is not sufficient evidence that
+the preceding write failed. The 2026-09-21 public-SDK lifecycle completed all
+12 reversible write/read-back stages, including URL Filter and UPnP, then hit a
+5-second read timeout on `get_admin_from_wan` while taking the final
+post-restore snapshot.
+
+For transactional verification:
+
+1. send each intended write once;
+2. on a transport/protocol failure, retry the getter rather than repeating the
+   write blindly;
+3. allow a longer read timeout during recovery;
+4. re-login if needed;
+5. decide success only from eventual semantic read-back;
+6. verify the full final snapshot after management becomes ready.
+
+This broadens the earlier URL-filter-specific timeout observation into a
+namespace-level management-readiness rule. It does not change any Firewall/NAT
+wire contract.
+
 ## WebUI transport rule
 
 The shipped common `ajaxHandler` defaults to `toStringData=true` and stringifies numeric values during JSON serialization. Only calls that explicitly pass `toStringData:false` retain native JSON numbers.
