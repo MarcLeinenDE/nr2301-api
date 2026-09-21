@@ -16,9 +16,9 @@ DHCP_STATIC_RESIDUE_CLEANUP = NOT_NEEDED
 
 The combined DHCP lease-time mutation succeeded and verified by exact read-back.
 
-The static reservation probe then used the corrected contract:
+The static reservation probe then used the corrected contract (the public MAC value below is a documentation-safe synthetic substitute for the local test value):
 - numeric slot index `0`;
-- locally administered unicast test MAC `02:00:00:00:00:fe`;
+- locally administered unicast test MAC `02:00:00:00:00:01`;
 - IPv4 `192.168.1.254`, inside the active `192.168.1.0/24` LAN and outside the
   DHCP pool chosen by the integration test.
 
@@ -30,7 +30,7 @@ The setter persisted the reservation. The subsequent
 ```json
 {
   "index": 0,
-  "mac": "02-00-00-00-00-FE",
+  "mac": "02-00-00-00-00-01",
   "ip": "192.168.1.254"
 }
 ```
