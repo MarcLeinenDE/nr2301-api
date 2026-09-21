@@ -118,3 +118,28 @@ Recommended recovery model:
 
 The exact external probe targets should remain configurable rather than being
 hard-coded as a universal product requirement.
+
+
+## Manual hardware factory reset
+
+After the plain software reboot, the user reported that the WebUI was still only
+partially loading and general router behavior remained abnormal. Because remote
+control was unreliable, a hardware factory reset was then performed using the
+physical reset button.
+
+This hardware reset is an important diagnostic boundary:
+- it does not depend on the SDK factory-reset helper;
+- it does not restore a saved configuration;
+- it clears prior runtime/session state through the device's physical reset path.
+
+No configuration restore should be performed until the bare factory state is
+checked for:
+- local WebUI readiness;
+- local API/control-plane readiness;
+- IPv4 TCP dataplane readiness;
+- DNS readiness;
+- IPv6 dataplane readiness.
+
+If the bare factory state is healthy but the problem returns only after a saved
+configuration is restored, the fault domain narrows substantially toward the
+restore/post-restore path or restored configuration/runtime interaction.
