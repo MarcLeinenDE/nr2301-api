@@ -4263,7 +4263,7 @@
         "dhcp.data[].ip"
       ],
       "semantic_contracts": [],
-      "live_note": "Authenticated empty-table response was observed earlier. On 2026-09-21, after a live static-reservation write, ACIY.3 read-back returned item {index:0, mac:\"02-00-00-00-00-FE\", ip:\"192.168.1.254\"}; the getter therefore canonicalizes the tested MAC to uppercase hyphen-separated form.",
+      "live_note": "Authenticated empty-table response was observed earlier. On 2026-09-21, after a live static-reservation write, ACIY.3 read-back returned item {index:0, mac:\"02-00-00-00-00-01\", ip:\"192.168.1.254\"}; the getter therefore canonicalizes the tested MAC to uppercase hyphen-separated form.",
       "implementation_notes": []
     },
     {
@@ -4568,7 +4568,7 @@
       "semantic_contracts": [
         {
           "id": "dhcp.static_reservations",
-          "evidence": "2026-08-25: empty table -> add index0 locally-administered MAC at 192.0.2.254 -> HTTP200 setting_response=OK -> read-back present -> exact empty-table restore -> read-back empty. 2026-09-21 ACIY.3: numeric index 0 + locally-administered MAC + in-subnet 192.168.1.254 persisted; getter read-back returned index 0, uppercase hyphen-separated MAC and exact IP."
+          "evidence": "2026-08-25: empty table -> add index0 locally-administered MAC at 192.0.2.254 -> HTTP200 setting_response=OK -> read-back present -> exact empty-table restore -> read-back empty. 2026-09-21 ACIY.3: numeric index 0 + locally-administered MAC + in-subnet 192.168.1.254 persisted; getter read-back returned index 0, uppercase hyphen-separated MAC and exact IP. Public MAC examples are sanitized."
         }
       ],
       "live_note": "2026-09-21 shipped set_dhcp.html confirms occupied slots only, numeric index values, same-LAN-subnet validation, and multicall submission with outer toStringData=false. A corrected production-SDK probe using numeric index 0 and in-subnet 192.168.1.254 persisted successfully. Read-back returned the same index/IP and canonicalized the MAC to uppercase hyphen-separated form; the SDK test then failed only because its parser accepted colon-separated MACs exclusively.",
