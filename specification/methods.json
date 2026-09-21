@@ -380,26 +380,43 @@
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
-        "schema": null,
-        "basis": "not fully reconstructed",
+        "schema": {
+          "type": "admin",
+          "session_id": "string",
+          "password": "string (optional; password-change variant)",
+          "total_time": "string (optional; session-timeout variant)"
+        },
+        "basis": "shipped frontend source + prior live total_time verification",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
             "http_method": "POST",
             "endpoint": "/api.cgi?path=<path>&method=<method>&timeout=<seconds>",
             "body_present": true,
-            "request_keys": [],
+            "request_keys": [
+              "type",
+              "session_id",
+              "password|total_time"
+            ],
             "confidence": "HIGH"
           }
         ]
       },
-      "response_schema": null,
+      "response_schema": {
+        "result": "integer"
+      },
       "response_fields": [
         "result"
       ],
       "semantic_contracts": [],
-      "live_note": "Platform WW_OPERATOR_ZYXEL. Same-state total_time=900 with current session_id returned result=0; numeric total_time was stringified on wire.",
-      "implementation_notes": []
+      "live_note": "WW_OPERATOR_ZYXEL same-state total_time=900 with current session_id returned result=0. 2026-09-21 source capture reconstructed password-change body exactly: type='admin', current CGISID as session_id, and password=<new password>; no old-password field is sent.",
+      "implementation_notes": [
+        "Password-change and timeout-change are two frontend variants of the same setter.",
+        "Password variant sends {type:'admin', session_id:<CGISID>, password:<new>} and does not send password_confirm or the old password.",
+        "General frontend validation: password length 5..32, ASCII-only according to checkLoginPassword(), and not all spaces. Some operator variants impose stricter rules.",
+        "Frontend maps result=-1001 to the message that the new password cannot be the same as the default password.",
+        "Timeout variant sends total_time as a string on wire."
+      ]
     },
     {
       "method_id": "aoc/get_bat_info",
