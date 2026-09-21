@@ -35,4 +35,31 @@ Recommended decision order:
 
 ## File endpoint
 
-The stock web UI can download a configuration backup using `/file.cgi`. This is a separate CGI family from `/api.cgi` and may return opaque binary configuration data containing secrets. Do not log or publish such backups.
+The stock web UI uses `/file.cgi` as a separate binary-transfer CGI family from `/api.cgi`.
+
+### Configuration backup download
+
+Source-verified on tested ACIY.3:
+
+```text
+GET /file.cgi?Action=Download&file=backup_config&dl=1
+```
+
+The response is opaque configuration-backup bytes and can contain credentials and other secrets.
+
+### Configuration restore upload
+
+Source-verified on tested ACIY.3:
+
+```text
+POST /file.cgi?Action=Upload&file=restore_config
+Content-Type: application/octet-stream
+
+<raw configuration bytes>
+```
+
+The stock frontend reads the file in sequential 1 MiB slices and POSTs each slice to the same URL. It does **not** use multipart/form-data and does not send a filename field or `Content-Range` header for configuration restore. A response containing `other error` is treated as failure. After the last successful chunk there is no separate apply API call; the frontend only updates its UI and expects the device to reboot.
+
+The frontend limits selected restore files to 200 MiB.
+
+Treat configuration backup/restore bytes as secret-bearing data. Never log, publish or commit real backup contents.
