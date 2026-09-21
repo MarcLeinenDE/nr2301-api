@@ -33,6 +33,22 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 | [`ww_upnp_open_close`](#ww-upnp-open-close) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`ww_upnp_open_close_state`](#ww-upnp-open-close-state) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 
+## Management readiness after Firewall/NAT writes
+
+Physical SDK lifecycles on ACIY.3 show that the management HTTP service can
+temporarily stall after cumulative Firewall/NAT writes/restores even when the
+preceding setters and their immediate read-backs succeeded. In one run the
+final `get_admin_from_wan` snapshot read connected to `zyxel.home` but timed
+out waiting for a response at the harness's 5-second read timeout.
+
+Treat a single immediate getter timeout after a Firewall/NAT write sequence as
+inconclusive. Do not blindly repeat the write. Retry the getter with recovery /
+re-login and decide from eventual semantic read-back. This is a verification
+and recovery rule; the endpoint request schemas are unchanged.
+
+See
+`../evidence/physical/2026-09-21-firewall-post-restore-management-stall.md`.
+
 <a id="fw-edit-dmz-entry"></a>
 
 ## `fw_edit_dmz_entry`

@@ -1661,7 +1661,17 @@
       },
       "response_schema": null,
       "response_fields": [],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "Non-empty destination writes are live verified. The stock NR2301 WebUI exposes no destination clear/delete operation.",
       "implementation_notes": [
         "Use fw_edit_dmz_entry only for a non-empty destination.",
@@ -1819,7 +1829,17 @@
       "response_fields": [
         "firewall"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "DMZ enable/disable physically verified and restored.",
       "implementation_notes": [
         "Changing enable state does not imply clearing the stored DMZ destination."
@@ -1863,7 +1883,17 @@
       "response_fields": [
         "result"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "Native integer VPN-passthrough payload physically verified.",
       "implementation_notes": [
         "The WebUI uses toStringData:false; do not stringify these three flags."
@@ -1904,7 +1934,17 @@
       "response_fields": [
         "firewall"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": null,
       "implementation_notes": []
     },
@@ -2084,7 +2124,17 @@
       "response_fields": [
         "settings"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": null,
       "implementation_notes": [
         "2026-09-21 physical SDK lifecycle: one immediate get_url_filter read-back after a successful set_url_filter call timed out at the harness's explicit 5 s read timeout. Earlier 2026-09-14/18 URL-filter lifecycles passed without reboot. Treat a single post-write timeout as inconclusive; retry getter/re-login and decide from semantic read-back rather than repeating the write."
@@ -2126,7 +2176,17 @@
       "response_fields": [
         "firewall"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "Nested WebUI setter body physically verified.",
       "implementation_notes": [
         "The stock UI separately schedules router/restart_web_server after a changed value; the firewall setter itself does not require callers to hide that disruptive action."
@@ -2168,7 +2228,17 @@
       "response_fields": [
         "firewall"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "Nested WebUI setter body physically verified.",
       "implementation_notes": []
     },
@@ -2214,6 +2284,15 @@
           "observation": "Setter accepted a synthetic MAC containing uppercase hexadecimal letters; immediate getter read-back returned the same MAC address bytes with hexadecimal letters rendered lowercase.",
           "verification_rule": "Validate MAC shape and compare address bytes/case-insensitively for semantic write/read-back verification. Preserve raw getter value in raw responses.",
           "evidence_file": "evidence/physical/2026-09-21-port-forward-mac-readback-case.md"
+        },
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
         }
       ],
       "live_note": "Five-slot Port Forward create/read-back/restore physically verified. Result is endpoint-state-dependent.",
@@ -2257,7 +2336,17 @@
       "response_fields": [
         "result"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "Non-empty Port Trigger creation and two-step deletion semantics physically verified.",
       "implementation_notes": [
         "When enable=0, the WebUI sends only {enable:0}; this disables triggering but does not delete stored items.",
@@ -2298,7 +2387,17 @@
       "response_fields": [
         "resJson"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "URL-filter blacklist lifecycle and semantic restore physically verified.",
       "implementation_notes": [
         "The WebUI uses toStringData:false; item indices are native integers.",
@@ -2342,7 +2441,17 @@
       "response_fields": [
         "firewall"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "Exact 10-slot non-empty IP-filter write/read-back/restore physically verified.",
       "implementation_notes": [
         "Full-list read uses ww_read_ip_filter with {ww_ip_filter:{list:['all']}}.",
@@ -2385,7 +2494,17 @@
       "response_fields": [
         "firewall"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "Exact 10-slot non-empty port-filter write/read-back/restore physically verified.",
       "implementation_notes": [
         "Full-list read uses ww_read_port_filter with {ww_port_filter:{list:['all']}}.",
@@ -2428,7 +2547,17 @@
       "response_fields": [
         "firewall"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "IP-filter enable/disable wire form physically verified.",
       "implementation_notes": []
     },
@@ -2468,7 +2597,17 @@
       "response_fields": [
         "firewall"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "Port-filter enable/disable wire form physically verified.",
       "implementation_notes": []
     },
@@ -2678,7 +2817,17 @@
       "response_fields": [
         "firewall"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.management_readiness_after_write.v1",
+          "evidence": "LIVE_SDK_FIREWALL_SEQUENCE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "After cumulative Firewall/NAT writes/restores, a subsequent getter can connect to the management HTTP service yet time out waiting for a response at a 5-second harness timeout.",
+          "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
+          "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
+          "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        }
+      ],
       "live_note": "UPnP enable/disable physically verified.",
       "implementation_notes": [
         "WPS and UPnP are independent controls on ACIY.3."
