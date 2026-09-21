@@ -125,3 +125,11 @@ Read the value back afterward.
 ## Engineering/debug operations — reference only
 
 The router namespace also contains engineering USB/ADB methods. Normal-admin access is denied for some engineering reads and the write methods were deliberately not executed for coverage. They are not part of an ordinary maintenance workflow.
+
+## Factory reset recovery
+
+2026-09-21 production-SDK testing physically verified the body-less GET `router/router_call_rst_factory` path. The device rebooted, returned to its device-specific default administrator password, and cleared a synthetic timed-reboot marker to factory state.
+
+For a recoverable factory-reset test, capture a baseline backup first, change at least one non-default setting/credential to create a reset marker, perform the reset, verify default-login recovery and marker removal, then restore the saved backup and verify the original state. If the backup itself changes the administrator password, switch the client recovery credential before post-restore login.
+
+Do not require `boot_time_after < boot_time_before` when a second disruptive operation is issued shortly after a previous reboot. In that case a real reboot can recover at a numerically larger uptime than the pre-action value. Use explicit reboot-evidence classification, observed outage, recovered credentials and restored configuration state together.

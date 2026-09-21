@@ -4078,22 +4078,21 @@
       "method": "router_call_rst_factory",
       "endpoint": "/api.cgi",
       "operation_type": "WRITE_OR_ACTION",
-      "verification": "STATIC_CONFIRMED",
+      "verification": "LIVE_VERIFIED",
       "observed_status": "UNTESTED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "DO_NOT_TEST_FOR_COVERAGE",
       "request": {
         "http_method": "GET",
         "schema": null,
-        "basis": "not fully reconstructed",
+        "basis": "shipped frontend source + 2026-09-21 production-SDK physical verification",
         "known_frontend_variants": [
           {
             "transport": "direct_ajaxHandler",
             "http_method": "GET",
-            "endpoint": "/api.cgi?path=<path>&method=<method>&timeout=<seconds>",
+            "endpoint": "/api.cgi?path=router&method=router_call_rst_factory&timeout=<seconds>",
             "body_present": false,
-            "request_keys": [],
             "confidence": "HIGH"
           }
         ]
@@ -4101,8 +4100,13 @@
       "response_schema": null,
       "response_fields": [],
       "semantic_contracts": [],
-      "live_note": null,
-      "implementation_notes": []
+      "live_note": "2026-09-21 production-SDK body-less GET caused a real factory reset: management dropped, boot_time reset 1864→50, login recovered with the device-default administrator credential, and a synthetic timed-reboot marker was cleared to factory state. Subsequent backup restore recovered the temporary credential and baseline restore recovered the original/default credential.",
+      "implementation_notes": [
+        "A factory-reset client must expect management loss and require post-reset login with the device-specific default administrator password.",
+        "Use an externally captured backup if original configuration must be restored after reset.",
+        "A synthetic configuration marker cleared by the reset provides stronger proof than reboot alone.",
+        "When a later restore occurs shortly after the reset, boot_time_after may numerically exceed boot_time_before despite a real second reboot; outage + fresh-uptime evidence and restored-credential/state verification are required."
+      ]
     },
     {
       "method_id": "router/router_get_dhcp_settings",
