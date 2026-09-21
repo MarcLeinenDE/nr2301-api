@@ -447,27 +447,39 @@ No stable response schema is currently documented.
 
 ## `router_call_rst_factory`
 
-**Method ID:** `router/router_call_rst_factory`  
-**Endpoint:** `/api.cgi`  
-**Operation type:** `WRITE_OR_ACTION`  
-**Verification:** `STATIC_CONFIRMED`  
-**Auth evidence:** `UNTESTED`  
-**Safety:** `DO_NOT_TEST_FOR_COVERAGE`
+**Path:** `router`  
+**Method:** `router_call_rst_factory`
 
-> [!CAUTION]
-> This method was deliberately not exercised merely to improve coverage because its potential impact outweighed the documentation value. Treat the contract as static evidence only.
+**Verification:** `LIVE_VERIFIED`  
+**Auth evidence:** `ADMIN_OK`
 
 ### Request
 
 HTTP method: `GET`
 
-No request body has been reconstructed as necessary for this method.
+No request body is required for the physically verified production transport.
 
-### Response
+### Response / recovery semantics
 
-No stable response schema is currently documented.
+The action is disruptive. A lost HTTP response is expected/inconclusive.
 
-<a id="router-get-dhcp-settings"></a>
+2026-09-21 production-SDK verification observed:
+
+- pre-reset `boot_time=1864`;
+- management outage during the action;
+- post-reset `boot_time=50`;
+- successful administrator login using the device-specific default password;
+- a synthetic timed-reboot marker changed from `disabled, 23:57, repeat=85` to the factory state `disabled, 00:00, repeat=0`.
+
+This proves a real factory reset rather than an ordinary reboot.
+
+### Notes
+
+- The post-reset administrator credential is the device-specific factory/default password.
+- If configuration must be restored, capture a backup before reset and retain the required recovery credentials out-of-band.
+- A configuration marker cleared by reset is stronger evidence than reboot alone.
+- A restore issued shortly after a previous reboot can complete with `boot_time_after > boot_time_before`; use the helper's reboot-evidence classification plus credential/state verification rather than a naive numeric comparison.
+
 
 ## `router_get_dhcp_settings`
 
