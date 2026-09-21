@@ -2086,7 +2086,9 @@
       ],
       "semantic_contracts": [],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-09-21 physical SDK lifecycle: one immediate get_url_filter read-back after a successful set_url_filter call timed out at the harness's explicit 5 s read timeout. Earlier 2026-09-14/18 URL-filter lifecycles passed without reboot. Treat a single post-write timeout as inconclusive; retry getter/re-login and decide from semantic read-back rather than repeating the write."
+      ]
     },
     {
       "method_id": "firewall/set_admin_from_wan",
@@ -2300,7 +2302,8 @@
       "live_note": "URL-filter blacklist lifecycle and semantic restore physically verified.",
       "implementation_notes": [
         "The WebUI uses toStringData:false; item indices are native integers.",
-        "Disabled mode sends only mode='disable' and does not by itself prove stored-item deletion."
+        "Disabled mode sends only mode='disable' and does not by itself prove stored-item deletion.",
+        "2026-09-21 physical SDK lifecycle: one immediate get_url_filter read-back after a successful set_url_filter call timed out at the harness's explicit 5 s read timeout. Earlier 2026-09-14/18 URL-filter lifecycles passed without reboot. Treat a single post-write timeout as inconclusive; retry getter/re-login and decide from semantic read-back rather than repeating the write."
       ]
     },
     {
