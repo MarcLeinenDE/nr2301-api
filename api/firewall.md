@@ -575,7 +575,7 @@ Known/observed response fields: `resJson`.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `WRITE_OR_SIDE_EFFECT`
 
 ### Request
@@ -612,7 +612,7 @@ Known/observed response fields: `firewall`.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `WRITE_OR_SIDE_EFFECT`
 
 ### Request
