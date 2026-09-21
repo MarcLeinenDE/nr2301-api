@@ -224,12 +224,42 @@ Known/observed response fields: `result`.
 
 HTTP method: `POST`
 
-No request body has been reconstructed as necessary for this method.
+The stock frontend uses the same setter for two admin-setting variants.
+
+Password change:
+
+```json
+{
+  "type": "admin",
+  "session_id": "<current CGISID>",
+  "password": "<new password>"
+}
+```
+
+Session timeout change:
+
+```json
+{
+  "type": "admin",
+  "session_id": "<current CGISID>",
+  "total_time": "<seconds as string>"
+}
+```
+
+The password form's `password_confirm` field is frontend-only validation and is
+not transmitted. The old password is also not sent in the setter body.
 
 ### Response
 
-Known/observed response fields: `result`.
+```json
+{
+  "result": "integer"
+}
+```
 
 ### Notes
 
-- Platform WW_OPERATOR_ZYXEL. Same-state total_time=900 with current session_id returned result=0; numeric total_time was stringified on wire.
+- Platform WW_OPERATOR_ZYXEL. Same-state `total_time=900` with current `session_id` returned `result=0`; numeric `total_time` was stringified on wire.
+- Read-only source capture on 2026-09-21 reconstructed the password setter exactly as `type=admin`, current `CGISID`, and the new `password`.
+- General frontend password validation on this build requires length 5..32, characters accepted by `checkLoginPassword()`, and rejects an all-space value. Operator-specific variants can impose stronger rules.
+- The frontend maps `result=-1001` to the message that the new password cannot be the same as the default password.
