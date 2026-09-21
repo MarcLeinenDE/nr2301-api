@@ -4,9 +4,9 @@
 
 The stock NR2301 web UI uses an application-level challenge flow for the normal administrator account.
 
-## Canonical management host on tested firmware
+## Management host / authority observations
 
-Administrator pre-auth is **host/authority sensitive** on tested firmware `V1.00(ACIY.3)C0`.
+Administrator pre-auth has shown **runtime/environment-dependent authority behavior** on tested firmware `V1.00(ACIY.3)C0`.
 
 During a controlled physical USB A/B test on 2026-08-31, `zyxel.home` resolved to the same management address as `192.168.1.1`, but the pre-auth account methods behaved differently:
 
@@ -20,15 +20,19 @@ http://zyxel.home
   account/get_rand                -> result=0, rand=<8-byte challenge>
 ```
 
-The same result was reproduced with normal `requests` JSON POSTs, compact historical request bodies/headers and `urllib`. Loading the WebUI first did not create a prerequisite cookie, and explicit WebUI logout did not change the direct-IP failure. This establishes that anonymous/status reads succeeding on `192.168.1.1` do **not** prove that the direct IP is suitable for administrator login.
+The same 2026-08-31 result was reproduced with normal `requests` JSON POSTs, compact historical request bodies/headers and `urllib`. Loading the WebUI first did not create a prerequisite cookie, and explicit WebUI logout did not change that direct-IP failure.
 
-For this firmware, use the canonical management URL:
+A later 2026-09-21 recheck changed the conclusion: `zyxel.home` did not resolve on the test PC, so the physical SDK campaign used `http://192.168.1.1`. The guarded static-DHCP cleanup and the complete destructive LAN/router lifecycle both called `client.login()` successfully and then completed authenticated operations through the direct IP.
 
-```text
-http://zyxel.home
-```
+Therefore:
 
-The current evidence establishes host/authority-dependent behavior. It does not justify assigning a universal semantic meaning to `result=4` on these pre-auth endpoints.
+- the 2026-08-31 `result=4` observation remains valid for that runtime state;
+- direct-IP administrator login is also physically proven to work on the same ACIY.3 device in a later state;
+- `zyxel.home` is a convenient default, not a mandatory authority;
+- if one known authority fails pre-auth, trying the other is a recovery option;
+- do not assign a universal semantic meaning to `result=4` on these pre-auth endpoints.
+
+See `../evidence/physical/2026-09-21-direct-ip-admin-login-recheck.md`.
 
 ### 0. Check the administrator lockout state
 
@@ -62,7 +66,7 @@ This guard does not authenticate the client and does not send the administrator 
 
 Historical live-working clients generated `user_id` as **exactly eight lowercase alphanumeric characters** (`[a-z0-9]{8}`) and reused the same value in the subsequent `account/login` request.
 
-The initial public SDK temporarily used a 32-character hexadecimal `user_id`, but a controlled retest showed that user-id length was not the cause of the observed `result=4`: both that format and the corrected historical `[a-z0-9]{8}` format failed through the direct IP, while the historical eight-character format succeeded immediately through `zyxel.home`.
+The initial public SDK temporarily used a 32-character hexadecimal `user_id`. The 2026-08-31 comparison showed that user-id length was not the cause of that run's `result=4`: both formats failed through the direct IP while the historical eight-character format succeeded through `zyxel.home`. The later 2026-09-21 direct-IP SDK login succeeded with the normal current client flow, so do not generalize the earlier authority result.
 
 Known successful response fields:
 
@@ -73,7 +77,7 @@ Known successful response fields:
 }
 ```
 
-On the direct-IP path, `account/get_rand` reproducibly returned `result=4` before password submission. Do **not** apply the `account/login` result-code table below to that value; result semantics are endpoint-specific unless separately verified.
+In the 2026-08-31 direct-IP A/B state, `account/get_rand` reproducibly returned `result=4` before password submission; on 2026-09-21 direct-IP pre-auth/login succeeded. Do **not** apply the `account/login` result-code table below to pre-auth `result` values; semantics are endpoint-specific unless separately verified.
 
 ### 2. Build the challenge response
 
