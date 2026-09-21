@@ -7,22 +7,14 @@ Device: Zyxel NR2301, firmware `V1.00(ACIY.3)C0`.
 During the public-SDK Firewall/NAT physical lifecycle, the SDK wrote one
 synthetic Port Forward rule through `firewall/set_port_forward`.
 
-The request used a locally administered synthetic MAC in uppercase hexadecimal:
-
-```text
-02:00:00:00:00:FA
-```
+The request used a locally administered synthetic MAC containing uppercase hexadecimal letters. The concrete test value is intentionally omitted from the public repository.
 
 The setter completed and the rule was present on immediate
 `firewall/get_port_forward` read-back.
 
 ## Observed getter representation
 
-The getter returned the same rule and same address bytes as:
-
-```text
-02:00:00:00:00:fa
-```
+The getter returned the same rule and the same MAC address bytes, but hexadecimal letters were rendered in lowercase.
 
 All other tested fields matched:
 
