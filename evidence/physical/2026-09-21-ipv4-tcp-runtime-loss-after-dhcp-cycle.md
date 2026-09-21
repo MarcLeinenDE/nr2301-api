@@ -3,11 +3,14 @@
 Device: Zyxel NR2301, firmware `V1.00(ACIY.3)C0`.
 
 Context:
-- a physical SDK lifecycle had successfully changed `router_set_dhcp_settings_comb`
-  by modifying only DHCP lease time;
-- exact DHCP configuration was subsequently restored in the test cleanup path;
-- the following network behavior was then observed from the attached Windows
-  client on the NR2301 LAN.
+- earlier in the same session a physical SDK lifecycle had successfully changed
+  `router_set_dhcp_settings_comb` by modifying only DHCP lease time and then
+  restored the exact DHCP configuration;
+- immediately before the network diagnosis, the full factory-reset/config-restore
+  production lifecycle was accidentally executed again by the user and completed
+  with PASS, including final configuration restoration;
+- after that PASS result, the following network behavior was observed from the
+  attached Windows client on the NR2301 LAN.
 
 Observed client path:
 - interface: Ethernet 3
@@ -47,17 +50,25 @@ Interpretation:
 - IPv6 TCP on the same client/interface remained functional.
 - This is therefore not a GitHub-specific failure and not a generic loss of
   Internet access.
-- The exact restored DHCP configuration does not prove that all IPv4
-  NAT/firewall/WAN runtime state recovered after the write.
+- A PASS result for factory-reset/config-restore plus exact configuration
+  equality does **not** prove that IPv4 NAT/firewall/WAN runtime state is healthy.
 
-Causality is **not yet established**. The observation occurred after a
-`router_set_dhcp_settings_comb` mutation/restore cycle, but a reboot recovery
-test is required before attributing the runtime failure to that setter.
+Causality is **not yet established**. Because the failure was observed after a
+fresh factory-reset/config-restore lifecycle as well as after earlier LAN/DHCP
+writes, the evidence currently points more broadly at incomplete IPv4 runtime
+recovery after disruptive reset/restore operations rather than specifically at
+`router_set_dhcp_settings_comb`.
+
+A plain reboot recovery test is required next. If IPv4 TCP returns after reboot
+without any configuration change, that will strongly support a runtime-readiness
+gap after reset/restore.
 
 Next verification:
 1. reboot the router without changing configuration;
 2. re-test IPv4 TCP to github.com:443, 1.1.1.1:80, 8.8.8.8:53 and IPv4 HTTPS;
 3. compare with IPv6 TCP;
-4. if IPv4 TCP returns after reboot, record the runtime recovery separately.
+4. if IPv4 TCP returns after reboot, record the runtime recovery separately and
+   extend factory-reset/config-restore readiness checks beyond management/API
+   recovery.
 
 USB management-mode configuration was not changed.
