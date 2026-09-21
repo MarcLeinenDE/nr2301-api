@@ -94,7 +94,7 @@ Enabled uses `toStringData:false`, so `enable` and `index` remain native integer
 }
 ```
 
-The NR2301 WebUI exposes **5 Port Forward slots** (indices 0..4). A 2026-09-14 physical campaign confirmed a synthetic forwarding-rule lifecycle, and the 2026-09-18 production-helper smoke reconfirmed the five-slot form with write/read-back/restore and no residue. Response `result` is endpoint-state-dependent; do not interpret it globally.
+The NR2301 WebUI exposes **5 Port Forward slots** (indices 0..4). A 2026-09-14 physical campaign confirmed a synthetic forwarding-rule lifecycle, and the 2026-09-18 production-helper smoke reconfirmed the five-slot form with write/read-back/restore and no residue. Response `result` is endpoint-state-dependent; do not interpret it globally. A 2026-09-21 public-SDK lifecycle additionally showed that the getter may lowercase hexadecimal letters in `mac`; semantic verification must therefore compare validated MAC addresses case-insensitively rather than requiring textual case preservation.
 
 ## Port triggering
 
