@@ -7,7 +7,7 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 | Method | Verification | Auth evidence | Safety |
 |---|---|---|---|
 | [`get_network_select_mode`](#get-network-select-mode) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
-| [`search_network`](#search-network) | `LIVE_VERIFIED` | `UNTESTED` | `READ_OR_LOW_SIDE_EFFECT` |
+| [`search_network`](#search-network) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`select_network`](#select-network) | `LIVE_VERIFIED` | `ADMIN_OK` | `DISRUPTIVE_RECOVERY_REQUIRED` |
 
 <a id="get-network-select-mode"></a>
@@ -44,7 +44,7 @@ No request body has been reconstructed as necessary for this method.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `SCAN_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `READ_OR_LOW_SIDE_EFFECT`
 
 ### Request

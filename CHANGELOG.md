@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- corrected the administrator authority model after a 2026-09-21 direct-IP SDK recheck: `http://192.168.1.1` successfully completed challenge/login and authenticated LAN/router operations after `zyxel.home` failed to resolve locally, so the earlier direct-IP `result=4` finding is now scoped to its 2026-08-31 runtime state rather than treated as a permanent firmware rule; also promoted normal-admin auth evidence for the physically exercised VPN profile/control methods and `util_wan/search_network`
 - recorded the 2026-09-21 complete public-SDK LAN/router lifecycle on ACIY.3: combined DHCP lease-time mutation, static-DHCP add/read-back, forced same-state deprecated LAN-IP execution and forced same-state work-mode execution all verified, followed by exact restoration of DHCP, reservation table, LAN address and work mode; the prior synthetic static-DHCP residue was safely removed after the getter MAC-format normalization fix
 - finalized the Firewall/NAT WebUI contract consolidation on ACIY.3: exact nested WAN admin/ping bodies, native-integer VPN passthrough, 10-slot IP/port filters, 10-slot Port Trigger with disable-vs-delete semantics, 5-slot Port Forward, URL filter, UPnP and non-empty DMZ destination writes are normalized from physical evidence; the 2026-09-18 production-helper smoke passed after correcting Port Forward from an erroneous 10-slot SDK representation to the NR2301 WebUI's verified 5-slot form; DMZ destination clear/delete remains explicitly unresolved
 
