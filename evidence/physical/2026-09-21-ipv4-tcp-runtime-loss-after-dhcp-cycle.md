@@ -72,3 +72,49 @@ Next verification:
    recovery.
 
 USB management-mode configuration was not changed.
+
+
+## Plain reboot recovery observation
+
+A subsequent plain production reboot was issued without changing configuration.
+
+Observed reboot proof:
+
+```text
+boot_before=1311
+boot_after=58
+outage_observed=True
+action_error=TransportError
+recovery_attempt=31
+```
+
+Immediately after management/API recovery:
+
+```text
+1.1.1.1:80 TCP   -> success
+8.8.8.8:53 TCP   -> success
+github.com:443   -> name resolution failed
+curl -4 google   -> DNS resolution timeout
+curl -6 google   -> connection timeout
+```
+
+This is a strong readiness-ordering observation:
+
+1. management/API recovery completed;
+2. raw IPv4 TCP dataplane connectivity recovered;
+3. DNS resolution was still unavailable;
+4. IPv6 dataplane was still unavailable at that observation point.
+
+Therefore a post-reset/reboot helper must not treat management/API recovery as
+equivalent to full Internet/dataplane readiness. Readiness should be modeled as
+separate stages and, where requested, verified independently.
+
+Recommended recovery model:
+- control-plane ready: authenticated API responds and boot evidence is valid;
+- configuration ready: stable configuration read-back succeeds;
+- IPv4 dataplane ready: at least one explicit IPv4 TCP probe succeeds;
+- DNS ready: resolver successfully resolves a known hostname;
+- IPv6 dataplane ready: optional/conditional IPv6 TCP probe succeeds.
+
+The exact external probe targets should remain configurable rather than being
+hard-coded as a universal product requirement.
