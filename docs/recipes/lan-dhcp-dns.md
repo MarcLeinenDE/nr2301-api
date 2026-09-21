@@ -120,23 +120,43 @@ A LAN-address change can make the old management URL unreachable. A client shoul
 
 ## Static DHCP reservations
 
-Read `router/router_get_dhcp_static_ip`. The reservation setter is `router/router_set_dhcp_static_ip` and accepts:
+Read `router/router_get_dhcp_static_ip`. The stock ACIY.3
+`html/set_dhcp.html` page builds the setter member as:
 
 ```json
 {
-  "data": [
-    {
-      "index": "0",
-      "mac": "02:00:00:00:00:01",
-      "ip": "192.0.2.10"
-    }
-  ]
+  "path": "router",
+  "method": "router_set_dhcp_static_ip",
+  "data": {
+    "data": [
+      {
+        "index": 0,
+        "mac": "02:00:00:00:00:01",
+        "ip": "192.168.1.2"
+      }
+    ]
+  }
 }
 ```
 
-The UI supports ten visible slots (`0..9`). The MAC/IP shown above are documentation examples; replace them with the intended client and an address appropriate for the router LAN.
+Contract details:
 
-Use multicall/recovery handling and read the reservation list back after writing.
+- `index` is a **JSON number** in the wire payload, not a string.
+- Only occupied rows are included; empty slots are omitted.
+- The UI exposes exactly ten slots, indices `0..9`.
+- Each reservation IP must be in the current LAN/subnet; the frontend checks
+  this with `checkIPGetewayMask(lanIP, submask, ip)`.
+- Duplicate MACs/IPs, multicast/invalid MACs and half-filled rows are rejected
+  by the frontend.
+- The page submits all changed LAN/DHCP members through one multicall with
+  `toStringData=false`; SDK helpers should preserve the same JSON types.
+- A write must be verified by `router_get_dhcp_static_ip` read-back. Tests
+  should restore the complete original reservation table.
+
+The 2026-09-21 SDK test that used string `"0"` plus `192.0.2.254` outside
+the active LAN subnet was not frontend-equivalent and correctly failed to
+verify. It is not evidence that the setter is unavailable.
+
 
 ## Router vs bridge work mode
 
