@@ -899,16 +899,6 @@
         }
       }
     },
-    "router/router_get_work_mode.mode": {
-      "evidence": "FRONTEND_SOURCE_VERIFIED",
-      "nr2301_normal_values": [
-        "router",
-        "bridge"
-      ],
-      "platform_conditional": {
-        "passthrough": "IS_OUTDOOR_CPE path only; do not expose as normal NR2301 H01 value"
-      }
-    },
     "wan.type": {
       "evidence": "FRONTEND_SOURCE_VERIFIED",
       "tokens": [
@@ -1139,6 +1129,19 @@
       ],
       "restore": "The physical integration test restored the original WPS enable state in finally; the run completed without a restore exception.",
       "scope": "Action-specific response envelopes are physically qualified for ACIY.3; do not assume a uniform wrapper across WPS actions."
+    },
+    "router/router_get_work_mode.work_mode": {
+      "evidence": "LIVE_VERIFIED_2026_09_21",
+      "nr2301_normal_values": [
+        "router",
+        "bridge"
+      ],
+      "platform_conditional": {
+        "passthrough": "IS_OUTDOOR_CPE path only; do not expose as normal NR2301 H01 value"
+      },
+      "live_observation": {
+        "work_mode": "router"
+      }
     }
   }
 }
