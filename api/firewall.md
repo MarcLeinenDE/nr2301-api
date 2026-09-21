@@ -480,6 +480,7 @@ Known/observed response fields: `resJson`.
 - The NR2301 WebUI exposes five Port Forward slots, not ten.
 - A 2026-09-18 production-helper smoke physically reconfirmed create/read-back/list restore/disable restore with no synthetic residue.
 - Observed `result=0` for the enabled write and `result=1` for the disabled restore; treat `result` as endpoint-state-dependent and verify with `get_port_forward`.
+- 2026-09-21 physical SDK lifecycle: a synthetic MAC containing uppercase hexadecimal letters was returned by `get_port_forward` with the same address bytes but lowercase hexadecimal letters. Compare MAC addresses semantically/case-insensitively for write verification; raw getter values remain raw.
 
 <a id="set-port-trigger"></a>
 
