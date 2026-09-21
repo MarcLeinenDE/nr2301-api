@@ -567,6 +567,7 @@ Known/observed response fields: `resJson`.
 
 - A synthetic blacklist lifecycle and semantic restore were physically verified.
 - Disabling the filter does not by itself establish deletion of stored blacklist/whitelist entries.
+- 2026-09-21 public-SDK lifecycle: one immediate `get_url_filter` after a successful write hit the harness's 5-second HTTP read timeout. Earlier physical URL-filter lifecycles passed and no reboot was observed. Treat a single immediate timeout as inconclusive: retry read-back/re-login without blindly repeating the write.
 
 <a id="ww-edit-ip-filter"></a>
 

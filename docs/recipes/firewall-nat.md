@@ -143,7 +143,7 @@ Use `get_url_filter` / `set_url_filter`. Setter uses `toStringData:false`:
 
 Whitelist uses `white_items`; disabled mode is `"disable"`.
 
-A physical campaign confirmed a synthetic blacklist item and semantic cleanup. Verify item contents after restore instead of relying on raw list shape alone.
+A physical campaign confirmed a synthetic blacklist item and semantic cleanup. Verify item contents after restore instead of relying on raw list shape alone. A 2026-09-21 public-SDK lifecycle observed one immediate `get_url_filter` HTTP read timeout at an explicit 5-second harness timeout after a successful write; earlier URL-filter lifecycles passed without reboot. A single immediate post-write timeout is therefore inconclusive: retry read-back/re-login, do not blindly repeat the write, and decide success from eventual semantic state.
 
 ## IP and port filters
 
