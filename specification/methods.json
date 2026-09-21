@@ -193,25 +193,26 @@
         },
         {
           "id": "account.preauth_host_authority.v1",
-          "evidence": "LIVE_AB_VERIFIED_2026_08_31",
+          "evidence": "LIVE_STATE_DEPENDENT_2026_08_31_AND_2026_09_21",
           "firmware": "V1.00(ACIY.3)C0",
-          "canonical_management_url": "http://zyxel.home",
+          "canonical_management_url": null,
           "dns_observation": "zyxel.home resolved to 192.168.1.1 on the tested USB-connected router",
-          "direct_ip_observation": "http://192.168.1.1 returned result=4 for administrator pre-auth",
-          "canonical_host_observation": "http://zyxel.home returned result=0 for administrator pre-auth",
           "scope": "host/authority-dependent behavior; does not define result=4 as a universal error enum",
-          "method_id": "account/get_rand"
+          "method_id": "account/get_rand",
+          "direct_ip_observation_2026_08_31": "http://192.168.1.1 returned result=4 for administrator pre-auth in the 2026-08-31 runtime state",
+          "hostname_observation_2026_08_31": "http://zyxel.home returned result=0 for administrator pre-auth in the 2026-08-31 runtime state",
+          "direct_ip_recheck_2026_09_21": "http://192.168.1.1 successfully completed the SDK challenge/login flow before authenticated cleanup and LAN/router lifecycle operations",
+          "conclusion": "Host/authority behavior is state/environment dependent in the current evidence set. Do not treat direct IP as permanently invalid and do not assign result=4 a universal meaning.",
+          "evidence_file": "evidence/physical/2026-09-21-direct-ip-admin-login-recheck.md"
         }
       ],
       "live_note": "Live pre-auth helper used successfully by normal admin login.",
       "implementation_notes": [
         "Historical live-working NR2301 clients used exactly eight lowercase alphanumeric characters for user_id.",
         "On 2026-08-31 the physical USB SDK smoke returned result=4 before password submission with both the initial 32-character hexadecimal user_id and the corrected historical [a-z0-9]{8} user_id.",
-        "On tested firmware V1.00(ACIY.3)C0, administrator pre-auth is host/authority sensitive.",
-        "zyxel.home and 192.168.1.1 reached the same router address during the USB A/B test, but the direct-IP path returned result=4 while http://zyxel.home returned result=0.",
         "The behavior was unchanged by requests-vs-urllib transport, historical compact JSON/header reproduction, WebUI bootstrap, or explicit WebUI logout.",
-        "Use http://zyxel.home as the canonical administrator management URL on the tested firmware.",
-        "Do not assign a universal meaning to result=4 from this observation; the result-code table for account/login remains endpoint-specific."
+        "Do not assign a universal meaning to result=4 from this observation; the result-code table for account/login remains endpoint-specific.",
+        "2026-09-21 direct-IP recheck: after zyxel.home failed to resolve locally, NR2301Client successfully completed administrator challenge/login via http://192.168.1.1 before authenticated cleanup and the full LAN/router lifecycle. The earlier 2026-08-31 result=4 direct-IP observation is runtime/state dependent, not a permanent authority rule."
       ]
     },
     {
@@ -257,24 +258,25 @@
       "semantic_contracts": [
         {
           "id": "account.preauth_host_authority.v1",
-          "evidence": "LIVE_AB_VERIFIED_2026_08_31",
+          "evidence": "LIVE_STATE_DEPENDENT_2026_08_31_AND_2026_09_21",
           "firmware": "V1.00(ACIY.3)C0",
-          "canonical_management_url": "http://zyxel.home",
+          "canonical_management_url": null,
           "dns_observation": "zyxel.home resolved to 192.168.1.1 on the tested USB-connected router",
-          "direct_ip_observation": "http://192.168.1.1 returned result=4 for administrator pre-auth",
-          "canonical_host_observation": "http://zyxel.home returned result=0 for administrator pre-auth",
           "scope": "host/authority-dependent behavior; does not define result=4 as a universal error enum",
-          "method_id": "account/get_retrytimes_and_time"
+          "method_id": "account/get_retrytimes_and_time",
+          "direct_ip_observation_2026_08_31": "http://192.168.1.1 returned result=4 for administrator pre-auth in the 2026-08-31 runtime state",
+          "hostname_observation_2026_08_31": "http://zyxel.home returned result=0 for administrator pre-auth in the 2026-08-31 runtime state",
+          "direct_ip_recheck_2026_09_21": "http://192.168.1.1 successfully completed the SDK challenge/login flow before authenticated cleanup and LAN/router lifecycle operations",
+          "conclusion": "Host/authority behavior is state/environment dependent in the current evidence set. Do not treat direct IP as permanently invalid and do not assign result=4 a universal meaning.",
+          "evidence_file": "evidence/physical/2026-09-21-direct-ip-admin-login-recheck.md"
         }
       ],
       "live_note": "Live pre-auth helper; normal admin retry_times remained 5 before/after login.",
       "implementation_notes": [
         "Recommended pre-login lockout guard: if remain_time > 0, wait; if retry_times <= 1, abort rather than consume the final password attempt.",
-        "On tested firmware V1.00(ACIY.3)C0, administrator pre-auth is host/authority sensitive.",
-        "zyxel.home and 192.168.1.1 reached the same router address during the USB A/B test, but the direct-IP path returned result=4 while http://zyxel.home returned result=0.",
         "The behavior was unchanged by requests-vs-urllib transport, historical compact JSON/header reproduction, WebUI bootstrap, or explicit WebUI logout.",
-        "Use http://zyxel.home as the canonical administrator management URL on the tested firmware.",
-        "Do not assign a universal meaning to result=4 from this observation; the result-code table for account/login remains endpoint-specific."
+        "Do not assign a universal meaning to result=4 from this observation; the result-code table for account/login remains endpoint-specific.",
+        "2026-09-21 direct-IP recheck: after zyxel.home failed to resolve locally, NR2301Client successfully completed administrator challenge/login via http://192.168.1.1 before authenticated cleanup and the full LAN/router lifecycle. The earlier 2026-08-31 result=4 direct-IP observation is runtime/state dependent, not a permanent authority rule."
       ]
     },
     {
@@ -547,7 +549,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
@@ -576,6 +578,11 @@
         {
           "id": "vpn.profile_active",
           "evidence": "frontend exact; inactive action live rc=0"
+        },
+        {
+          "id": "cm.active_vpn_client_item.sdk_admin_auth_2026_09_21.v1",
+          "evidence": "PUBLIC_SDK_PHYSICAL_ADMIN_SESSION",
+          "conclusion": "Persisted physical SDK integration coverage reaches this method after NR2301Client.login() using the normal administrator account."
         }
       ],
       "live_note": "Temporary VPN item set inactive; rc=0.",
@@ -590,7 +597,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
@@ -623,6 +630,11 @@
         {
           "id": "vpn.profile_add",
           "evidence": "temporary PPTP profile live-added and read back"
+        },
+        {
+          "id": "cm.add_vpn_client_item.sdk_admin_auth_2026_09_21.v1",
+          "evidence": "PUBLIC_SDK_PHYSICAL_ADMIN_SESSION",
+          "conclusion": "Persisted physical SDK integration coverage reaches this method after NR2301Client.login() using the normal administrator account."
         }
       ],
       "live_note": "Temporary PPTP test item added; read-back present.",
@@ -640,7 +652,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED_ACTION",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "DISRUPTIVE_RECOVERY_REQUIRED",
       "request": {
         "http_method": "GET",
@@ -659,7 +671,13 @@
       },
       "response_schema": null,
       "response_fields": [],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "cm.connect.sdk_admin_auth_2026_09_21.v1",
+          "evidence": "PUBLIC_SDK_PHYSICAL_ADMIN_SESSION",
+          "conclusion": "Persisted physical SDK integration coverage reaches this method after NR2301Client.login() using the normal administrator account."
+        }
+      ],
       "live_note": "result=0; management recovery succeeded.",
       "implementation_notes": []
     },
@@ -672,7 +690,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
@@ -701,6 +719,11 @@
         {
           "id": "vpn.profile_delete",
           "evidence": "temporary profile live-deleted result=0"
+        },
+        {
+          "id": "cm.del_vpn_client_item.sdk_admin_auth_2026_09_21.v1",
+          "evidence": "PUBLIC_SDK_PHYSICAL_ADMIN_SESSION",
+          "conclusion": "Persisted physical SDK integration coverage reaches this method after NR2301Client.login() using the normal administrator account."
         }
       ],
       "live_note": "Temporary VPN item deleted; result=0; final list empty.",
@@ -717,7 +740,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED_ACTION",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "DISRUPTIVE_RECOVERY_REQUIRED",
       "request": {
         "http_method": "GET",
@@ -736,7 +759,13 @@
       },
       "response_schema": null,
       "response_fields": [],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "cm.disconnect.sdk_admin_auth_2026_09_21.v1",
+          "evidence": "PUBLIC_SDK_PHYSICAL_ADMIN_SESSION",
+          "conclusion": "Persisted physical SDK integration coverage reaches this method after NR2301Client.login() using the normal administrator account."
+        }
+      ],
       "live_note": "result=0; followed by reconnect and recovery.",
       "implementation_notes": []
     },
@@ -749,7 +778,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
@@ -783,6 +812,11 @@
         {
           "id": "vpn.profile_edit",
           "evidence": "temporary PPTP profile live-edited result=0"
+        },
+        {
+          "id": "cm.edit_vpn_client_item.sdk_admin_auth_2026_09_21.v1",
+          "evidence": "PUBLIC_SDK_PHYSICAL_ADMIN_SESSION",
+          "conclusion": "Persisted physical SDK integration coverage reaches this method after NR2301Client.login() using the normal administrator account."
         }
       ],
       "live_note": "Temporary VPN item edited; result=0.",
@@ -1260,7 +1294,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED_WITH_SIDE_EFFECT",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "WRITE_OR_SIDE_EFFECT",
       "request": {
         "http_method": "POST",
@@ -1289,6 +1323,11 @@
         {
           "id": "vpn.global_enable",
           "evidence": "2026-08-25: disable -> enable result=0/read-back enable -> disable result=0/read-back disable; exact initial state restored"
+        },
+        {
+          "id": "cm.open_close_vpn_clients.sdk_admin_auth_2026_09_21.v1",
+          "evidence": "PUBLIC_SDK_PHYSICAL_ADMIN_SESSION",
+          "conclusion": "Persisted physical SDK integration coverage reaches this method after NR2301Client.login() using the normal administrator account."
         }
       ],
       "live_note": "Same-state global VPN enable returned result=0.",
@@ -6870,7 +6909,7 @@
       "verification": "LIVE_VERIFIED",
       "observed_status": "VERIFIED_ACTION",
       "frontend_reference": true,
-      "auth_evidence": "UNTESTED",
+      "auth_evidence": "ADMIN_OK",
       "safety_class": "READ_OR_LOW_SIDE_EFFECT",
       "request": {
         "http_method": "GET",
@@ -6889,7 +6928,13 @@
       },
       "response_schema": null,
       "response_fields": [],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "util_wan.search_network.sdk_admin_auth_2026_09_21.v1",
+          "evidence": "PUBLIC_SDK_PHYSICAL_ADMIN_SESSION",
+          "conclusion": "Persisted physical SDK integration coverage reaches this method after NR2301Client.login() using the normal administrator account."
+        }
+      ],
       "live_note": "Operator scan returned live network_list.",
       "implementation_notes": []
     },
