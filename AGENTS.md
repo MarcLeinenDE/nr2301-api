@@ -52,6 +52,18 @@ Do **not** change the router's USB/management mode (including engineering USB-mo
 
 Reading USB-mode state is acceptable when already authorized and non-disruptive. A future explicit test plan may change this exclusion, but the general permission to test the dedicated router does not implicitly authorize USB-mode mutation.
 
+### Full-coverage campaign exclusion policy
+
+For the active complete API/SDK coverage campaign, the **only hard mutation exclusion is `router/eng_set_usb_mode`**, because changing USB/management mode can remove the active control/recovery anchor.
+
+All other documented capabilities remain eligible for deliberate research and physical testing when their request contract, credentials/state prerequisites and recovery plan are explicit. This includes methods historically classified `DO_NOT_TEST_FOR_COVERAGE`, credential-changing paths, administrator-password recovery, VPN/DDNS/TR-069 credentials, SIM PIN/PUK recovery, engineering/ADB surfaces, radio changes, WAN interruption, reboot, configuration restore and factory reset.
+
+Safety classifications remain risk/planning metadata. Outside the USB-mode mutation exclusion, they are not permanent coverage bans. A high-risk method may require a dedicated gate, known-correct credential, specific device state or one-shot recovery scenario instead of routine broad testing.
+
+Do not brute-force or repeatedly guess engineering/supervisor credentials, SIM secrets, ADB keys or other credentials. Credential testing must use known/derived evidence-backed values or a separate authorized research path.
+
+OTA download/install is eligible but should be scheduled late in the ACIY.3 campaign because a firmware replacement may change the protocol baseline and cannot normally be undone by a factory reset.
+
 ### Test levels
 
 Use explicit levels rather than treating every write equally:
