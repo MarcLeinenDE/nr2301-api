@@ -1,0 +1,52 @@
+{
+  "endpoint_family": "/file.cgi",
+  "source_basis": "stock WebUI source captured from tested NR2301 V1.00(ACIY.3)C0 on 2026-09-21",
+  "authentication": "authenticated browser/session cookie (CGISID), same session as /api.cgi",
+  "contracts": [
+    {
+      "id": "configuration-backup-download",
+      "http_method": "GET",
+      "path": "/file.cgi",
+      "query": {
+        "Action": "Download",
+        "file": "backup_config",
+        "dl": "1"
+      },
+      "request_body": null,
+      "response": "opaque binary configuration backup",
+      "security": "secret-bearing; do not log, publish, or commit backup bytes"
+    },
+    {
+      "id": "configuration-restore-upload",
+      "http_method": "POST",
+      "path": "/file.cgi",
+      "query": {
+        "Action": "Upload",
+        "file": "restore_config"
+      },
+      "content_type": "application/octet-stream",
+      "request_body": "raw binary configuration bytes",
+      "chunking": {
+        "frontend_chunk_size_bytes": 1048576,
+        "multipart": false,
+        "content_range_header": false,
+        "first_chunk_total_size_header": false,
+        "sequence": "sequential POSTs to the same URL in file order"
+      },
+      "completion": {
+        "frontend_error_detection": "responseText containing 'other error' is treated as failure",
+        "success_detection": "each completed POST without 'other error' advances; last chunk is treated as effective restore",
+        "separate_apply_call": false,
+        "expected_effect": "successful restore causes device reboot"
+      },
+      "frontend_limit_bytes": 209715200,
+      "security": "secret-bearing; upload only trusted backups from the same device/compatible firmware"
+    }
+  ],
+  "related_source_functions": [
+    "config_file_reader",
+    "configFileUpload",
+    "configFileUpload_IE11",
+    "config_effective"
+  ]
+}
