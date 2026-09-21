@@ -6,12 +6,12 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 
 | Method | Verification | Auth evidence | Safety |
 |---|---|---|---|
-| [`active_vpn_client_item`](#active-vpn-client-item) | `LIVE_VERIFIED` | `UNTESTED` | `WRITE_OR_SIDE_EFFECT` |
-| [`add_vpn_client_item`](#add-vpn-client-item) | `LIVE_VERIFIED` | `UNTESTED` | `WRITE_OR_SIDE_EFFECT` |
-| [`connect`](#connect) | `LIVE_VERIFIED` | `UNTESTED` | `DISRUPTIVE_RECOVERY_REQUIRED` |
-| [`del_vpn_client_item`](#del-vpn-client-item) | `LIVE_VERIFIED` | `UNTESTED` | `WRITE_OR_SIDE_EFFECT` |
-| [`disconnect`](#disconnect) | `LIVE_VERIFIED` | `UNTESTED` | `DISRUPTIVE_RECOVERY_REQUIRED` |
-| [`edit_vpn_client_item`](#edit-vpn-client-item) | `LIVE_VERIFIED` | `UNTESTED` | `WRITE_OR_SIDE_EFFECT` |
+| [`active_vpn_client_item`](#active-vpn-client-item) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
+| [`add_vpn_client_item`](#add-vpn-client-item) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
+| [`connect`](#connect) | `LIVE_VERIFIED` | `ADMIN_OK` | `DISRUPTIVE_RECOVERY_REQUIRED` |
+| [`del_vpn_client_item`](#del-vpn-client-item) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
+| [`disconnect`](#disconnect) | `LIVE_VERIFIED` | `ADMIN_OK` | `DISRUPTIVE_RECOVERY_REQUIRED` |
+| [`edit_vpn_client_item`](#edit-vpn-client-item) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`eng_get_bands`](#eng-get-bands) | `LIVE_DENIED` | `ADMIN_DENIED` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`eng_set_bands`](#eng-set-bands) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
 | [`get_available_network_mode`](#get-available-network-mode) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
@@ -22,7 +22,7 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 | [`get_vpn_client_connect_status`](#get-vpn-client-connect-status) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`get_vpn_clients`](#get-vpn-clients) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`get_wan_settings`](#get-wan-settings) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
-| [`open_close_vpn_clients`](#open-close-vpn-clients) | `LIVE_VERIFIED` | `UNTESTED` | `WRITE_OR_SIDE_EFFECT` |
+| [`open_close_vpn_clients`](#open-close-vpn-clients) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`query_eng_info`](#query-eng-info) | `LIVE_VERIFIED_LIMITED` | `ADMIN_MULTICALL_ONLY` | `READ_OR_LOW_SIDE_EFFECT` |
 | [`set_eng_mode`](#set-eng-mode) | `STATIC_CONFIRMED` | `UNTESTED` | `DO_NOT_TEST_FOR_COVERAGE` |
 | [`set_network_settings`](#set-network-settings) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
@@ -36,7 +36,7 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `WRITE_OR_SIDE_EFFECT`
 
 ### Request
@@ -71,7 +71,7 @@ No stable response schema is currently documented.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `WRITE_OR_SIDE_EFFECT`
 
 ### Request
@@ -113,7 +113,7 @@ Known/observed response fields: `result`.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `DISRUPTIVE_RECOVERY_REQUIRED`
 
 > [!WARNING]
@@ -141,7 +141,7 @@ No stable response schema is currently documented.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `WRITE_OR_SIDE_EFFECT`
 
 ### Request
@@ -176,7 +176,7 @@ Known/observed response fields: `result`.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `DISRUPTIVE_RECOVERY_REQUIRED`
 
 > [!WARNING]
@@ -204,7 +204,7 @@ No stable response schema is currently documented.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `WRITE_OR_SIDE_EFFECT`
 
 ### Request
@@ -614,7 +614,7 @@ No request body has been reconstructed as necessary for this method.
 **Endpoint:** `/api.cgi`  
 **Operation type:** `WRITE_OR_ACTION`  
 **Verification:** `LIVE_VERIFIED`  
-**Auth evidence:** `UNTESTED`  
+**Auth evidence:** `ADMIN_OK`  
 **Safety:** `WRITE_OR_SIDE_EFFECT`
 
 ### Request
