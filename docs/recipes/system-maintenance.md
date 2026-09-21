@@ -57,11 +57,29 @@ The numeric example above is illustrative; compute the bitmask for the intended 
 > [!NOTE]
 > A targeted public-SDK lifecycle on tested firmware `V1.00(ACIY.3)C0` on 2026-09-08 first observed the raw getter value `time="0:0"`, proving that `router_get_timed_reboot.time` is not guaranteed to be zero-padded `HH:MM`. After the client was corrected to compare parsed hour/minute semantics, a disabled probe schedule (`enable=0`) was written, read back successfully, and the original `enable`/`time`/`repeat` state was restored and verified. The SDK used canonical zero-padded times for setter writes. Clients should preserve the raw getter value but compare parsed hour/minute semantics when deciding whether a schedule matches or has been restored.
 
-## Configuration backup
+## Configuration backup and restore
 
-`router/router_backup_config` is a legacy action returning an internal backup path. A 2026-09-18 production-SDK run reconfirmed the body-less GET action with `rc=0`. The current stock UI downloads configuration through the separate `/file.cgi` family.
+`router/router_backup_config` is a legacy action returning an internal backup path. A 2026-09-18 production-SDK run reconfirmed the body-less GET action with `rc=0`. The current stock UI bypasses that action for the actual backup download.
 
-Configuration backups can contain secrets. Treat the returned binary/backup as sensitive, never commit it to this repository and never include it in diagnostics without explicit sanitization.
+Current source-verified backup download:
+
+```text
+GET /file.cgi?Action=Download&file=backup_config&dl=1
+```
+
+Current source-verified restore transport:
+
+```text
+POST /file.cgi?Action=Upload&file=restore_config
+Content-Type: application/octet-stream
+<body: raw configuration bytes>
+```
+
+The frontend uploads sequential 1 MiB chunks, without multipart/form-data, filename form fields or `Content-Range`. Its selected-file limit is 200 MiB. A response containing `other error` is failure. The final successful chunk has no separate API apply call; the frontend expects the device to reboot after a successful restore.
+
+A safe restore client should snapshot externally observable state, upload only a trusted backup, tolerate management loss on the last chunk, wait for device recovery, log in again and verify both a fresh boot and restored state.
+
+Configuration backups can contain secrets. Treat backup bytes as sensitive, never commit them to this repository and never include them in diagnostics without explicit sanitization.
 
 ## Change UI language
 
