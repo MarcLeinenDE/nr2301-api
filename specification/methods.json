@@ -4508,6 +4508,15 @@
         {
           "id": "dhcp.core",
           "evidence": "live same-state frontend-form multicall reset + recovery/read-back"
+        },
+        {
+          "id": "router.lan_router_sdk_lifecycle_2026_09_21.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "lifecycle": "snapshot -> write/forced execution -> read-back -> exact restore -> final snapshot equality",
+          "result": "PASS",
+          "evidence_file": "evidence/physical/2026-09-21-dhcp-static-readback-mac-format.md",
+          "method_role": "router/router_set_dhcp_settings_comb"
         }
       ],
       "live_note": "2026-08-31 public-SDK physical test via normal admin and http://zyxel.home: combined DHCP/DNS write succeeded, all seven non-DNS fields remained unchanged, and the complete original 12-field object was restored exactly.",
@@ -4515,7 +4524,8 @@
         "Original UI normally sends this as a multicall member with outer toStringData=false; LAN/DHCP changes can reset management TCP.",
         "Manual DNS is upstream DNS for the NR2301 DNS proxy, not direct DHCP option-6 distribution of the configured public resolvers.",
         "Public SDK physical verification on 2026-08-31 confirmed normal-admin write/read-back/restore through the combined DHCP/DNS setter.",
-        "The test changed only DNS fields, asserted all seven non-DNS fields stayed unchanged, then required the complete restored object to equal the original object."
+        "The test changed only DNS fields, asserted all seven non-DNS fields stayed unchanged, then required the complete restored object to equal the original object.",
+        "2026-09-21 complete public-SDK LAN/router lifecycle passed with read-back verification and exact final restoration of DHCP, static reservations, LAN address and work mode; see evidence/physical/2026-09-21-dhcp-static-readback-mac-format.md."
       ]
     },
     {
@@ -4569,6 +4579,15 @@
         {
           "id": "dhcp.static_reservations",
           "evidence": "2026-08-25: empty table -> add index0 locally-administered MAC at 192.0.2.254 -> HTTP200 setting_response=OK -> read-back present -> exact empty-table restore -> read-back empty. 2026-09-21 ACIY.3: numeric index 0 + locally-administered MAC + in-subnet 192.168.1.254 persisted; getter read-back returned index 0, uppercase hyphen-separated MAC and exact IP. Public MAC examples are sanitized."
+        },
+        {
+          "id": "router.lan_router_sdk_lifecycle_2026_09_21.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "lifecycle": "snapshot -> write/forced execution -> read-back -> exact restore -> final snapshot equality",
+          "result": "PASS",
+          "evidence_file": "evidence/physical/2026-09-21-dhcp-static-readback-mac-format.md",
+          "method_role": "router/router_set_dhcp_static_ip"
         }
       ],
       "live_note": "2026-09-21 shipped set_dhcp.html confirms occupied slots only, numeric index values, same-LAN-subnet validation, and multicall submission with outer toStringData=false. A corrected production-SDK probe using numeric index 0 and in-subnet 192.168.1.254 persisted successfully. Read-back returned the same index/IP and canonicalized the MAC to uppercase hyphen-separated form; the SDK test then failed only because its parser accepted colon-separated MACs exclusively.",
@@ -4579,7 +4598,8 @@
         "Static reservation IPv4 addresses are validated to be inside the current LAN/subnet via checkIPGetewayMask().",
         "The frontend rejects duplicate MAC addresses and duplicate IPv4 addresses, invalid/multicast MAC addresses, and half-filled MAC/IP rows.",
         "Submission is a multicall member; the stock page uses async=true, timeout=20000 and toStringData=false at the ajaxHandler layer.",
-        "Read back router_get_dhcp_static_ip after writing and restore the complete original table for tests."
+        "Read back router_get_dhcp_static_ip after writing and restore the complete original table for tests.",
+        "2026-09-21 complete public-SDK LAN/router lifecycle passed with read-back verification and exact final restoration of DHCP, static reservations, LAN address and work mode; see evidence/physical/2026-09-21-dhcp-static-readback-mac-format.md."
       ]
     },
     {
@@ -4616,9 +4636,21 @@
       },
       "response_schema": null,
       "response_fields": [],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "router.lan_router_sdk_lifecycle_2026_09_21.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "lifecycle": "snapshot -> write/forced execution -> read-back -> exact restore -> final snapshot equality",
+          "result": "PASS",
+          "evidence_file": "evidence/physical/2026-09-21-dhcp-static-readback-mac-format.md",
+          "method_role": "router/router_set_lan_ip"
+        }
+      ],
       "live_note": "Deprecated same-state LAN setter returned router.setting_response='OK'; management recovery succeeded.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-09-21 complete public-SDK LAN/router lifecycle passed with read-back verification and exact final restoration of DHCP, static reservations, LAN address and work mode; see evidence/physical/2026-09-21-dhcp-static-readback-mac-format.md."
+      ]
     },
     {
       "method_id": "router/router_set_timed_reboot",
@@ -4690,9 +4722,21 @@
       },
       "response_schema": null,
       "response_fields": [],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "router.lan_router_sdk_lifecycle_2026_09_21.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_2026_09_21",
+          "firmware": "V1.00(ACIY.3)C0",
+          "lifecycle": "snapshot -> write/forced execution -> read-back -> exact restore -> final snapshot equality",
+          "result": "PASS",
+          "evidence_file": "evidence/physical/2026-09-21-dhcp-static-readback-mac-format.md",
+          "method_role": "router/router_set_work_mode"
+        }
+      ],
       "live_note": "Frontend-form multicall reset TCP connection; recovery succeeded and work_mode remained router.",
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-09-21 complete public-SDK LAN/router lifecycle passed with read-back verification and exact final restoration of DHCP, static reservations, LAN address and work mode; see evidence/physical/2026-09-21-dhcp-static-readback-mac-format.md."
+      ]
     },
     {
       "method_id": "router/set_ui_language",

@@ -163,3 +163,23 @@ verify. It is not evidence that the setter is unavailable.
 Read `router/router_get_work_mode`. Known values are `router` and `bridge`.
 
 `router/router_set_work_mode` is live verified only with disruptive recovery handling. Changing work mode can fundamentally change addressing and management reachability; do not combine it casually with an unrelated DHCP/DNS change.
+
+## Physical SDK lifecycle closure — 2026-09-21
+
+The complete LAN/router lifecycle has now been exercised through the public SDK
+on ACIY.3:
+
+- mutate DHCP lease time and verify exact read-back;
+- add one synthetic static reservation and verify normalized exact read-back;
+- execute the deprecated LAN-IP setter at the same original address with an
+  explicit forced transport test;
+- execute the work-mode setter at the same original mode with an explicit forced
+  transport test;
+- restore the complete original static reservation table and combined DHCP
+  object;
+- require final DHCP, reservation, LAN-address and work-mode snapshots to equal
+  the originals.
+
+The run passed, including exact final restoration. Disruptive writes should still
+be treated as successful only after recovery/read-back, not merely from the HTTP
+response.
