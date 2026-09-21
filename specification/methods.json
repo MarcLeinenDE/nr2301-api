@@ -4388,7 +4388,9 @@
       "response_schema": {
         "work_mode": "string"
       },
-      "response_fields": [],
+      "response_fields": [
+        "work_mode"
+      ],
       "semantic_contracts": [
         {
           "id": "work_mode.platform.v1",
@@ -4399,8 +4401,11 @@
           ]
         }
       ],
-      "live_note": null,
-      "implementation_notes": []
+      "live_note": "2026-09-21 direct production-SDK read on ACIY.3 returned exactly {\"work_mode\":\"router\"}. Earlier source-derived 'mode' field documentation was incorrect for the tested runtime.",
+      "implementation_notes": [
+        "Tested ACIY.3 returns the field name work_mode, not mode.",
+        "Known source/runtime values remain router and bridge."
+      ]
     },
     {
       "method_id": "router/router_restart_adb",
