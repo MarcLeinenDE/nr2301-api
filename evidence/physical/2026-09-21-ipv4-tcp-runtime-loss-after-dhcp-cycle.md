@@ -143,3 +143,72 @@ checked for:
 If the bare factory state is healthy but the problem returns only after a saved
 configuration is restored, the fault domain narrows substantially toward the
 restore/post-restore path or restored configuration/runtime interaction.
+
+
+## Bare hardware-factory state verification
+
+After the manual hardware factory reset, **no saved configuration was restored**
+before the following checks.
+
+Client/network state:
+- DHCP renewed successfully from `192.168.1.1`;
+- client IPv4: `192.168.1.100/24`;
+- IPv4 default gateway: `192.168.1.1`;
+- global IPv6 address and IPv6 default gateway present;
+- DNS servers included both router IPv4 and router-provided IPv6 addresses.
+
+Observed checks:
+
+```text
+Resolve-DnsName zyxel.home
+  -> 192.168.1.1
+
+zyxel.home:80
+  -> TCP success
+
+192.168.1.1:80
+  -> TCP success
+
+1.1.1.1:80
+  -> TCP success
+
+8.8.8.8:53
+  -> TCP success
+
+Resolve-DnsName github.com
+  -> 140.82.121.3
+
+curl -4 https://www.google.com
+  -> HTTP 200
+
+curl -6 https://www.google.com
+  -> HTTP 200
+```
+
+Conclusion:
+- local management connectivity is healthy in bare factory state;
+- IPv4 TCP dataplane is healthy;
+- DNS is healthy;
+- IPv6 dataplane is healthy.
+
+This materially narrows the fault domain. The abnormal state observed after the
+earlier automated factory-reset/config-restore lifecycle is **not reproduced by
+a bare hardware factory reset**. The strongest current hypotheses are therefore:
+
+1. a post-config-restore runtime/readiness defect;
+2. a restored configuration value or combination that leaves one or more
+   dataplane/runtime subsystems unhealthy;
+3. interaction between config restore and subsystem startup ordering.
+
+The evidence does not currently support a general hardware failure or a
+persistent USB-management-path failure.
+
+Next controlled experiment should capture a factory-state backup, then restore
+the known baseline backup once, while continuously measuring:
+- control-plane/API readiness;
+- WebUI readiness;
+- IPv4 TCP;
+- DNS;
+- IPv6 TCP.
+
+Do not declare restore success solely from configuration equality.
