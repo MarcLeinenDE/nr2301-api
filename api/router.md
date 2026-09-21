@@ -932,3 +932,28 @@ Known/observed response fields: `result`.
   - `evidence`: STATIC_FRONTEND_VERIFIED
   - `important`: Use lowercase router API codes; uppercase strings are display abbreviations, not transport values.
 
+
+
+## Cross-method LAN/router SDK lifecycle — 2026-09-21
+
+A complete production-SDK lifecycle on ACIY.3 verified the combined DHCP setter,
+static-DHCP table setter, deprecated LAN-IP setter and work-mode setter in one
+snapshot/write/read-back/restore sequence.
+
+Observed milestones:
+
+```text
+LAN_DHCP_WRITE field=leasetime changed=True readback=True
+LAN_STATIC_RESERVATION_WRITE original_count=0 synthetic_count=1 readback=True
+LAN_LEGACY_ADDRESS_WRITE force_same_state=True readback=True
+ROUTER_WORK_MODE_WRITE force_same_state=True mode_preserved=True
+LAN_ROUTER_FINAL dhcp_restored=True reservations_restored=True address_preserved=True work_mode_preserved=True
+```
+
+The static reservation left by the earlier getter-format parser failure was first
+identified as the sole known synthetic entry and removed by the guarded cleanup
+helper. The full rerun then passed and restored the initial DHCP object,
+reservation table, LAN address and work mode exactly.
+
+See
+`../evidence/physical/2026-09-21-dhcp-static-readback-mac-format.md`.
