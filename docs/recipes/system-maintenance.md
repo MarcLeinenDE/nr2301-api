@@ -81,6 +81,8 @@ A safe restore client should snapshot externally observable state, upload only a
 
 Physical restore testing on 2026-09-21 showed that `router/get_runtime_info` can become readable before every subsystem is fully API-ready: a later firewall/UPnP read briefly returned HTTP 200 with an empty body. Verification clients should therefore retry the **entire required configuration snapshot** until all relevant reads succeed in one pass before comparing restored state.
 
+A completed production-SDK lifecycle then restored the same-device backup successfully. The stable configuration snapshot matched exactly, but a newly downloaded post-restore backup differed in both byte length and SHA-256. Do **not** use backup-file hash/size equality as proof of configuration equivalence; verify the relevant restored settings instead.
+
 Configuration backups can contain secrets. Treat backup bytes as sensitive, never commit them to this repository and never include them in diagnostics without explicit sanitization.
 
 ## Change UI language
