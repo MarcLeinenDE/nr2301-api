@@ -14,6 +14,18 @@ Machine-readable live-contract overlay:
 
 - [`specification/firewall-live-contracts-2026-09-14.json`](../../specification/firewall-live-contracts-2026-09-14.json)
 
+## Public-SDK reversible lifecycle status
+
+On 2026-09-25 the public SDK completed the full reversible Firewall/NAT lifecycle
+for 12 write helpers in one run. All write/read-back stages passed and the final
+semantic snapshot was identical to the original configuration.
+
+Result: `1 passed in 25.64s`.
+
+The only remaining Firewall/NAT write helper outside this lifecycle is the DMZ
+destination setter. It remains a separate destructive/recovery test because an
+empty original destination has no verified API-level clear operation.
+
 ## Management recovery after write/restore sequences
 
 A single immediate Firewall/NAT getter timeout is not sufficient evidence that
