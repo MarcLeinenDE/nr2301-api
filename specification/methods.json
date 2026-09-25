@@ -4224,7 +4224,17 @@
         "wifi_mac": "string"
       },
       "response_fields": [],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "sdk.readonly_physical_coverage_2026_09_25.v1",
+          "evidence": "LIVE_PUBLIC_SDK_READONLY_2026_09_25",
+          "firmware": "V1.00(ACIY.3)C0",
+          "result": "PASS",
+          "pytest_result": "7 passed in 0.86s",
+          "privacy": "Sensitive returned values were shape-checked but not logged.",
+          "evidence_file": "evidence/physical/2026-09-25-sdk-remaining-readonly-coverage.md"
+        }
+      ],
       "live_note": null,
       "implementation_notes": []
     },
@@ -6190,6 +6200,15 @@
       "semantic_contracts": [
         {
           "id": "sms.query"
+        },
+        {
+          "id": "sdk.readonly_physical_coverage_2026_09_25.v1",
+          "evidence": "LIVE_PUBLIC_SDK_READONLY_2026_09_25",
+          "firmware": "V1.00(ACIY.3)C0",
+          "result": "PASS",
+          "pytest_result": "7 passed in 0.86s",
+          "privacy": "Sensitive returned values were shape-checked but not logged.",
+          "evidence_file": "evidence/physical/2026-09-25-sdk-remaining-readonly-coverage.md"
         }
       ],
       "live_note": "Live contract/schema confirmed; tested query returned resp=-2. Frontend treats resp=0 as semantic success and ids as comma-separated IDs. Anonymous live response: HTTP 200 {'system_err':'session no exist'}.",
@@ -6628,7 +6647,17 @@
       "response_fields": [
         "mac"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "sdk.readonly_physical_coverage_2026_09_25.v1",
+          "evidence": "LIVE_PUBLIC_SDK_READONLY_2026_09_25",
+          "firmware": "V1.00(ACIY.3)C0",
+          "result": "PASS",
+          "pytest_result": "7 passed in 0.86s",
+          "privacy": "Sensitive returned values were shape-checked but not logged.",
+          "evidence_file": "evidence/physical/2026-09-25-sdk-remaining-readonly-coverage.md"
+        }
+      ],
       "live_note": null,
       "implementation_notes": [
         "Do not require this method as the sole proof of USB management identity. One USB-only preflight returned no MAC, while a repeated run did return one. Treat it as optional diagnostic metadata."
@@ -7325,7 +7354,17 @@
       "response_fields": [
         "magic"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "sdk.readonly_physical_coverage_2026_09_25.v1",
+          "evidence": "LIVE_PUBLIC_SDK_READONLY_2026_09_25",
+          "firmware": "V1.00(ACIY.3)C0",
+          "result": "PASS",
+          "pytest_result": "7 passed in 0.86s",
+          "privacy": "Sensitive returned values were shape-checked but not logged.",
+          "evidence_file": "evidence/physical/2026-09-25-sdk-remaining-readonly-coverage.md"
+        }
+      ],
       "live_note": null,
       "implementation_notes": []
     },
@@ -7407,6 +7446,15 @@
         {
           "id": "diag.wifi.v1",
           "evidence": "STATIC_FRONTEND_VERIFIED"
+        },
+        {
+          "id": "sdk.readonly_physical_coverage_2026_09_25.v1",
+          "evidence": "LIVE_PUBLIC_SDK_READONLY_2026_09_25",
+          "firmware": "V1.00(ACIY.3)C0",
+          "result": "PASS",
+          "pytest_result": "7 passed in 0.86s",
+          "privacy": "Sensitive returned values were shape-checked but not logged.",
+          "evidence_file": "evidence/physical/2026-09-25-sdk-remaining-readonly-coverage.md"
         }
       ],
       "live_note": null,
@@ -7446,7 +7494,17 @@
       "response_fields": [
         "ssid"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "sdk.readonly_physical_coverage_2026_09_25.v1",
+          "evidence": "LIVE_PUBLIC_SDK_READONLY_2026_09_25",
+          "firmware": "V1.00(ACIY.3)C0",
+          "result": "PASS",
+          "pytest_result": "7 passed in 0.86s",
+          "privacy": "Sensitive returned values were shape-checked but not logged.",
+          "evidence_file": "evidence/physical/2026-09-25-sdk-remaining-readonly-coverage.md"
+        }
+      ],
       "live_note": null,
       "implementation_notes": []
     },
@@ -8396,6 +8454,15 @@
           },
           "constraint": "status='on' must not be documented as equivalent to timed-off schedule enable=1.",
           "meaning": "UNRESOLVED_BEYOND_NON_EQUIVALENCE"
+        },
+        {
+          "id": "sdk.readonly_physical_coverage_2026_09_25.v1",
+          "evidence": "LIVE_PUBLIC_SDK_READONLY_2026_09_25",
+          "firmware": "V1.00(ACIY.3)C0",
+          "result": "PASS",
+          "pytest_result": "7 passed in 0.86s",
+          "privacy": "Sensitive returned values were shape-checked but not logged.",
+          "evidence_file": "evidence/physical/2026-09-25-sdk-remaining-readonly-coverage.md"
         }
       ],
       "live_note": null,
