@@ -116,6 +116,39 @@ merging the SDK physical harness, these 12 closures would reduce the original
 surface but no physical reach and **21** methods without an SDK surface (including
 the single deliberate USB-mode mutation exclusion).
 
+### Read-only coverage closure — 2026-09-25
+
+A subsequent public-SDK physical run closed seven additional existing-helper gaps:
+
+- `router/get_mac_info`
+- `statistics/get_login_client_mac`
+- `version/get_magicnumber`
+- `wireless/get_diag_wifi_info`
+- `wireless/get_extender_config`
+- `wireless/wifi_get_timed_off_status`
+- `sms/sms.query`
+
+Result: `7 passed in 0.86s`.
+
+Sensitive values were not printed. `sms.query` returned the previously documented
+non-success semantic code `resp=-2`; the SDK correctly surfaced this as its
+endpoint-specific `APIError`, so the physical contract path is considered
+covered.
+
+Combined with the 12 reversible Firewall/NAT closures recorded above, the
+original **44** physical-harness gaps are now reduced by **19** to **25**:
+
+- **4** methods with existing SDK surface still lacking clean physical closure;
+- **21** methods with no SDK surface, including the single deliberate
+  `router/eng_set_usb_mode` mutation exclusion.
+
+The four existing-helper gaps now are:
+
+- `firewall/fw_edit_dmz_entry` — write is physically proven, exact sentinel-state restore remains pending until the factory-reset/recovery phase;
+- `sim/reset_pin_using_puk`;
+- `statistics/set_black_white_mode`;
+- `statistics/stat_clear_common_data`.
+
 ## Existing SDK helpers that still lack persisted physical SDK reach
 
 These are the fastest coverage wins because an SDK implementation already exists.
