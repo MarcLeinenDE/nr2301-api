@@ -1670,12 +1670,21 @@
           "verification_rule": "Treat one immediate getter timeout as inconclusive. Do not blindly repeat the write; retry read-back with recovery/re-login and decide from eventual semantic state.",
           "scope": "Physical verification/recovery behavior; request schemas are unchanged.",
           "evidence_file": "evidence/physical/2026-09-21-firewall-post-restore-management-stall.md"
+        },
+        {
+          "id": "firewall.dmz_destination_restore_classification.v1",
+          "evidence": "LIVE_SDK_WRITE_READBACK_RESTORE_FAILURE_2026_09_25",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "A valid synthetic IPv4 destination persisted and read back. Attempting to restore the original incomplete getter value through fw_edit_dmz_entry did not restore the getter state even though no transport/protocol exception was raised.",
+          "conclusion": "The verified setter domain is syntactically valid non-empty IPv4 only. Verify success by getter read-back. Empty or invalid original getter values are not setter-restorable and require full configuration restore after testing.",
+          "evidence_file": "evidence/physical/2026-09-25-dmz-destination-sentinel-restore.md"
         }
       ],
-      "live_note": "Non-empty destination writes are live verified. The stock NR2301 WebUI exposes no destination clear/delete operation.",
+      "live_note": "Valid non-empty IPv4 destination writes are live verified. Invalid/incomplete getter values are not proven setter-round-trippable. The stock NR2301 WebUI exposes no destination clear/delete operation.",
       "implementation_notes": [
         "Use fw_edit_dmz_entry only for a non-empty destination.",
-        "Do not infer an empty-string clear/delete contract; DMZ destination clear/delete remains unresolved."
+        "Do not infer an empty-string clear/delete contract; DMZ destination clear/delete remains unresolved.",
+        "2026-09-25: only syntactically valid IPv4 destinations are in the verified setter domain. Invalid/sentinel originals must not be replayed through this setter; use full config restore."
       ]
     },
     {
@@ -1750,9 +1759,20 @@
       "response_fields": [
         "firewall"
       ],
-      "semantic_contracts": [],
+      "semantic_contracts": [
+        {
+          "id": "firewall.dmz_destination_raw_sentinel.v1",
+          "evidence": "LIVE_OBSERVED_2026_08_25_AND_2026_09_25",
+          "firmware": "V1.00(ACIY.3)C0",
+          "observation": "fw_get_dmz_info.dmz_dest_ip can return a non-empty incomplete/non-IPv4 value; the physically observed example is '192.168.'.",
+          "conclusion": "Treat dmz_dest_ip as a raw firmware string. Non-empty does not imply valid IPv4 or setter round-trippability.",
+          "evidence_file": "evidence/physical/2026-09-25-dmz-destination-sentinel-restore.md"
+        }
+      ],
       "live_note": null,
-      "implementation_notes": []
+      "implementation_notes": [
+        "2026-09-25: dmz_dest_ip is raw firmware text and may be a non-empty invalid/sentinel-like value; preserve it but do not assume IPv4 validity."
+      ]
     },
     {
       "method_id": "firewall/fw_get_vpn_passthrough",

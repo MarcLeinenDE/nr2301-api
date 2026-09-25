@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- corrected DMZ destination restore semantics after the 2026-09-25 SDK run: `fw_get_dmz_info.dmz_dest_ip` can return the non-empty but invalid sentinel-like value `192.168.`; only syntactically valid IPv4 destinations are setter-restorable, invalid/empty originals require full config restore, and setter success must be verified by getter read-back
 - closed the 2026-09-25 public-SDK reversible Firewall/NAT lifecycle: all 12 fully reversible write helpers passed mutation/action, semantic read-back, restore and exact final snapshot equality in one physical run (`1 passed in 25.64s`); only the separate DMZ-destination recovery test remains pending in this namespace
 - broadened the 2026-09-21 Firewall/NAT transient-stall evidence: a later run completed all 12 reversible write/read-back stages, including URL Filter and UPnP, but the final post-restore `get_admin_from_wan` snapshot read connected and then timed out at 5 seconds; this establishes a namespace-level management-readiness recovery rule rather than a URL-filter-specific issue
 - recorded a 2026-09-21 transient URL-filter post-write management stall: `set_url_filter` returned, but the immediately following `get_url_filter` hit the physical harness's 5-second HTTP read timeout; earlier URL-filter lifecycles passed without reboot, so verification now retries read-back/re-login and does not repeat the write blindly

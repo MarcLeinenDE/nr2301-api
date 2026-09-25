@@ -108,9 +108,7 @@ Still pending in the Firewall/NAT block:
 
 - `firewall/fw_edit_dmz_entry`
 
-The DMZ-destination test remains separate because an originally empty destination
-cannot be restored through a verified clear/delete API. Its physical harness uses
-the already verified in-memory configuration-backup restore path when needed.
+The DMZ-destination test remains separate because an original destination that is empty **or not a syntactically valid IPv4 address** cannot be restored through the verified setter/clear API. The physically observed default/sentinel-like `192.168.` value is non-empty but not setter-restorable. Its physical harness must choose configuration-backup restore based on IPv4 validity, not emptiness.
 
 If the current campaign were recomputed against the same 157-method catalog after
 merging the SDK physical harness, these 12 closures would reduce the original
