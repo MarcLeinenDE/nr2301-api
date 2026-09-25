@@ -33,6 +33,24 @@ Verification/auth/safety terminology: see [`../docs/method-status.md`](../docs/m
 | [`ww_upnp_open_close`](#ww-upnp-open-close) | `LIVE_VERIFIED` | `ADMIN_OK` | `WRITE_OR_SIDE_EFFECT` |
 | [`ww_upnp_open_close_state`](#ww-upnp-open-close-state) | `LIVE_VERIFIED` | `ADMIN_OK` | `READ_OR_LOW_SIDE_EFFECT` |
 
+## Public-SDK reversible lifecycle — 2026-09-25
+
+The public SDK physically completed a single reversible Firewall/NAT lifecycle
+covering 12 write methods: DMZ enable, VPN passthrough, WAN administration, WAN
+ping, IP-filter list and mode, port-filter list and mode, Port Forward, Port
+Trigger, URL Filter and UPnP.
+
+Every stage passed mutation/action plus semantic read-back. The final full
+Firewall/NAT snapshot matched the original state exactly after restore.
+
+Pytest result: `1 passed in 25.64s`.
+
+The remaining write gap is `fw_edit_dmz_entry`, which is tested separately
+because no verified destination-clear/delete contract exists.
+
+See
+`../evidence/physical/2026-09-25-firewall-sdk-reversible-lifecycle.md`.
+
 ## Management readiness after Firewall/NAT writes
 
 Physical SDK lifecycles on ACIY.3 show that the management HTTP service can
