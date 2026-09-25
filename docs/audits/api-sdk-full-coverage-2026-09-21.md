@@ -80,6 +80,44 @@ Green CI therefore confirms consistency of the current implementation, not compl
 | wireless | 14 | 14 | 13 | 11 |
 | **Total** | **157** | **136** | **135** | **113** |
 
+## Campaign progress update — 2026-09-25
+
+The pinned 2026-09-21 baseline above is intentionally preserved unchanged.
+
+Since that baseline, the public-SDK Firewall/NAT campaign has physically closed
+**12 of the 13** write-helper gaps listed below. The complete reversible lifecycle
+passed on ACIY.3 with write, semantic read-back, restore and exact final snapshot
+equality (`1 passed in 25.64s`).
+
+Closed:
+
+- `firewall/fw_set_disable_info`
+- `firewall/fw_set_vpn_passthrough`
+- `firewall/set_admin_from_wan`
+- `firewall/set_ping_from_wan`
+- `firewall/set_port_forward`
+- `firewall/set_port_trigger`
+- `firewall/set_url_filter`
+- `firewall/ww_edit_ip_filter`
+- `firewall/ww_edit_port_filter`
+- `firewall/ww_fw_set_disable_info`
+- `firewall/ww_fw_set_port_disable_info`
+- `firewall/ww_upnp_open_close`
+
+Still pending in the Firewall/NAT block:
+
+- `firewall/fw_edit_dmz_entry`
+
+The DMZ-destination test remains separate because an originally empty destination
+cannot be restored through a verified clear/delete API. Its physical harness uses
+the already verified in-memory configuration-backup restore path when needed.
+
+If the current campaign were recomputed against the same 157-method catalog after
+merging the SDK physical harness, these 12 closures would reduce the original
+44 physical-harness gaps to **32**, leaving **11** methods with an existing SDK
+surface but no physical reach and **21** methods without an SDK surface (including
+the single deliberate USB-mode mutation exclusion).
+
 ## Existing SDK helpers that still lack persisted physical SDK reach
 
 These are the fastest coverage wins because an SDK implementation already exists.
