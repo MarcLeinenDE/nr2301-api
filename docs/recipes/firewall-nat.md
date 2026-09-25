@@ -105,7 +105,7 @@ The WebUI explicitly uses `toStringData:false`. A physical campaign confirmed sa
 
 The physical NR2301 WebUI comments that `fw_add_dmz_entry` is not implemented on the cpe.5g path and always uses `fw_edit_dmz_entry` for destination changes.
 
-The current UI exposes no destination-clear/delete action: with DMZ off the field is disabled/restored to the stored value; with DMZ on an empty value fails validation. Keep clear/delete unresolved and do not promote related-device delete behavior.
+The current UI exposes no destination-clear/delete action: with DMZ off the field is disabled/restored to the stored getter value; with DMZ on an empty value fails validation. Importantly, the getter value is not guaranteed to be a valid IPv4 address: `192.168.` was physically observed on 2026-08-25 and again as the 2026-09-25 pre-test state. Therefore classify the original with an IPv4 parser, not by empty/non-empty text. A valid IPv4 may be restored through the verified setter and must be read back. An empty or invalid/sentinel-like original requires full configuration-backup restore after the mutation. Keep clear/delete unresolved and do not promote related-device delete behavior.
 
 ## Port forwarding
 
