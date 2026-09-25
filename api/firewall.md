@@ -96,7 +96,12 @@ No stable response schema is currently documented.
 
 ### Notes
 
-- Non-empty destination writes are live verified.
+- Valid non-empty IPv4 destination writes are live verified.
+- `fw_get_dmz_info.dmz_dest_ip` is raw firmware text and may be non-empty but not a valid IPv4 address. The value `192.168.` was physically observed before DMZ mutation work and again on 2026-09-25.
+- An invalid/incomplete getter value is not setter-round-trippable merely because it is non-empty. Parse the original as IPv4 before deciding that setter restore is safe.
+- A 2026-09-25 SDK run wrote/read back a valid synthetic destination, then attempted to restore the incomplete original through `fw_edit_dmz_entry`; no SDK exception was raised, but getter read-back stayed on the synthetic destination.
+- Verify setter success by semantic getter read-back.
+- Empty or invalid original getter values require full configuration-backup restore after mutation.
 - The stock NR2301 WebUI exposes no destination clear/delete operation; do not infer an empty-string clear contract.
 
 <a id="fw-get-disable-info"></a>
@@ -152,6 +157,8 @@ No request body has been reconstructed as necessary for this method.
   }
 }
 ```
+
+`dmz_dest_ip` is a raw firmware string, not a guaranteed IPv4 value. A non-empty incomplete value (`192.168.`) has been physically observed while DMZ was disabled.
 
 <a id="fw-get-vpn-passthrough"></a>
 
