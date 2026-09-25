@@ -4,6 +4,7 @@
 
 Development metadata: `0.1.1.dev0`.
 
+- closed the 2026-09-25 public-SDK reversible Firewall/NAT lifecycle: all 12 fully reversible write helpers passed mutation/action, semantic read-back, restore and exact final snapshot equality in one physical run (`1 passed in 25.64s`); only the separate DMZ-destination recovery test remains pending in this namespace
 - broadened the 2026-09-21 Firewall/NAT transient-stall evidence: a later run completed all 12 reversible write/read-back stages, including URL Filter and UPnP, but the final post-restore `get_admin_from_wan` snapshot read connected and then timed out at 5 seconds; this establishes a namespace-level management-readiness recovery rule rather than a URL-filter-specific issue
 - recorded a 2026-09-21 transient URL-filter post-write management stall: `set_url_filter` returned, but the immediately following `get_url_filter` hit the physical harness's 5-second HTTP read timeout; earlier URL-filter lifecycles passed without reboot, so verification now retries read-back/re-login and does not repeat the write blindly
 - recorded the 2026-09-21 public-SDK Port Forward read-back normalization: ACIY.3 accepted a synthetic MAC containing uppercase hexadecimal letters and returned the same address bytes with lowercase hexadecimal letters, so Port Forward verification now treats MAC case as representational while preserving raw getter values
